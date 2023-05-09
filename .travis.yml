@@ -1,0 +1,57 @@
+language: go
+
+dist: focal
+
+# Remove this if using external Travis
+group: focal
+
+go:
+- 1.18.x
+- 1.19.x
+- 1.20.x
+
+# After creating your SDK project from this template repository,
+# remove this entire "jobs" section as this is only applicable
+# to the template repo's travis build.
+jobs:
+  include:
+    - stage: Run system test with template
+      before_install:
+        - echo -e "machine github.ibm.com\n  login $GITHUB_ACCESS_TOKEN" > ~/.netrc
+      script:
+        - git clone https://github.ibm.com/CloudEngineering/sdkgen-systest.git
+        - cd sdkgen-systest
+        - ./install_scripts/install_deps_ubuntu.sh
+        - ./setup_and_generate.sh -l ibm-go -t $TRAVIS_BRANCH -s
+
+notifications:
+  email: true
+
+env:
+  global:
+    - GO111MODULE=on
+
+before_install:
+  - sudo apt-get update
+  - pyenv global 3.8
+
+install:
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.51.2
+  - curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+script:
+  - make travis-ci
+
+# To enable semantic-release, uncomment these sections.
+# before_deploy:
+#   - nvm install 14
+#   - npm install
+#   - pip install --user bump2version
+#
+# deploy:
+#   - provider: script
+#     script: npm run semantic-release
+#     skip_cleanup: true
+#     on:
+#       go: '1.18.x'
+#       branch: main
