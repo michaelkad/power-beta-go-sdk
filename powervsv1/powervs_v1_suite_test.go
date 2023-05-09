@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2022.
+ * (C) Copyright IBM Corp. 2023.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package exampleservicev1_test
+package powervsv1_test
 
 import (
 	"testing"
@@ -23,7 +23,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestExampleServiceV1(t *testing.T) {
+func TestPowervsV1(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "ExampleServiceV1 Suite")
+	RunSpecs(t, "PowervsV1 Suite")
 }
