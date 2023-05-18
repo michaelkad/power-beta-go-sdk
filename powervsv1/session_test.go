@@ -1,4 +1,4 @@
-package ibmpisession
+package powervsv1
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 func TestNewIBMPISession(t *testing.T) {
 	bearerTokenAuth := &core.BearerTokenAuthenticator{BearerToken: "sample"}
-	o1 := &IBMPIOptions{
+	o1 := &PowervsV1Options{
 		Authenticator: bearerTokenAuth,
 		UserAccount:   "1234",
 		Region:        "dal",
@@ -19,7 +19,7 @@ func TestNewIBMPISession(t *testing.T) {
 		URL:           "dal.power-iaas.test.cloud.ibm.com",
 	}
 	type args struct {
-		o *IBMPIOptions
+		o *PowervsV1Options
 	}
 	tests := []struct {
 		name    string
@@ -47,7 +47,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Invalid Authenticator",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: &core.BearerTokenAuthenticator{},
 				},
 			},
@@ -56,7 +56,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Without Authenticator",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					UserAccount: "1234",
 					Zone:        "dal12",
 					URL:         "dal.power-iaas.test.cloud.ibm.com",
@@ -67,7 +67,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Without UserAccount",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: bearerTokenAuth,
 					Zone:          "dal12",
 					URL:           "dal.power-iaas.test.cloud.ibm.com",
@@ -78,7 +78,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Without Zone",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: bearerTokenAuth,
 					UserAccount:   "1234",
 					URL:           "dal.power-iaas.test.cloud.ibm.com",
@@ -89,7 +89,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Without URL and Region",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: bearerTokenAuth,
 					UserAccount:   "1234",
 					Zone:          "dal12",
@@ -103,7 +103,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Without URL but with region",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: bearerTokenAuth,
 					UserAccount:   "1234",
 					Zone:          "dal12",
@@ -118,7 +118,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Simple URL with https",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 					UserAccount:   "1234",
 					Region:        "dal",
@@ -127,7 +127,7 @@ func TestNewIBMPISession(t *testing.T) {
 				},
 			},
 			want: &IBMPISession{
-				Options: &IBMPIOptions{
+				Options: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 				},
 				CRNFormat: "crn:v1:staging:public:power-iaas:dal12:a/1234:%s::",
@@ -136,7 +136,7 @@ func TestNewIBMPISession(t *testing.T) {
 		{
 			name: "Simple URL with http",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 					UserAccount:   "1234",
 					Region:        "dal",
@@ -145,7 +145,7 @@ func TestNewIBMPISession(t *testing.T) {
 				},
 			},
 			want: &IBMPISession{
-				Options: &IBMPIOptions{
+				Options: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 				},
 				CRNFormat: "crn:v1:staging:public:power-iaas:dal12:a/1234:%s::",
@@ -169,7 +169,7 @@ func TestNewIBMPISession(t *testing.T) {
 func TestNewIBMPISessionViaEnv(t *testing.T) {
 	os.Setenv("IBMCLOUD_POWER_API_ENDPOINT", "power-iaas.test.cloud.ibm.com")
 	type args struct {
-		o *IBMPIOptions
+		o *PowervsV1Options
 	}
 	tests := []struct {
 		name    string
@@ -180,14 +180,14 @@ func TestNewIBMPISessionViaEnv(t *testing.T) {
 		{
 			name: "URL from Env Without Region",
 			args: args{
-				o: &IBMPIOptions{
+				o: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 					UserAccount:   "1234",
 					Zone:          "dal12",
 				},
 			},
 			want: &IBMPISession{
-				Options: &IBMPIOptions{
+				Options: &PowervsV1Options{
 					Authenticator: &core.NoAuthAuthenticator{},
 				},
 				CRNFormat: "crn:v1:staging:public:power-iaas:dal12:a/1234:%s::",
@@ -242,7 +242,7 @@ func TestIBMPISession_AuthInfo(t *testing.T) {
 		{
 			name: "Auth",
 			s: &IBMPISession{
-				Options: &IBMPIOptions{
+				Options: &PowervsV1Options{
 					Authenticator: &core.BearerTokenAuthenticator{BearerToken: "sample"},
 					Zone:          "dal12",
 					URL:           "dal.power-iaas.test.cloud.ibm.com",
@@ -260,7 +260,7 @@ func TestIBMPISession_AuthInfo(t *testing.T) {
 		{
 			name: "Incorrect Auth",
 			s: &IBMPISession{
-				Options: &IBMPIOptions{
+				Options: &PowervsV1Options{
 					Authenticator: &core.IamAuthenticator{ApiKey: "sample"},
 					Zone:          "dal12",
 					URL:           "dal.power-iaas.test.cloud.ibm.com",

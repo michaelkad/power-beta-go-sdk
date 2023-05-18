@@ -33,6 +33,7 @@ import (
 	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/go-openapi/strfmt"
 	common "github.com/michaelkad/power-beta-go-sdk/common"
+	// "github.com/michaelkad/power-beta-go-sdk/ibmpisession"
 )
 
 // PowervsV1 : Power IAAS API
@@ -76,7 +77,7 @@ type PowervsV1Options struct {
 }
 
 // NewPowervsV1UsingExternalConfig : constructs an instance of PowervsV1 with passed in options and external configuration.
-func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *PowervsV1, err error) {
+func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *IBMPISession, err error) {
 	if options.ServiceName == "" {
 		options.ServiceName = DefaultServiceName
 	}
@@ -93,52 +94,20 @@ func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *Powerv
 		return
 	}
 
-	err = powervs.Service.ConfigureService(options.ServiceName)
-	if err != nil {
-		return
-	}
+	// err = powervs.Service.ConfigureService(options.ServiceName)
+	// if err != nil {
+	// 	return
+	// }
 
-	if options.URL != "" {
-		err = powervs.Service.SetServiceURL(options.URL)
-	}
+	// if options.URL != "" {
+	// 	err = powervs.Service.SetServiceURL(options.URL)
+	// }
 	return
-}
-func crnBuilder(useraccount, zone, host string) string {
-	var service string
-	if strings.Contains(host, ".power-iaas.cloud.ibm.com") {
-		service = "bluemix"
-	} else {
-		service = "staging"
-	}
-	crn := fmt.Sprintf("crn:v1:%s:public:power-iaas:%s:a/%s:", service, zone, useraccount)
-	return crn + "%s::"
 }
 
 // NewPowervsV1 : constructs an instance of PowervsV1 with passed in options.
-func NewPowervsV1(options *PowervsV1Options) (service *PowervsV1, err error) {
-	serviceOptions := &core.ServiceOptions{
-		URL:           DefaultServiceURL,
-		Authenticator: options.Authenticator,
-	}
-
-	baseService, err := core.NewBaseService(serviceOptions)
-	if err != nil {
-		return
-	}
-
-	if options.URL != "" {
-		err = baseService.SetServiceURL(options.URL)
-		if err != nil {
-			return
-		}
-	}
-
-	service = &PowervsV1{
-		Service:   baseService,
-		Options:   options,
-		CRNFormat: crnBuilder(options.UserAccount, options.Zone, DefaultServiceURL),
-	}
-
+func NewPowervsV1(options *PowervsV1Options) (service *IBMPISession, err error) {
+	service, err = NewIBMPISession(options)
 	return
 }
 

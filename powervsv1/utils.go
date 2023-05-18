@@ -1,4 +1,4 @@
-package ibmpisession
+package powervsv1
 
 import (
 	"bytes"

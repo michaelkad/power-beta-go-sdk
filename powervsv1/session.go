@@ -1,4 +1,4 @@
-package ibmpisession
+package powervsv1
 
 import (
 	"fmt"
@@ -16,42 +16,42 @@ import (
 type IBMPISession struct {
 	CRNFormat string
 	Power     *client.PowerIaasAPI
-	Options   *IBMPIOptions
+	Options   *PowervsV1Options
 }
 
-// PIOptions
-type IBMPIOptions struct {
-	// The authenticator implementation to be used by the
-	// service instance to authenticate outbound requests
-	// Required
-	Authenticator core.Authenticator
+// // PIOptions
+// type PowervsV1Options struct {
+// 	// The authenticator implementation to be used by the
+// 	// service instance to authenticate outbound requests
+// 	// Required
+// 	Authenticator core.Authenticator
 
-	// Enable/Disable http transport debugging log
-	Debug bool
+// 	// Enable/Disable http transport debugging log
+// 	Debug bool
 
-	// Region of the Power Cloud Service Instance
-	// For generating the default endpoint
-	// Deprecated: Region is deprecated, the URL is auto generated based on Zone when not provided.
-	Region string
+// 	// Region of the Power Cloud Service Instance
+// 	// For generating the default endpoint
+// 	// Deprecated: Region is deprecated, the URL is auto generated based on Zone when not provided.
+// 	Region string
 
-	// Power Virtual Server host or URL endpoint
-	// This will be used instead of generating the default host
-	// eg: dal.power-iaas.cloud.ibm.com
-	URL string
+// 	// Power Virtual Server host or URL endpoint
+// 	// This will be used instead of generating the default host
+// 	// eg: dal.power-iaas.cloud.ibm.com
+// 	URL string
 
-	// Account id of the Power Cloud Service Instance
-	// It will be part of the CRN string
-	// Required
-	UserAccount string
+// 	// Account id of the Power Cloud Service Instance
+// 	// It will be part of the CRN string
+// 	// Required
+// 	UserAccount string
 
-	// Zone of the Power Cloud Service Instance
-	// It will be part of the CRN string
-	// Required
-	Zone string
-}
+// 	// Zone of the Power Cloud Service Instance
+// 	// It will be part of the CRN string
+// 	// Required
+// 	Zone string
+// }
 
 // Create a IBMPISession
-func NewIBMPISession(o *IBMPIOptions) (*IBMPISession, error) {
+func NewIBMPISession(o *PowervsV1Options) (*IBMPISession, error) {
 	if core.IsNil(o) {
 		return nil, fmt.Errorf("options is required")
 	}
