@@ -57,7 +57,7 @@ type PowervsV1Options struct {
 	URL           string
 	Authenticator core.Authenticator
 	// Enable/Disable http transport debugging log
-	// Debug bool
+	Debug bool
 
 	// Region of the Power Cloud Service Instance
 	// For generating the default endpoint
