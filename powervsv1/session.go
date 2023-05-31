@@ -19,7 +19,7 @@ type IBMPISession struct {
 	Options   *PowervsV1Options
 }
 
-// // PIOptions
+// // PIOptions v1
 // type PowervsV1Options struct {
 // 	// The authenticator implementation to be used by the
 // 	// service instance to authenticate outbound requests
