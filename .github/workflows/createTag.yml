@@ -8,8 +8,8 @@ on:
         required: true
         default: 'minor'
         options: ['super', 'major', 'minor']
-
-
+permissions:
+     contents: write
 jobs:
   create_tag:
     runs-on: ubuntu-latest
@@ -17,7 +17,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+         node-version: '16'
+         cache: 'npm'
       - name: Set up Git
         run: |
           git config --local user.email "action@github.com"
