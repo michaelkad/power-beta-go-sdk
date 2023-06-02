@@ -30,9 +30,9 @@ jobs:
       - name: Determine next tag
         id: next_tag
         run: |
-          echo "NEXT_TAG_SUPER=${{ env.TAG }}" | awk -F. '{print $1}') >> $GITHUB_ENV
-          echo "NEXT_TAG_MAJOR=${{ env.TAG }}" | awk -F. '{print $2}') >> $GITHUB_ENV
-          echo "NEXT_TAG_MINOR=${{ env.TAG }}" | awk -F. '{print $3}') >> $GITHUB_ENV
+          echo "NEXT_TAG_SUPER=$(${{ env.TAG }}" | awk -F. '{print $1}') >> $GITHUB_ENV
+          echo "NEXT_TAG_MAJOR=$(${{ env.TAG }}" | awk -F. '{print $2}') >> $GITHUB_ENV
+          echo "NEXT_TAG_MINOR=$(${{ env.TAG }}" | awk -F. '{print $3}') >> $GITHUB_ENV
           if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
             #super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
             super=$((${{ env.NEXT_TAG_SUPER }} + 1))
