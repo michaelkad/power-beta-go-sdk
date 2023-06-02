@@ -27,7 +27,9 @@ jobs:
           git config user.email 'michaelkadiayi@gmail.com'
       - name: Get current tag
         id: get_tag
-        run: echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
+        run: |
+         git fetch --tags
+         echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
       - name: Test tag
         run: echo $TAG 
 
