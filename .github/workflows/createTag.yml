@@ -64,5 +64,6 @@ jobs:
           fi
       - name: Create and push new tag
         run: |
-          git tag ${{ env.NEXT_TAG }}
+          git tag -a ${{ env.NEXT_TAG }} -m" Generated tag: ${{ env.NEXT_TAG }}"
+          git show ${{ env.NEXT_TAG }}
           git push origin main --follow-tags
