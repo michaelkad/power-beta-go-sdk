@@ -2,10 +2,8 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    types: [ opened, synchronize, reopened, ready_for_review]
-
+   branches:
+     - "**"
 jobs:
 
   build:
@@ -25,9 +23,8 @@ jobs:
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v3
       with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-        version: v1.29
-    - run: golangci-lint runs
+       version: latest
+    # - run: golangci-lint runs
     - name: Test
       run: go test -v `go list ./...`
 
