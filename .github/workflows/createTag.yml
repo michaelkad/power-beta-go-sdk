@@ -1,12 +1,14 @@
-name: Create New Tag
+name: Create Tag
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version'
+        description: 'Version type (major or minor)'
         required: true
-        default: 'super'
+        default: 'minor'
+        options: ['super', 'major', 'minor']
+
 
 jobs:
   create_tag:
@@ -23,24 +25,24 @@ jobs:
 
       - name: Get current tag
         id: get_tag
-        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+        run: echo "::set-env name=TAG::$(git describe --tags --abbrev=0)"
 
       - name: Determine next tag
         id: next_tag
         run: |
           current_tag="$super.$major.$minor"
           if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
-            super=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $1}')
+            super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
             super=$((super + 1))
-            echo "::set-output name=next_tag::v$super.0.0"
+            echo "NEXT_TAG=v$super.0.0" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "major" ]]; then
-            major=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $2}')
+            major=$(echo "${{ env.TAG }}" | awk -F. '{print $2}')
             major=$((major + 1))
-            echo "::set-output name=next_tag::v${{ steps.next_tag.outputs.super }}.$major.0"
+            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.$major.0" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "minor" ]]; then
-            minor=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $3}')
+            minor=$(echo "${{ env.TAG }}" | awk -F. '{print $3}')
             minor=$((minor + 1))
-            echo "::set-output name=next_tag::v${{ steps.next_tag.outputs.super }}.${{ steps.next_tag.outputs.major }}.$minor"
+            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.${{ env.NEXT_TAG_MAJOR }}.$minor" >> $GITHUB_ENV
           else
             echo "Invalid version input"
             exit 1
@@ -48,5 +50,5 @@ jobs:
 
       - name: Create and push new tag
         run: |
-          git tag ${{ steps.next_tag.outputs.next_tag }}
+          git tag ${{ env.NEXT_TAG }}
           git push origin main --follow-tags
