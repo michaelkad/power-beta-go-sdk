@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+         fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
@@ -27,9 +29,7 @@ jobs:
           git config user.email 'michaelkadiayi@gmail.com'
       - name: Get current tag
         id: get_tag
-        run: |
-         git fetch --tags
-         echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
+        run: echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
       - name: Test tag
         run: echo $TAG 
 
