@@ -21,7 +21,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
          node-version: '16'
-         cache: 'npm'
       - name: Set up Git
         run: |
           git config --local user.email "action@github.com"
