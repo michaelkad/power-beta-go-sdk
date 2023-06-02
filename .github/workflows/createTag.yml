@@ -30,24 +30,28 @@ jobs:
       - name: Determine next tag
         id: next_tag
         run: |
-          current_tag="$super.$major.$minor"
+          #current_tag="$super.$major.$minor"
+         
+          echo "NEXT_TAG_SUPER=${{ env.TAG }}" | awk -F. '{print $1}') >> $GITHUB_ENV
+          echo "NEXT_TAG_MAJOR=${{ env.TAG }}" | awk -F. '{print $2}') >> $GITHUB_ENV
+          echo "NEXT_TAG_MINOR=${{ env.TAG }}" | awk -F. '{print $3}') >> $GITHUB_ENV
+
           if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
-            super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
-            super=$((super + 1))
-            echo "NEXT_TAG=v$super.$major.$minor" >> $GITHUB_ENV
+            #super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
+            super=$((${{ env.NEXT_TAG_SUPER }} + 1))
+            echo "NEXT_TAG=v$super.${{ env.NEXT_TAG_MAJOR }}.${{ env.NEXT_TAG_MINOR }}" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "major" ]]; then
-            major=$(echo "${{ env.TAG }}" | awk -F. '{print $2}')
-            major=$((major + 1))
-            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.$major.0" >> $GITHUB_ENV
+            # major=$(echo "${{ env.TAG }}" | awk -F. '{print $2}')
+            major=$((${{ env.NEXT_TAG_MAJOR }} + 1))
+            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.$major.${{ env.NEXT_TAG_MINOR }}" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "minor" ]]; then
-            minor=$(echo "${{ env.TAG }}" | awk -F. '{print $3}')
-            minor=$((minor + 1))
+            # minor=$(echo "${{ env.TAG }}" | awk -F. '{print $3}')
+            minor=$((${{ env.NEXT_TAG_MINOR }} + 1))
             echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.${{ env.NEXT_TAG_MAJOR }}.$minor" >> $GITHUB_ENV
           else
             echo "Invalid version input"
             exit 1
           fi
-
       - name: Create and push new tag
         run: |
           git tag ${{ env.NEXT_TAG }}
