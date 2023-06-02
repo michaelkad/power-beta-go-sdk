@@ -1,0 +1,52 @@
+name: Create New Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: 'super'
+
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Get current tag
+        id: get_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+      - name: Determine next tag
+        id: next_tag
+        run: |
+          current_tag="$super.$major.$minor"
+          if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
+            super=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $1}')
+            super=$((super + 1))
+            echo "::set-output name=next_tag::v$super.0.0"
+          elif [[ "${{ github.event.inputs.version }}" == "major" ]]; then
+            major=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $2}')
+            major=$((major + 1))
+            echo "::set-output name=next_tag::v${{ steps.next_tag.outputs.super }}.$major.0"
+          elif [[ "${{ github.event.inputs.version }}" == "minor" ]]; then
+            minor=$(echo "${{ steps.get_tag.outputs.tag }}" | awk -F. '{print $3}')
+            minor=$((minor + 1))
+            echo "::set-output name=next_tag::v${{ steps.next_tag.outputs.super }}.${{ steps.next_tag.outputs.major }}.$minor"
+          else
+            echo "Invalid version input"
+            exit 1
+          fi
+
+      - name: Create and push new tag
+        run: |
+          git tag ${{ steps.next_tag.outputs.next_tag }}
+          git push origin main --follow-tags
