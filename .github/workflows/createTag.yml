@@ -32,21 +32,27 @@ jobs:
       - name: Determine next tag
         id: next_tag
         run: |
-          echo "NEXT_TAG_SUPER=$(${{ env.TAG }}" | awk -F. '{print $1}') >> $GITHUB_ENV
-          echo "NEXT_TAG_MAJOR=$(${{ env.TAG }}" | awk -F. '{print $2}') >> $GITHUB_ENV
-          echo "NEXT_TAG_MINOR=$(${{ env.TAG }}" | awk -F. '{print $3}') >> $GITHUB_ENV
+          current_tag=$(git describe --abbrev=0 --tags 2>/dev/null)
+          echo "Current tag: $current_tag"
+          if [ -z "$current_tag" ]; then
+            current_tag='v0.0.41'
+          fi
+          NEXT_TAG_SUPER=$(echo "$current_tag" | awk -F. -v OFS=. '{print substr($1,2)}')
+          NEXT_TAG_MAJOR=$(echo "$current_tag" |awk -F. -v OFS=. '{print $2}')
+          NEXT_TAG_MINOR=$(echo "$current_tag" |awk -F. -v OFS=. '{print $3}')
+          echo "Super: $NEXT_TAG_SUPER, Major:$NEXT_TAG_MAJOR, Minor: $NEXT_TAG_MINOR"
           if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
             #super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
-            super=$((${{ env.NEXT_TAG_SUPER }} + 1))
-            echo "NEXT_TAG=v$super.${{ env.NEXT_TAG_MAJOR }}.${{ env.NEXT_TAG_MINOR }}" >> $GITHUB_ENV
+            super=$((${{ NEXT_TAG_SUPER }} + 1))
+            echo "NEXT_TAG=v$super.${{ NEXT_TAG_MAJOR }}.${{ NEXT_TAG_MINOR }}" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "major" ]]; then
             # major=$(echo "${{ env.TAG }}" | awk -F. '{print $2}')
-            major=$((${{ env.NEXT_TAG_MAJOR }} + 1))
-            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.$major.${{ env.NEXT_TAG_MINOR }}" >> $GITHUB_ENV
+            major=$((${{ NEXT_TAG_MAJOR }} + 1))
+            echo "NEXT_TAG=v${{ NEXT_TAG_SUPER }}.$major.${{ NEXT_TAG_MINOR }}" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "minor" ]]; then
             # minor=$(echo "${{ env.TAG }}" | awk -F. '{print $3}')
-            minor=$((${{ env.NEXT_TAG_MINOR }} + 1))
-            echo "NEXT_TAG=v${{ env.NEXT_TAG_SUPER }}.${{ env.NEXT_TAG_MAJOR }}.$minor" >> $GITHUB_ENV
+            minor=$((${{ NEXT_TAG_MINOR }} + 1))
+            echo "NEXT_TAG=v${{ NEXT_TAG_SUPER }}.${{ NEXT_TAG_MAJOR }}.$minor" >> $GITHUB_ENV
           else
             echo "Invalid version input"
             exit 1
