@@ -25,7 +25,7 @@ jobs:
 
       - name: Get current tag
         id: get_tag
-        run: echo "::set-env name=TAG::$(git describe --tags --abbrev=0)"
+        run: echo "TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Determine next tag
         id: next_tag
@@ -34,7 +34,7 @@ jobs:
           if [[ "${{ github.event.inputs.version }}" == "super" ]]; then
             super=$(echo "${{ env.TAG }}" | awk -F. '{print $1}')
             super=$((super + 1))
-            echo "NEXT_TAG=v$super.0.0" >> $GITHUB_ENV
+            echo "NEXT_TAG=v$super.$major.$minor" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.version }}" == "major" ]]; then
             major=$(echo "${{ env.TAG }}" | awk -F. '{print $2}')
             major=$((major + 1))
