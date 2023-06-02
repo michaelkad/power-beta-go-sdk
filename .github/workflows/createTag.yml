@@ -26,6 +26,8 @@ jobs:
       - name: Get current tag
         id: get_tag
         run: echo "TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      - name: Test tag
+        run: echo $TAG 
 
       - name: Determine next tag
         id: next_tag
