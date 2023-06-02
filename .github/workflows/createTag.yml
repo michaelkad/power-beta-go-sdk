@@ -23,8 +23,10 @@ jobs:
          node-version: '16'
       - name: Set up Git
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          #git config user.name 'Michael kad'
+          #git config user.email 'michaelkadiayi@gmail.com'
+          git config  user.email "action@github.com"
+          git config  user.name "GitHub Action"
 
       - name: Get current tag
         id: get_tag
