@@ -65,4 +65,4 @@ jobs:
           git show ${{ env.NEXT_TAG }}
           git push origin main --follow-tags
         env:
-         GITHUB_TOKEN: ${{ secrets.RELEASE }}
+         GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
