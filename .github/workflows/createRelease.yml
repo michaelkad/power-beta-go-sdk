@@ -22,5 +22,5 @@ jobs:
     - name: Create Release
       run: gh release create $ref --generate-notes
       env:
-       ssh-key: ${{ secrets.DEPLOY_KEY }}
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        ssh-key: ${{ secrets.DEPLOY_KEY }}
+       GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
