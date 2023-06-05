@@ -19,8 +19,9 @@ jobs:
           current_tag=$(git describe --tags --abbrev=0) >> $GITHUB_ENV
           ref=$(git log --oneline --no-decorate "$current_tag") >> $GITHUB_ENV
           echo " ref : $ref"
+          echo "${{ github.ref }} "
     - name: Create Release
-      run: gh release create $ref --generate-notes
+      run: gh release create ${{ github.ref }} --generate-notes
       env:
 #        ssh-key: ${{ secrets.DEPLOY_KEY }}
        GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
