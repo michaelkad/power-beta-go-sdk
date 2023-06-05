@@ -64,3 +64,5 @@ jobs:
           git tag -a ${{ env.NEXT_TAG }} -m" Generated tag: ${{ env.NEXT_TAG }}"
           git show ${{ env.NEXT_TAG }}
           git push origin main --follow-tags
+        env:
+         ssh-key: ${{ secrets.DEPLOY_KEY }}
