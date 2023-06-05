@@ -8,6 +8,8 @@ jobs:
  create-release:
   name: Create Terraform Release
   runs-on: ubuntu-latest
+  permissions:
+     contents: write
   steps:
     - name: Checkout Source
       uses: actions/checkout@v2
@@ -20,4 +22,5 @@ jobs:
     - name: Create Release
       run: gh release create $ref --generate-notes
       env:
-       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       ssh-key: ${{ secrets.DEPLOY_KEY }}
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
