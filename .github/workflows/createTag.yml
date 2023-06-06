@@ -8,8 +8,6 @@ on:
         required: true
         default: 'minor'
         options: ['super', 'major', 'minor']
-# permissions:
-#      contents: write
 jobs:
   create_tag:
     runs-on: ubuntu-latest
@@ -23,17 +21,10 @@ jobs:
       - name: Set up Git
         run: |
           git config user.name '${{ github.actor }}'
-          git config user.email '${{ github.actor }}@users.noreply.github.com'
-      - name: Get current tag
-        id: get_tag
-        run: echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
-      - name: Test tag
-        run: echo $TAG 
-
+          git config user.email '${{ github.actor }}@users.noreply.github.com' 
       - name: Determine next tag
         id: next_tag
         run: |
-          set -x
           current_tag=$(git describe --tags --abbrev=0)
           echo "Current tag: $current_tag"
           if [ -z "$current_tag" ]; then
