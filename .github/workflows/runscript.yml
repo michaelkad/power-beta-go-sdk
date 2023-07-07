@@ -11,10 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Checkout power-go-client repo
         uses: actions/checkout@v3
         with:
           repository: michaelkad/power-go-client
+          path: power-go-client
 
       - name: Run Script
         run: |
