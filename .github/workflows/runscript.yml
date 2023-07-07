@@ -1,0 +1,21 @@
+name: Manual Trigger Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      triggerString:
+        description: 'Enter a string to trigger the workflow'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Script
+        run: |
+          # Access the input value using ${{ github.event.inputs.triggerString }}
+          echo "Trigger String: ${{ github.event.inputs.triggerString }}"
+          # Add your script commands here
