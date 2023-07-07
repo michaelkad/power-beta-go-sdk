@@ -25,7 +25,7 @@ package-lock.json
 node_modules/
 
 
-.github/
+# .github/
 .cra/
 .npmrc
 .secrets.baseline
