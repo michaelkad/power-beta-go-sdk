@@ -28,5 +28,6 @@ jobs:
           echo "Directory : ${PWD}"
           cd "${PWD}/main"
           ls -la
+          chmod +x .github/workflows/build.sh
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
 
