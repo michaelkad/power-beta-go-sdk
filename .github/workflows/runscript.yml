@@ -25,5 +25,6 @@ jobs:
       - name: Run Script
         run: |
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
-          ${PWD}/.github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
+          echo "Directory : ${PWD}"
+          ${PWD}/.github/workflows/build "${{ github.event.inputs.triggerString }}"
 
