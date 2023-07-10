@@ -14,7 +14,7 @@ jobs:
       - name: Checkout power-beta-go-sdk
         uses: actions/checkout@v3
         with:
-          path: power-beta-go-sdk
+          path: main
 
       - name: Checkout power-go-client repo
         uses: actions/checkout@v3
