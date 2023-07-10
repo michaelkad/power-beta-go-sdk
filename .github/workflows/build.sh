@@ -4,9 +4,10 @@
 
 # Get the parent directory of where this script is.
 SOURCE="${BASH_SOURCE[0]}"
+echo "Source: $SOURCE"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
-
+echo "DIR: $DIR"
 # Change into that directory
 cd "$DIR"
 
