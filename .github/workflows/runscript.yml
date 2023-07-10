@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Checkout power-go-client repo
         uses: actions/checkout@v3
         with:
@@ -22,7 +19,14 @@ jobs:
 
       - name: Run Script
         run: |
-          # Access the input value using ${{ github.event.inputs.triggerString }}
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
-          # Add your script commands here
+
+          ${PWD}/.github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
+
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: michaelkad/power-beta-go-sdk
+          path: power-beta-go-sdk
 
