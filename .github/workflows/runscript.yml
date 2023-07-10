@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
           echo "Directory : ${PWD}"
-          cd ${PWD}
+          cd "${PWD}/main"
           ls -la
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
 
