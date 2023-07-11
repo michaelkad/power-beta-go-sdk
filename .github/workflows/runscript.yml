@@ -19,8 +19,9 @@ jobs:
       - name: Checkout power-go-client repo
         uses: actions/checkout@v3
         with:
-          repository: michaelkad/terraform-provider-ibm/tree/cc_dal_update_9390
+          repository: michaelkad/terraform-provider-ibm
           path: terraform-provider-ibm
+          ref: ${{ github.event.inputs.triggerString }}
 
       - name: Run Script
         run: |
