@@ -11,22 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout power-beta-go-sdk
-        uses: actions/checkout@v3
-        with:
-          path: main
-
-      - name: Checkout power-go-client repo
-        uses: actions/checkout@v3
-        with:
-          repository: michaelkad/terraform-provider-ibm
-          path: terraform-provider-ibm
-          ref: ${{ github.event.inputs.triggerString }}
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
       - run: go version
+      
+      - name: Checkout power-beta-go-sdk
+        uses: actions/checkout@v3
+        with:
+          path: go/src/github.com/main
+
+      - name: Checkout power-go-client repo
+        uses: actions/checkout@v3
+        with:
+          repository: michaelkad/terraform-provider-ibm
+          path: go/src/github.com/terraform-provider-ibm
+          ref: ${{ github.event.inputs.triggerString }}
+
       
       - name: Run Script
         run: |
@@ -37,4 +39,6 @@ jobs:
           ls -la
           chmod +x .github/workflows/build.sh
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
+        env:
+         GOPATH: /home/runner/work/power-beta-go-sdk/go
 
