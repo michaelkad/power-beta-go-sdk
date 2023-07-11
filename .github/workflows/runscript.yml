@@ -36,7 +36,7 @@ jobs:
           echo "Path: $PATH"
           echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
-          echo "Directory : ${PWD}"
+          apt install gox
           cd "$GOPATH/src/github.com/main"
           ls -la
           chmod +x .github/workflows/build.sh
