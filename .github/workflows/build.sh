@@ -3,13 +3,13 @@
 # This script builds the application from source for multiple platforms.
 
 # Get the parent directory of where this script is.
-SOURCE="${BASH_SOURCE[0]}"
+SOURCE="/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/terraform-provider-ibm"
 echo "Source: $SOURCE"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 echo "DIR: $DIR"
 # Change into that directory
-cd "$DIR"
+cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/terraform-provider-ibm"
 
 # Package which has the version information, required to set the Version, GitCommit info
 VERSION_PACKAGE="github.com/terraform-providers/terraform-provider-ibm/version"
