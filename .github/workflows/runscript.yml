@@ -38,8 +38,9 @@ jobs:
           echo "Home: $HOME, Path: $PATH"
           echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
-          cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/main"
+          cd  GOPATH
           ls -la
+          cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/main"
           chmod +x .github/workflows/build.sh
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
         env:
