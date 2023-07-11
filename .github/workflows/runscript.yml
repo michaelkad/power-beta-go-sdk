@@ -30,6 +30,7 @@ jobs:
       
       - name: Run Script
         run: |
+          echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
           echo "Directory : ${PWD}"
           cd "${PWD}/main"
