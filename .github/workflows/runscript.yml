@@ -15,7 +15,12 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
-      - run: go version
+      - run: |
+          go version
+          echo "==> Creating GOPATH/ directory..."
+          export GOPATH="$HOME/go"
+          export PATH=$PATH:$GOPATH/bin
+          mkdir -p $GOPATH $GOPATH/src $GOPATH/pkg $GOPATH/bin
       
       - name: Checkout power-beta-go-sdk
         uses: actions/checkout@v3
@@ -32,9 +37,7 @@ jobs:
       
       - name: Run Script
         run: |
-          export GOPATH="$HOME/go"
-          export PATH=$PATH:$GOPATH/bin
-          mkdir -p $GOPATH $GOPATH/src $GOPATH/pkg $GOPATH/bin
+          
           echo "Home: $HOME, Path: $PATH"
           echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
