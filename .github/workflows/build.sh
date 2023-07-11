@@ -41,7 +41,7 @@ if ! which gox > /dev/null; then
     go get  github.com/mitchellh/gox@latest
     go get  golang.org/x/sys/unix@latest
 fi
-
+ echo "===> check gox download...`which gox`" 
 # instruct gox to build statically linked binaries
 export CGO_ENABLED=0
 
