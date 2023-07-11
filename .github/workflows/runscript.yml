@@ -37,7 +37,7 @@ jobs:
       
       - name: Run Script
         run: |
-          
+          sudo apt install gox
           echo "Home: $HOME, Path: $PATH"
           echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
