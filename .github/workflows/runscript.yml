@@ -11,16 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.18
-      - run: |
-          go version
-          echo "==> Creating GOPATH/ directory..."
-          export GOPATH="$HOME/go"
-          export PATH=$PATH:$GOPATH/bin
-          mkdir -p $GOPATH $GOPATH/src $GOPATH/pkg $GOPATH/bin
       
       - name: Checkout power-beta-go-sdk
         uses: actions/checkout@v3
@@ -33,7 +23,17 @@ jobs:
           repository: michaelkad/terraform-provider-ibm
           path: go/src/github.com/terraform-provider-ibm
           ref: ${{ github.event.inputs.triggerString }}
-
+      
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - run: |
+          go version
+          echo "==> Creating GOPATH/ directory..."
+          export GOPATH="$HOME/go"
+          export PATH=$PATH:$GOPATH/bin
+          mkdir -p $GOPATH $GOPATH/src $GOPATH/pkg $GOPATH/bin
       
       - name: Run Script
         run: |
