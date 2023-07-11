@@ -41,6 +41,6 @@ jobs:
           ls -la
           chmod +x .github/workflows/build.sh
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
-#         env:
-#          GOPATH: /home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go
+        env:
+         GOPATH: /home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go
 
