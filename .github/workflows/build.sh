@@ -37,8 +37,8 @@ fi
 
 if ! which gox > /dev/null; then
     echo "==> Installing gox..."
-    go get -u github.com/mitchellh/gox
-    go get -u golang.org/x/sys/unix
+    go get  github.com/mitchellh/gox@latest
+    go get  golang.org/x/sys/unix@latest
 fi
 
 # instruct gox to build statically linked binaries
