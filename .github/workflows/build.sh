@@ -9,7 +9,7 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 echo "DIR: $DIR"
 # Change into that directory
-cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm"
+cd "$GOPATH/src/github.com/terraform-provider-ibm"
 
 # Package which has the version information, required to set the Version, GitCommit info
 VERSION_PACKAGE="github.com/terraform-providers/terraform-provider-ibm/version"
