@@ -32,8 +32,9 @@ jobs:
       
       - name: Run Script
         run: |
-          export GOPATH="/home/runner/go"
+          export GOPATH="$HOME/go"
           export PATH=$PATH:$GOPATH/bin
+          mkdir -p $GOPATH $GOPATH/src $GOPATH/pkg $GOPATH/bin
           echo "Home: $HOME, Path: $PATH"
           echo "gopath: $GOPATH or  bin: $GOPATH/bin"
           echo "Trigger String: ${{ github.event.inputs.triggerString }}"
