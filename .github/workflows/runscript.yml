@@ -48,14 +48,37 @@ jobs:
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
           parent_dir="/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm"
           
-          zip_files=""
+          ASSET_linux_amd64=""
+          ASSET_windows_amd64=""
+          ASSET_linux_arm=""
+          ASSET_darwin_amd64=""
+          
           while IFS= read -r -d $'\0' file; do
             relative_path="${file#$parent_dir/}"
-            absolute_path="$parent_dir/$relative_path"
-            zip_files+="$(printf "%q" "$absolute_path")\n"
+            case "$relative_path" in
+                  linux_amd64.zip)
+                      ASSET_linux_amd64="$file"
+                      ;;
+                  windows_amd64.zip)
+                      ASSET_windows_amd64="$file"
+                      ;;
+                  linux_arm.zip)
+                      ASSET_linux_arm="$file"
+                      ;;
+                  darwin_amd64.zip)
+                      ASSET_darwin_amd64="$file"
+                      ;;
+              esac
           done < <(find "$parent_dir/pkg" -type f -name "*.zip" -print0)
-          if [ ! -n "$zip_files" ]; then exit 1; fi
-          echo  "ASSETS=$zip_files" >> $GITHUB_ENV
+           echo "ASSET_linux_amd64=$(printf "%q" "$ASSET_linux_amd64")" >> $GITHUB_ENV
+           echo "ASSET_windows_amd64=$(printf "%q" "$ASSET_windows_amd64")" >> $GITHUB_ENV
+           echo "ASSET_linux_arm=$(printf "%q" "$ASSET_linux_arm")" >> $GITHUB_ENV
+           echo "ASSET_darwin_amd64=$(printf "%q" "$ASSET_darwin_amd64")" >> $GITHUB_ENV
+           echo "Individual asset variables added to the GitHub environment:"
+          echo "ASSET_linux_amd64=$ASSET_linux_amd64"
+          echo "ASSET_windows_amd64=$ASSET_windows_amd64"
+          echo "ASSET_linux_arm=$ASSET_linux_arm"
+          echo "ASSET_darwin_amd64=$ASSET_darwin_amd64"
         env:
          GOPATH: /home/runner/go
       - name: Create release 
@@ -65,6 +88,9 @@ jobs:
           prerelease: true
           tag_name: v0.0.55-2
           files: |
-            ${{ env.ASSETS }}
+            ${{ env.ASSET_linux_amd64 }}
+            ${{ env.ASSET_linux_arm }}
+            ${{ env.ASSET_darwin_amd64 }}
+            ${{ env.ASSET_windows_amd64 }}
         
 
