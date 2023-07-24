@@ -53,7 +53,7 @@ jobs:
            relative_path="${file#$parent_dir/}"
            zip_files+="$(printf "%q" "$relative_path")\n"
           done < <(find "$parent_dir/pkg" -type f -name "*.zip" -print0)
-          if [! -n "$zip_files" ]; then exit 1; fi
+          if [ ! -n "$zip_files" ]; then exit 1; fi
           echo -e "Zip files:\n$zip_files"
         env:
          GOPATH: /home/runner/go
@@ -64,6 +64,6 @@ jobs:
           prerelease: true
           tag_name: v0.0.55-2
           files: |
-            "$zip_files"
+            /home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm/pkg/linux_amd64.zip
         
 
