@@ -100,7 +100,8 @@ if [ "${TF_DEV}x" = "x" ]; then
 
         pushd $PLATFORM >/dev/null 2>&1
         zip ../${OSARCH}.zip ./*
-        rm -rf ${PLATFORM}
+        echo "==> Deleiting dir: ${PLATFORM} ... or ${OSARCH}"
+        rm -rf ${OSARCH}
         popd >/dev/null 2>&1
     done
 fi
