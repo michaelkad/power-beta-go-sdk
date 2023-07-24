@@ -56,19 +56,19 @@ jobs:
           while IFS= read -r -d $'\0' file; do
             relative_path="${file#$parent_dir/}"
             case "$relative_path" in
-                  linux_amd64.zip)
+                  pkg/linux_amd64.zip)
                       echo "==>  linux_amd64.zip directory...$file"
                       ASSET_linux_amd64="$file"
                       ;;
-                  windows_amd64.zip)
+                  pkg/windows_amd64.zip)
                       echo "==>  windows_amd64.zip directory...$file"
                       ASSET_windows_amd64="$file"
                       ;;
-                  linux_arm.zip)
+                  pkg/linux_arm.zip)
                       echo "==>   linux_arm.zip directory...$file"
                       ASSET_linux_arm="$file"
                       ;;
-                  darwin_amd64.zip)
+                  pkg/darwin_amd64.zip)
                       ASSET_darwin_amd64="$file"
                       ;;
               esac
