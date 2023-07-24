@@ -46,6 +46,23 @@ jobs:
           cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/main"
           chmod +x .github/workflows/build.sh
           .github/workflows/build.sh "${{ github.event.inputs.triggerString }}"
+          parent_dir="/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm"
+          
+          zip_files=""
+          while IFS= read -r -d $'\0' file; do
+           relative_path="${file#$parent_dir/}"
+           zip_files+="$(printf "%q" "$relative_path")\n"
+          done < <(find "$parent_dir/pkg" -type f -name "*.zip" -print0)
+          if [! -n "$zip_files" ]; then exit 1; fi
+          echo -e "Zip files:\n$zip_files"
         env:
          GOPATH: /home/runner/go
+      - name: Create release 
+        uses: softprops/action-gh-release@v1
+        with:
+          body: "Testing zip files"
+          prerelease: true
+          files: |
+            $zip_files
+        
 
