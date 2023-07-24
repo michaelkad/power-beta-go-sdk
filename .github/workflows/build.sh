@@ -19,8 +19,10 @@ GIT_COMMIT=$(git rev-parse HEAD)
 GIT_DIRTY=$(test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 
 # Determine the arch/os combos we're building for
-XC_ARCH=${XC_ARCH:-"amd64" "arm64" "arm"}
-XC_OS=${XC_OS:-linux darwin windows}
+# XC_ARCH=${XC_ARCH:-"amd64" "arm64" "arm"}
+# XC_OS=${XC_OS:-linux darwin windows}
+XC_ARCH=${XC_ARCH:-"amd64" }
+XC_OS=${XC_OS:-linux }
 XC_EXCLUDE_OSARCH="!darwin/386 !windows/arm64 !windows/arm !darwin/arm"
 
 # Delete the old dir
@@ -36,12 +38,12 @@ if [ "${TF_DEV}x" != "x" ]; then
     XC_ARCH=$(go env GOARCH)
 fi
 
-if ! which gox > /dev/null; then
-    echo "==> Installing gox..."
-    go get  github.com/mitchellh/gox@latest
-    go get  golang.org/x/sys/unix@latest
-fi
- echo "===> check gox download...`which gox`" 
+# if ! which gox > /dev/null; then
+#     echo "==> Installing gox..."
+#     go get  github.com/mitchellh/gox@latest
+#     go get  golang.org/x/sys/unix@latest
+# fi
+#  echo "===> check gox download...`which gox`" 
 # instruct gox to build statically linked binaries
 export CGO_ENABLED=0
 
@@ -63,31 +65,31 @@ gox \
     -output "pkg/{{.OS}}_{{.Arch}}/terraform-provider-ibm" \
     .
 
-# Move all the compiled things to the $GOPATH/bin
-GOPATH=${GOPATH:-$(go env GOPATH)}
-case $(uname) in
-    CYGWIN*)
-        GOPATH="$(cygpath $GOPATH)"
-        ;;
-esac
-OLDIFS=$IFS
-IFS=: MAIN_GOPATH=($GOPATH)
-IFS=$OLDIFS
+# # Move all the compiled things to the $GOPATH/bin
+# GOPATH=${GOPATH:-$(go env GOPATH)}
+# case $(uname) in
+#     CYGWIN*)
+#         GOPATH="$(cygpath $GOPATH)"
+#         ;;
+# esac
+# OLDIFS=$IFS
+# IFS=: MAIN_GOPATH=($GOPATH)
+# IFS=$OLDIFS
 
-# Create GOPATH/bin if it's doesn't exists
-if [ ! -d $MAIN_GOPATH/bin ]; then
-    echo "==> Creating GOPATH/bin directory..."
-    mkdir -p $MAIN_GOPATH/bin
-fi
+# # Create GOPATH/bin if it's doesn't exists
+# if [ ! -d $MAIN_GOPATH/bin ]; then
+#     echo "==> Creating GOPATH/bin directory..."
+#     mkdir -p $MAIN_GOPATH/bin
+# fi
 
-# Copy our OS/Arch to the bin/ directory
-DEV_PLATFORM="./pkg/$(go env GOOS)_$(go env GOARCH)"
-if [[ -d "${DEV_PLATFORM}" ]]; then
-    for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 1 -type f); do
-        cp ${F} bin/
-        cp ${F} ${MAIN_GOPATH}/bin/
-    done
-fi
+# # Copy our OS/Arch to the bin/ directory
+# DEV_PLATFORM="./pkg/$(go env GOOS)_$(go env GOARCH)"
+# if [[ -d "${DEV_PLATFORM}" ]]; then
+#     for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 1 -type f); do
+#         cp ${F} bin/
+#         cp ${F} ${MAIN_GOPATH}/bin/
+#     done
+# fi
 
 if [ "${TF_DEV}x" = "x" ]; then
     # Zip and copy to the dist dir
@@ -98,6 +100,7 @@ if [ "${TF_DEV}x" = "x" ]; then
 
         pushd $PLATFORM >/dev/null 2>&1
         zip ../${OSARCH}.zip ./*
+        rm -rf ${PLATFORM}
         popd >/dev/null 2>&1
     done
 fi
@@ -105,5 +108,7 @@ fi
 # Done!
 echo
 echo "==> Results:"
+echo "==> bin/:..."
 ls -hl bin/
+echo "==> pkg/:..."
 ls -hl pkg/
