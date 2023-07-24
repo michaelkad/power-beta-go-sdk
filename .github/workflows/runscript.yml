@@ -69,7 +69,7 @@ jobs:
                       ASSET_darwin_amd64="$file"
                       ;;
               esac
-          done < <(find "$parent_dir/pkg" -type f -name "*.zip" -print0)
+          done < <(find "$parent_dir/pkg" -type f \( -name "linux_amd64.zip" -o -name "windows_amd64.zip" -o -name "linux_arm.zip" -o -name "darwin_amd64.zip" \) -print0)
           echo "ASSET_linux_amd64=$(printf "%q" "$ASSET_linux_amd64")" >> $GITHUB_ENV
           echo "ASSET_windows_amd64=$(printf "%q" "$ASSET_windows_amd64")" >> $GITHUB_ENV
           echo "ASSET_linux_arm=$(printf "%q" "$ASSET_linux_arm")" >> $GITHUB_ENV
