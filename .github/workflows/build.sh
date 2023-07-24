@@ -113,9 +113,9 @@ echo "==> bin/:..."
 ls -hl bin/
 echo "==> pkg/:..."
 ls -hl pkg/
-zip_files=""
-while IFS= read -r -d $'\0' file; do
-    zip_files+="$(printf "%q" "$file")\n"
-done < <(find ./pkg -type f -name "*.zip" -print0)
+# zip_files=""
+# while IFS= read -r -d $'\0' file; do
+#     zip_files+="$(printf "%q" "$file")\n"
+# done < <(find ./pkg -type f -name "*.zip" -print0)
 
-echo -e "Zip files:\n$zip_files"
+# echo -e "Zip files:\n$zip_files"
