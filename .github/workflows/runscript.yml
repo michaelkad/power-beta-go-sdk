@@ -64,6 +64,6 @@ jobs:
           prerelease: true
           tag_name: v0.0.55-2
           files: |
-            $zip_files
+            "$zip_files"
         
 
