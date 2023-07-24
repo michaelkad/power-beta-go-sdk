@@ -62,6 +62,7 @@ jobs:
         with:
           body: "Testing zip files"
           prerelease: true
+          tag_name: v0.0.55-2
           files: |
             $zip_files
         
