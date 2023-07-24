@@ -106,3 +106,4 @@ fi
 echo
 echo "==> Results:"
 ls -hl bin/
+ls -hl pkg/
