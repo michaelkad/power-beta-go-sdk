@@ -57,12 +57,15 @@ jobs:
             relative_path="${file#$parent_dir/}"
             case "$relative_path" in
                   linux_amd64.zip)
+                      echo "==>  linux_amd64.zip directory...$file""
                       ASSET_linux_amd64="$file"
                       ;;
                   windows_amd64.zip)
+                      echo "==>  windows_amd64.zip directory...$file""
                       ASSET_windows_amd64="$file"
                       ;;
                   linux_arm.zip)
+                      echo "==>   linux_arm.zip directory...$file""
                       ASSET_linux_arm="$file"
                       ;;
                   darwin_amd64.zip)
