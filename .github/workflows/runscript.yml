@@ -70,11 +70,11 @@ jobs:
                       ;;
               esac
           done < <(find "$parent_dir/pkg" -type f -name "*.zip" -print0)
-           echo "ASSET_linux_amd64=$(printf "%q" "$ASSET_linux_amd64")" >> $GITHUB_ENV
-           echo "ASSET_windows_amd64=$(printf "%q" "$ASSET_windows_amd64")" >> $GITHUB_ENV
-           echo "ASSET_linux_arm=$(printf "%q" "$ASSET_linux_arm")" >> $GITHUB_ENV
-           echo "ASSET_darwin_amd64=$(printf "%q" "$ASSET_darwin_amd64")" >> $GITHUB_ENV
-           echo "Individual asset variables added to the GitHub environment:"
+          echo "ASSET_linux_amd64=$(printf "%q" "$ASSET_linux_amd64")" >> $GITHUB_ENV
+          echo "ASSET_windows_amd64=$(printf "%q" "$ASSET_windows_amd64")" >> $GITHUB_ENV
+          echo "ASSET_linux_arm=$(printf "%q" "$ASSET_linux_arm")" >> $GITHUB_ENV
+          echo "ASSET_darwin_amd64=$(printf "%q" "$ASSET_darwin_amd64")" >> $GITHUB_ENV
+          echo "Individual asset variables added to the GitHub environment:"
           echo "ASSET_linux_amd64=$ASSET_linux_amd64"
           echo "ASSET_windows_amd64=$ASSET_windows_amd64"
           echo "ASSET_linux_arm=$ASSET_linux_arm"
