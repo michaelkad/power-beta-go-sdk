@@ -7,7 +7,7 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 
-# Change into that directory
+# ==> ...Change into that directory
 cd "$DIR"
 
 # Package which has the version information, required to set the Version, GitCommit info
