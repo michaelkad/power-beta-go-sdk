@@ -96,5 +96,3 @@ jobs:
             ${{ env.ASSET_linux_arm }}
             ${{ env.ASSET_darwin_amd64 }}
             ${{ env.ASSET_windows_amd64 }}
-        
-
