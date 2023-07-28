@@ -6,6 +6,7 @@ on:
       version:
         description: 'Version type (major or minor)'
         required: true
+        type: choice
         default: 'minor'
         options: ['super', 'major', 'minor']
 jobs:
