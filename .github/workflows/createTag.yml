@@ -9,6 +9,8 @@ on:
         type: choice
         default: 'minor'
         options: ['super', 'major', 'minor']
+      environment:
+        type: environment
 jobs:
   create_tag:
     runs-on: ubuntu-latest
