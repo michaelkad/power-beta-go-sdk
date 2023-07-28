@@ -11,6 +11,9 @@ on:
         options: ['super', 'major', 'minor']
       environment:
         type: environment
+      run:
+        description: 'True or false'
+        type: boolean
 jobs:
   create_tag:
     runs-on: ubuntu-latest
