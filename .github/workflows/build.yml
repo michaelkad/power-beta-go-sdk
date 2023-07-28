@@ -1,9 +1,11 @@
 name: Go
 
 on:
-  push:
-   branches:
-     - "gitflow"
+  workflow_dispatch:
+    inputs:
+      run:
+        description: 'True to run'
+        type: boolean
 jobs:
 
   build:
