@@ -1,0 +1,40 @@
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      triggerString:
+        description: 'Enter a string to trigger the workflow'
+        required: true
+      branch:
+        description: 'Enter a branch'
+        required: true
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3.5.3
+        with:
+          repository:  ${{ github.event.inputs.triggerString }}
+          path: go/src/github.com/terraform-provider-ibm
+          ref: ${{ github.event.inputs.branch }}
+      -
+        name: Unshallow
+        run: git fetch --prune --unshallow
+      -
+        name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.18
+
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          # GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          # GitHub sets this automatically
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
