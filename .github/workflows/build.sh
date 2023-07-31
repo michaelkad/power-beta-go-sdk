@@ -9,14 +9,14 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 echo "DIR: $DIR"
 # Change into that directory
-cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm"
+cd "/home/runner/work/power-beta-go-sdk/power-beta-go-sdk/go/src/github.com/terraform-provider-ibm" || exit
 
 # Package which has the version information, required to set the Version, GitCommit info
 VERSION_PACKAGE="github.com/terraform-providers/terraform-provider-ibm/version"
 
 # Get the git commit
 GIT_COMMIT=$(git rev-parse HEAD)
-GIT_DIRTY=$(test -n "`git status --porcelain`" && echo "+CHANGES" || true)
+GIT_DIRTY=$(test -n "$(git status --porcelain)" && echo "+CHANGES" || true)
 
 # Determine the arch/os combos we're building for
 XC_ARCH=${XC_ARCH:-"amd64" "arm64" "arm"}
