@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2023.
+ * (C) Copyright IBM Corp. 2024.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.71.0-316eb5da-20230504-195406
+ * IBM OpenAPI SDK Code Generator Version: 3.85.0-75c38f8f-20240206-210220
  */
 
 // Package powervsv1 : Operations and models for the PowervsV1 service
@@ -33,7 +33,6 @@ import (
 	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/go-openapi/strfmt"
 	common "github.com/michaelkad/power-beta-go-sdk/common"
-	// "github.com/michaelkad/power-beta-go-sdk/ibmpisession"
 )
 
 // PowervsV1 : Power IAAS API
@@ -41,43 +40,21 @@ import (
 // API Version: 1.0.0
 // See: https://github.ibm.com/power-iaas/service-broker
 type PowervsV1 struct {
-	Service   *core.BaseService
-	Options   *PowervsV1Options
-	CRNFormat string
+	Service *core.BaseService
 }
 
-// DefaultServiceURL is the default URL to make service requests to.
-const DefaultServiceURL = "dal.power-iaas.test.cloud.ibm.com"
-
 // DefaultServiceName is the default key used to find external configuration information.
-const DefaultServiceName = "power-iaas"
+const DefaultServiceName = "powervs"
 
 // PowervsV1Options : Service options
 type PowervsV1Options struct {
 	ServiceName   string
 	URL           string
 	Authenticator core.Authenticator
-	// Enable/Disable http transport debugging log
-	Debug bool
-
-	// Region of the Power Cloud Service Instance
-	// For generating the default endpoint
-	// Deprecated: Region is deprecated, the URL is auto generated based on Zone when not provided.
-	Region string
-
-	// Account id of the Power Cloud Service Instance
-	// It will be part of the CRN string
-	// Required
-	UserAccount string
-
-	// Zone of the Power Cloud Service Instance
-	// It will be part of the CRN string
-	// Required
-	Zone string
 }
 
 // NewPowervsV1UsingExternalConfig : constructs an instance of PowervsV1 with passed in options and external configuration.
-func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *IBMPISession, err error) {
+func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *PowervsV1, err error) {
 	if options.ServiceName == "" {
 		options.ServiceName = DefaultServiceName
 	}
@@ -94,20 +71,39 @@ func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *IBMPIS
 		return
 	}
 
-	// err = powervs.Service.ConfigureService(options.ServiceName)
-	// if err != nil {
-	// 	return
-	// }
+	err = powervs.Service.ConfigureService(options.ServiceName)
+	if err != nil {
+		return
+	}
 
-	// if options.URL != "" {
-	// 	err = powervs.Service.SetServiceURL(options.URL)
-	// }
+	if options.URL != "" {
+		err = powervs.Service.SetServiceURL(options.URL)
+	}
 	return
 }
 
 // NewPowervsV1 : constructs an instance of PowervsV1 with passed in options.
-func NewPowervsV1(options *PowervsV1Options) (service *IBMPISession, err error) {
-	service, err = NewIBMPISession(options)
+func NewPowervsV1(options *PowervsV1Options) (service *PowervsV1, err error) {
+	serviceOptions := &core.ServiceOptions{
+		Authenticator: options.Authenticator,
+	}
+
+	baseService, err := core.NewBaseService(serviceOptions)
+	if err != nil {
+		return
+	}
+
+	if options.URL != "" {
+		err = baseService.SetServiceURL(options.URL)
+		if err != nil {
+			return
+		}
+	}
+
+	service = &PowervsV1{
+		Service: baseService,
+	}
+
 	return
 }
 
@@ -918,6 +914,122 @@ func (powervs *PowervsV1) CatalogGetWithContext(ctx context.Context, catalogGetO
 	return
 }
 
+// DatacentersGetall : Get all Datacenters information and capabilities
+func (powervs *PowervsV1) DatacentersGetall(v1DatacentersGetallOptions *V1DatacentersGetallOptions) (result *Datacenters, response *core.DetailedResponse, err error) {
+	return powervs.DatacentersGetallWithContext(context.Background(), v1DatacentersGetallOptions)
+}
+
+// DatacentersGetallWithContext is an alternate form of the DatacentersGetall method which supports a Context parameter
+func (powervs *PowervsV1) DatacentersGetallWithContext(ctx context.Context, v1DatacentersGetallOptions *V1DatacentersGetallOptions) (result *Datacenters, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(v1DatacentersGetallOptions, "v1DatacentersGetallOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/datacenters`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1DatacentersGetallOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "DatacentersGetall")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	if v1DatacentersGetallOptions.Accept != nil {
+		builder.AddHeader("Accept", fmt.Sprint(*v1DatacentersGetallOptions.Accept))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDatacenters)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// DatacentersGet : Get a Datacenter's information and capabilities
+func (powervs *PowervsV1) DatacentersGet(v1DatacentersGetOptions *V1DatacentersGetOptions) (result *Datacenter, response *core.DetailedResponse, err error) {
+	return powervs.DatacentersGetWithContext(context.Background(), v1DatacentersGetOptions)
+}
+
+// DatacentersGetWithContext is an alternate form of the DatacentersGet method which supports a Context parameter
+func (powervs *PowervsV1) DatacentersGetWithContext(ctx context.Context, v1DatacentersGetOptions *V1DatacentersGetOptions) (result *Datacenter, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1DatacentersGetOptions, "v1DatacentersGetOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1DatacentersGetOptions, "v1DatacentersGetOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"datacenter_region": *v1DatacentersGetOptions.DatacenterRegion,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/datacenters/{datacenter_region}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1DatacentersGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "DatacentersGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	if v1DatacentersGetOptions.Accept != nil {
+		builder.AddHeader("Accept", fmt.Sprint(*v1DatacentersGetOptions.Accept))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDatacenter)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
 // ServiceBrokerHardwareplatformsGet : Available hardware statistics and limits
 func (powervs *PowervsV1) ServiceBrokerHardwareplatformsGet(serviceBrokerHardwareplatformsGetOptions *ServiceBrokerHardwareplatformsGetOptions) (result map[string]HardwarePlatform, response *core.DetailedResponse, err error) {
 	return powervs.ServiceBrokerHardwareplatformsGetWithContext(context.Background(), serviceBrokerHardwareplatformsGetOptions)
@@ -1353,7 +1465,7 @@ func (powervs *PowervsV1) InternalV1StorageRegionsStoragePoolsGetWithContext(ctx
 	}
 
 	pathParamsMap := map[string]string{
-		"region_zone_id":    *internalV1StorageRegionsStoragePoolsGetOptions.RegionZoneID,
+		"region_zone_id": *internalV1StorageRegionsStoragePoolsGetOptions.RegionZoneID,
 		"storage_pool_name": *internalV1StorageRegionsStoragePoolsGetOptions.StoragePoolName,
 	}
 
@@ -1413,7 +1525,7 @@ func (powervs *PowervsV1) InternalV1StorageRegionsStoragePoolsPutWithContext(ctx
 	}
 
 	pathParamsMap := map[string]string{
-		"region_zone_id":    *internalV1StorageRegionsStoragePoolsPutOptions.RegionZoneID,
+		"region_zone_id": *internalV1StorageRegionsStoragePoolsPutOptions.RegionZoneID,
 		"storage_pool_name": *internalV1StorageRegionsStoragePoolsPutOptions.StoragePoolName,
 	}
 
@@ -1875,7 +1987,7 @@ func (powervs *PowervsV1) ServiceBrokerOpenstacksHostsGetWithContext(ctx context
 	}
 
 	pathParamsMap := map[string]string{
-		"hostname":     *serviceBrokerOpenstacksHostsGetOptions.Hostname,
+		"hostname": *serviceBrokerOpenstacksHostsGetOptions.Hostname,
 		"openstack_id": *serviceBrokerOpenstacksHostsGetOptions.OpenstackID,
 	}
 
@@ -1935,7 +2047,7 @@ func (powervs *PowervsV1) ServiceBrokerOpenstacksServersGetWithContext(ctx conte
 	}
 
 	pathParamsMap := map[string]string{
-		"openstack_id":    *serviceBrokerOpenstacksServersGetOptions.OpenstackID,
+		"openstack_id": *serviceBrokerOpenstacksServersGetOptions.OpenstackID,
 		"pvm_instance_id": *serviceBrokerOpenstacksServersGetOptions.PvmInstanceID,
 	}
 
@@ -2203,7 +2315,7 @@ func (powervs *PowervsV1) PcloudCloudconnectionsDeleteWithContext(ctx context.Co
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":   *pcloudCloudconnectionsDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudCloudconnectionsDeleteOptions.CloudInstanceID,
 		"cloud_connection_id": *pcloudCloudconnectionsDeleteOptions.CloudConnectionID,
 	}
 
@@ -2263,7 +2375,7 @@ func (powervs *PowervsV1) PcloudCloudconnectionsGetWithContext(ctx context.Conte
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":   *pcloudCloudconnectionsGetOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudCloudconnectionsGetOptions.CloudInstanceID,
 		"cloud_connection_id": *pcloudCloudconnectionsGetOptions.CloudConnectionID,
 	}
 
@@ -2323,7 +2435,7 @@ func (powervs *PowervsV1) PcloudCloudconnectionsPutWithContext(ctx context.Conte
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":   *pcloudCloudconnectionsPutOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudCloudconnectionsPutOptions.CloudInstanceID,
 		"cloud_connection_id": *pcloudCloudconnectionsPutOptions.CloudConnectionID,
 	}
 
@@ -2408,9 +2520,9 @@ func (powervs *PowervsV1) PcloudCloudconnectionsNetworksDeleteWithContext(ctx co
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":   *pcloudCloudconnectionsNetworksDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudCloudconnectionsNetworksDeleteOptions.CloudInstanceID,
 		"cloud_connection_id": *pcloudCloudconnectionsNetworksDeleteOptions.CloudConnectionID,
-		"network_id":          *pcloudCloudconnectionsNetworksDeleteOptions.NetworkID,
+		"network_id": *pcloudCloudconnectionsNetworksDeleteOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -2469,9 +2581,9 @@ func (powervs *PowervsV1) PcloudCloudconnectionsNetworksPutWithContext(ctx conte
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":   *pcloudCloudconnectionsNetworksPutOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudCloudconnectionsNetworksPutOptions.CloudInstanceID,
 		"cloud_connection_id": *pcloudCloudconnectionsNetworksPutOptions.CloudConnectionID,
-		"network_id":          *pcloudCloudconnectionsNetworksPutOptions.NetworkID,
+		"network_id": *pcloudCloudconnectionsNetworksPutOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -2713,7 +2825,7 @@ func (powervs *PowervsV1) PcloudEventsGetWithContext(ctx context.Context, pcloud
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudEventsGetOptions.CloudInstanceID,
-		"event_id":          *pcloudEventsGetOptions.EventID,
+		"event_id": *pcloudEventsGetOptions.EventID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -3048,9 +3160,6 @@ func (powervs *PowervsV1) PcloudCloudinstancesImagesPostWithContext(ctx context.
 	if pcloudCloudinstancesImagesPostOptions.SecretKey != nil {
 		body["secretKey"] = pcloudCloudinstancesImagesPostOptions.SecretKey
 	}
-	if pcloudCloudinstancesImagesPostOptions.Source2 != nil {
-		body["source2"] = pcloudCloudinstancesImagesPostOptions.Source2
-	}
 	if pcloudCloudinstancesImagesPostOptions.StorageAffinity != nil {
 		body["storageAffinity"] = pcloudCloudinstancesImagesPostOptions.StorageAffinity
 	}
@@ -3101,7 +3210,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesImagesDeleteWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesImagesDeleteOptions.CloudInstanceID,
-		"image_id":          *pcloudCloudinstancesImagesDeleteOptions.ImageID,
+		"image_id": *pcloudCloudinstancesImagesDeleteOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -3161,7 +3270,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesImagesGetWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesImagesGetOptions.CloudInstanceID,
-		"image_id":          *pcloudCloudinstancesImagesGetOptions.ImageID,
+		"image_id": *pcloudCloudinstancesImagesGetOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -3227,7 +3336,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesImagesExportPostWithContext(ctx co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesImagesExportPostOptions.CloudInstanceID,
-		"image_id":          *pcloudCloudinstancesImagesExportPostOptions.ImageID,
+		"image_id": *pcloudCloudinstancesImagesExportPostOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -3372,7 +3481,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesStockimagesGetWithContext(ctx cont
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesStockimagesGetOptions.CloudInstanceID,
-		"image_id":          *pcloudCloudinstancesStockimagesGetOptions.ImageID,
+		"image_id": *pcloudCloudinstancesStockimagesGetOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -3561,7 +3670,7 @@ func (powervs *PowervsV1) PcloudV2ImagesExportGetWithContext(ctx context.Context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2ImagesExportGetOptions.CloudInstanceID,
-		"image_id":          *pcloudV2ImagesExportGetOptions.ImageID,
+		"image_id": *pcloudV2ImagesExportGetOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -3621,7 +3730,7 @@ func (powervs *PowervsV1) PcloudV2ImagesExportPostWithContext(ctx context.Contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2ImagesExportPostOptions.CloudInstanceID,
-		"image_id":          *pcloudV2ImagesExportPostOptions.ImageID,
+		"image_id": *pcloudV2ImagesExportPostOptions.ImageID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -3968,7 +4077,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesJobsDeleteWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesJobsDeleteOptions.CloudInstanceID,
-		"job_id":            *pcloudCloudinstancesJobsDeleteOptions.JobID,
+		"job_id": *pcloudCloudinstancesJobsDeleteOptions.JobID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -4028,7 +4137,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesJobsGetWithContext(ctx context.Con
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesJobsGetOptions.CloudInstanceID,
-		"job_id":            *pcloudCloudinstancesJobsGetOptions.JobID,
+		"job_id": *pcloudCloudinstancesJobsGetOptions.JobID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -4176,6 +4285,9 @@ func (powervs *PowervsV1) PcloudNetworksPostWithContext(ctx context.Context, pcl
 	if pcloudNetworksPostOptions.Type != nil {
 		body["type"] = pcloudNetworksPostOptions.Type
 	}
+	if pcloudNetworksPostOptions.AccessConfig != nil {
+		body["accessConfig"] = pcloudNetworksPostOptions.AccessConfig
+	}
 	if pcloudNetworksPostOptions.CIDR != nil {
 		body["cidr"] = pcloudNetworksPostOptions.CIDR
 	}
@@ -4190,6 +4302,9 @@ func (powervs *PowervsV1) PcloudNetworksPostWithContext(ctx context.Context, pcl
 	}
 	if pcloudNetworksPostOptions.Jumbo != nil {
 		body["jumbo"] = pcloudNetworksPostOptions.Jumbo
+	}
+	if pcloudNetworksPostOptions.Mtu != nil {
+		body["mtu"] = pcloudNetworksPostOptions.Mtu
 	}
 	if pcloudNetworksPostOptions.Name != nil {
 		body["name"] = pcloudNetworksPostOptions.Name
@@ -4238,7 +4353,7 @@ func (powervs *PowervsV1) PcloudNetworksDeleteWithContext(ctx context.Context, p
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksDeleteOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksDeleteOptions.NetworkID,
+		"network_id": *pcloudNetworksDeleteOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -4298,7 +4413,7 @@ func (powervs *PowervsV1) PcloudNetworksGetWithContext(ctx context.Context, pclo
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksGetOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksGetOptions.NetworkID,
+		"network_id": *pcloudNetworksGetOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -4358,7 +4473,7 @@ func (powervs *PowervsV1) PcloudNetworksPutWithContext(ctx context.Context, pclo
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPutOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPutOptions.NetworkID,
+		"network_id": *pcloudNetworksPutOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -4437,7 +4552,7 @@ func (powervs *PowervsV1) PcloudNetworksPortsGetallWithContext(ctx context.Conte
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPortsGetallOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPortsGetallOptions.NetworkID,
+		"network_id": *pcloudNetworksPortsGetallOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -4497,7 +4612,7 @@ func (powervs *PowervsV1) PcloudNetworksPortsPostWithContext(ctx context.Context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPortsPostOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPortsPostOptions.NetworkID,
+		"network_id": *pcloudNetworksPortsPostOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -4570,8 +4685,8 @@ func (powervs *PowervsV1) PcloudNetworksPortsDeleteWithContext(ctx context.Conte
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPortsDeleteOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPortsDeleteOptions.NetworkID,
-		"port_id":           *pcloudNetworksPortsDeleteOptions.PortID,
+		"network_id": *pcloudNetworksPortsDeleteOptions.NetworkID,
+		"port_id": *pcloudNetworksPortsDeleteOptions.PortID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -4631,8 +4746,8 @@ func (powervs *PowervsV1) PcloudNetworksPortsGetWithContext(ctx context.Context,
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPortsGetOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPortsGetOptions.NetworkID,
-		"port_id":           *pcloudNetworksPortsGetOptions.PortID,
+		"network_id": *pcloudNetworksPortsGetOptions.NetworkID,
+		"port_id": *pcloudNetworksPortsGetOptions.PortID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -4695,8 +4810,8 @@ func (powervs *PowervsV1) PcloudNetworksPortsPutWithContext(ctx context.Context,
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudNetworksPortsPutOptions.CloudInstanceID,
-		"network_id":        *pcloudNetworksPortsPutOptions.NetworkID,
-		"port_id":           *pcloudNetworksPortsPutOptions.PortID,
+		"network_id": *pcloudNetworksPortsPutOptions.NetworkID,
+		"port_id": *pcloudNetworksPortsPutOptions.PortID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -4914,6 +5029,9 @@ func (powervs *PowervsV1) PcloudPvminstancesPostWithContext(ctx context.Context,
 	if pcloudPvminstancesPostOptions.StorageConnection != nil {
 		body["storageConnection"] = pcloudPvminstancesPostOptions.StorageConnection
 	}
+	if pcloudPvminstancesPostOptions.StorageConnectionV2 != nil {
+		body["storageConnectionV2"] = pcloudPvminstancesPostOptions.StorageConnectionV2
+	}
 	if pcloudPvminstancesPostOptions.StoragePool != nil {
 		body["storagePool"] = pcloudPvminstancesPostOptions.StoragePool
 	}
@@ -4976,7 +5094,7 @@ func (powervs *PowervsV1) PcloudPvminstancesDeleteWithContext(ctx context.Contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesDeleteOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesDeleteOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesDeleteOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -5040,7 +5158,7 @@ func (powervs *PowervsV1) PcloudPvminstancesGetWithContext(ctx context.Context, 
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesGetOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesGetOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesGetOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -5100,7 +5218,7 @@ func (powervs *PowervsV1) PcloudPvminstancesPutWithContext(ctx context.Context, 
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesPutOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesPutOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesPutOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -5123,6 +5241,9 @@ func (powervs *PowervsV1) PcloudPvminstancesPutWithContext(ctx context.Context, 
 	builder.AddHeader("Content-Type", "application/json")
 
 	body := make(map[string]interface{})
+	if pcloudPvminstancesPutOptions.CloudInitialization != nil {
+		body["cloudInitialization"] = pcloudPvminstancesPutOptions.CloudInitialization
+	}
 	if pcloudPvminstancesPutOptions.LicenseRepositoryCapacity != nil {
 		body["licenseRepositoryCapacity"] = pcloudPvminstancesPutOptions.LicenseRepositoryCapacity
 	}
@@ -5200,7 +5321,7 @@ func (powervs *PowervsV1) PcloudPvminstancesActionPostWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesActionPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesActionPostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesActionPostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5276,7 +5397,7 @@ func (powervs *PowervsV1) PcloudPvminstancesCapturePostWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesCapturePostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesCapturePostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesCapturePostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5364,7 +5485,7 @@ func (powervs *PowervsV1) PcloudPvminstancesClonePostWithContext(ctx context.Con
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesClonePostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesClonePostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesClonePostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5455,7 +5576,7 @@ func (powervs *PowervsV1) PcloudPvminstancesConsoleGetWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesConsoleGetOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesConsoleGetOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesConsoleGetOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -5515,7 +5636,7 @@ func (powervs *PowervsV1) PcloudPvminstancesConsolePostWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesConsolePostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesConsolePostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesConsolePostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5575,7 +5696,7 @@ func (powervs *PowervsV1) PcloudPvminstancesConsolePutWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesConsolePutOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesConsolePutOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesConsolePutOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -5648,7 +5769,7 @@ func (powervs *PowervsV1) PcloudPvminstancesNetworksGetallWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesNetworksGetallOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesNetworksGetallOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesNetworksGetallOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -5708,7 +5829,7 @@ func (powervs *PowervsV1) PcloudPvminstancesNetworksPostWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesNetworksPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesNetworksPostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesNetworksPostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5781,8 +5902,8 @@ func (powervs *PowervsV1) PcloudPvminstancesNetworksDeleteWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesNetworksDeleteOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesNetworksDeleteOptions.PvmInstanceID,
-		"network_id":        *pcloudPvminstancesNetworksDeleteOptions.NetworkID,
+		"pvm_instance_id": *pcloudPvminstancesNetworksDeleteOptions.PvmInstanceID,
+		"network_id": *pcloudPvminstancesNetworksDeleteOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -5852,8 +5973,8 @@ func (powervs *PowervsV1) PcloudPvminstancesNetworksGetWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesNetworksGetOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesNetworksGetOptions.PvmInstanceID,
-		"network_id":        *pcloudPvminstancesNetworksGetOptions.NetworkID,
+		"pvm_instance_id": *pcloudPvminstancesNetworksGetOptions.PvmInstanceID,
+		"network_id": *pcloudPvminstancesNetworksGetOptions.NetworkID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -5913,7 +6034,7 @@ func (powervs *PowervsV1) PcloudPvminstancesOperationsPostWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesOperationsPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesOperationsPostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesOperationsPostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -5986,7 +6107,7 @@ func (powervs *PowervsV1) PcloudPvminstancesSnapshotsGetallWithContext(ctx conte
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesSnapshotsGetallOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesSnapshotsGetallOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesSnapshotsGetallOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -6046,7 +6167,7 @@ func (powervs *PowervsV1) PcloudPvminstancesSnapshotsPostWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesSnapshotsPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesSnapshotsPostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesSnapshotsPostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -6074,9 +6195,6 @@ func (powervs *PowervsV1) PcloudPvminstancesSnapshotsPostWithContext(ctx context
 	}
 	if pcloudPvminstancesSnapshotsPostOptions.Description != nil {
 		body["description"] = pcloudPvminstancesSnapshotsPostOptions.Description
-	}
-	if pcloudPvminstancesSnapshotsPostOptions.PerformancePath != nil {
-		body["performancePath"] = pcloudPvminstancesSnapshotsPostOptions.PerformancePath
 	}
 	if pcloudPvminstancesSnapshotsPostOptions.VolumeIDs != nil {
 		body["volumeIDs"] = pcloudPvminstancesSnapshotsPostOptions.VolumeIDs
@@ -6125,8 +6243,8 @@ func (powervs *PowervsV1) PcloudPvminstancesSnapshotsRestorePostWithContext(ctx 
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesSnapshotsRestorePostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesSnapshotsRestorePostOptions.PvmInstanceID,
-		"snapshot_id":       *pcloudPvminstancesSnapshotsRestorePostOptions.SnapshotID,
+		"pvm_instance_id": *pcloudPvminstancesSnapshotsRestorePostOptions.PvmInstanceID,
+		"snapshot_id": *pcloudPvminstancesSnapshotsRestorePostOptions.SnapshotID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -6259,7 +6377,7 @@ func (powervs *PowervsV1) PcloudV2PvminstancesCaptureGetWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2PvminstancesCaptureGetOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudV2PvminstancesCaptureGetOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudV2PvminstancesCaptureGetOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -6319,7 +6437,7 @@ func (powervs *PowervsV1) PcloudV2PvminstancesCapturePostWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2PvminstancesCapturePostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudV2PvminstancesCapturePostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudV2PvminstancesCapturePostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -6537,7 +6655,7 @@ func (powervs *PowervsV1) PcloudPlacementgroupsDeleteWithContext(ctx context.Con
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":  *pcloudPlacementgroupsDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudPlacementgroupsDeleteOptions.CloudInstanceID,
 		"placement_group_id": *pcloudPlacementgroupsDeleteOptions.PlacementGroupID,
 	}
 
@@ -6597,7 +6715,7 @@ func (powervs *PowervsV1) PcloudPlacementgroupsGetWithContext(ctx context.Contex
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":  *pcloudPlacementgroupsGetOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudPlacementgroupsGetOptions.CloudInstanceID,
 		"placement_group_id": *pcloudPlacementgroupsGetOptions.PlacementGroupID,
 	}
 
@@ -6657,7 +6775,7 @@ func (powervs *PowervsV1) PcloudPlacementgroupsMembersDeleteWithContext(ctx cont
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":  *pcloudPlacementgroupsMembersDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudPlacementgroupsMembersDeleteOptions.CloudInstanceID,
 		"placement_group_id": *pcloudPlacementgroupsMembersDeleteOptions.PlacementGroupID,
 	}
 
@@ -6727,7 +6845,7 @@ func (powervs *PowervsV1) PcloudPlacementgroupsMembersPostWithContext(ctx contex
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":  *pcloudPlacementgroupsMembersPostOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudPlacementgroupsMembersPostOptions.CloudInstanceID,
 		"placement_group_id": *pcloudPlacementgroupsMembersPostOptions.PlacementGroupID,
 	}
 
@@ -6771,6 +6889,65 @@ func (powervs *PowervsV1) PcloudPlacementgroupsMembersPostWithContext(ctx contex
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPlacementGroup)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// PcloudPodcapacityGet : List of available resources within a particular Pod
+func (powervs *PowervsV1) PcloudPodcapacityGet(pcloudPodcapacityGetOptions *PcloudPodcapacityGetOptions) (result *PodCapacity, response *core.DetailedResponse, err error) {
+	return powervs.PcloudPodcapacityGetWithContext(context.Background(), pcloudPodcapacityGetOptions)
+}
+
+// PcloudPodcapacityGetWithContext is an alternate form of the PcloudPodcapacityGet method which supports a Context parameter
+func (powervs *PowervsV1) PcloudPodcapacityGetWithContext(ctx context.Context, pcloudPodcapacityGetOptions *PcloudPodcapacityGetOptions) (result *PodCapacity, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(pcloudPodcapacityGetOptions, "pcloudPodcapacityGetOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(pcloudPodcapacityGetOptions, "pcloudPodcapacityGetOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"cloud_instance_id": *pcloudPodcapacityGetOptions.CloudInstanceID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/pcloud/v1/cloud-instances/{cloud_instance_id}/pod-capacity`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range pcloudPodcapacityGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "PcloudPodcapacityGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPodCapacity)
 		if err != nil {
 			return
 		}
@@ -6968,7 +7145,7 @@ func (powervs *PowervsV1) PcloudSapGetWithContext(ctx context.Context, pcloudSap
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudSapGetOptions.CloudInstanceID,
-		"sap_profile_id":    *pcloudSapGetOptions.SapProfileID,
+		"sap_profile_id": *pcloudSapGetOptions.SapProfileID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -7158,7 +7335,7 @@ func (powervs *PowervsV1) PcloudSppplacementgroupsDeleteWithContext(ctx context.
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":      *pcloudSppplacementgroupsDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudSppplacementgroupsDeleteOptions.CloudInstanceID,
 		"spp_placement_group_id": *pcloudSppplacementgroupsDeleteOptions.SppPlacementGroupID,
 	}
 
@@ -7218,7 +7395,7 @@ func (powervs *PowervsV1) PcloudSppplacementgroupsGetWithContext(ctx context.Con
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":      *pcloudSppplacementgroupsGetOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudSppplacementgroupsGetOptions.CloudInstanceID,
 		"spp_placement_group_id": *pcloudSppplacementgroupsGetOptions.SppPlacementGroupID,
 	}
 
@@ -7278,8 +7455,8 @@ func (powervs *PowervsV1) PcloudSppplacementgroupsMembersDeleteWithContext(ctx c
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":        *pcloudSppplacementgroupsMembersDeleteOptions.CloudInstanceID,
-		"spp_placement_group_id":   *pcloudSppplacementgroupsMembersDeleteOptions.SppPlacementGroupID,
+		"cloud_instance_id": *pcloudSppplacementgroupsMembersDeleteOptions.CloudInstanceID,
+		"spp_placement_group_id": *pcloudSppplacementgroupsMembersDeleteOptions.SppPlacementGroupID,
 		"shared_processor_pool_id": *pcloudSppplacementgroupsMembersDeleteOptions.SharedProcessorPoolID,
 	}
 
@@ -7339,8 +7516,8 @@ func (powervs *PowervsV1) PcloudSppplacementgroupsMembersPostWithContext(ctx con
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":        *pcloudSppplacementgroupsMembersPostOptions.CloudInstanceID,
-		"spp_placement_group_id":   *pcloudSppplacementgroupsMembersPostOptions.SppPlacementGroupID,
+		"cloud_instance_id": *pcloudSppplacementgroupsMembersPostOptions.CloudInstanceID,
+		"spp_placement_group_id": *pcloudSppplacementgroupsMembersPostOptions.SppPlacementGroupID,
 		"shared_processor_pool_id": *pcloudSppplacementgroupsMembersPostOptions.SharedProcessorPoolID,
 	}
 
@@ -7541,7 +7718,7 @@ func (powervs *PowervsV1) PcloudDhcpDeleteWithContext(ctx context.Context, pclou
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudDhcpDeleteOptions.CloudInstanceID,
-		"dhcp_id":           *pcloudDhcpDeleteOptions.DhcpID,
+		"dhcp_id": *pcloudDhcpDeleteOptions.DhcpID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -7601,7 +7778,7 @@ func (powervs *PowervsV1) PcloudDhcpGetWithContext(ctx context.Context, pcloudDh
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudDhcpGetOptions.CloudInstanceID,
-		"dhcp_id":           *pcloudDhcpGetOptions.DhcpID,
+		"dhcp_id": *pcloudDhcpGetOptions.DhcpID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -7797,7 +7974,7 @@ func (powervs *PowervsV1) PcloudSharedprocessorpoolsDeleteWithContext(ctx contex
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":        *pcloudSharedprocessorpoolsDeleteOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudSharedprocessorpoolsDeleteOptions.CloudInstanceID,
 		"shared_processor_pool_id": *pcloudSharedprocessorpoolsDeleteOptions.SharedProcessorPoolID,
 	}
 
@@ -7857,7 +8034,7 @@ func (powervs *PowervsV1) PcloudSharedprocessorpoolsGetWithContext(ctx context.C
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":        *pcloudSharedprocessorpoolsGetOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudSharedprocessorpoolsGetOptions.CloudInstanceID,
 		"shared_processor_pool_id": *pcloudSharedprocessorpoolsGetOptions.SharedProcessorPoolID,
 	}
 
@@ -7917,7 +8094,7 @@ func (powervs *PowervsV1) PcloudSharedprocessorpoolsPutWithContext(ctx context.C
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":        *pcloudSharedprocessorpoolsPutOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudSharedprocessorpoolsPutOptions.CloudInstanceID,
 		"shared_processor_pool_id": *pcloudSharedprocessorpoolsPutOptions.SharedProcessorPoolID,
 	}
 
@@ -8050,7 +8227,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesSnapshotsDeleteWithContext(ctx con
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesSnapshotsDeleteOptions.CloudInstanceID,
-		"snapshot_id":       *pcloudCloudinstancesSnapshotsDeleteOptions.SnapshotID,
+		"snapshot_id": *pcloudCloudinstancesSnapshotsDeleteOptions.SnapshotID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -8110,7 +8287,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesSnapshotsGetWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesSnapshotsGetOptions.CloudInstanceID,
-		"snapshot_id":       *pcloudCloudinstancesSnapshotsGetOptions.SnapshotID,
+		"snapshot_id": *pcloudCloudinstancesSnapshotsGetOptions.SnapshotID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -8170,7 +8347,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesSnapshotsPutWithContext(ctx contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesSnapshotsPutOptions.CloudInstanceID,
-		"snapshot_id":       *pcloudCloudinstancesSnapshotsPutOptions.SnapshotID,
+		"snapshot_id": *pcloudCloudinstancesSnapshotsPutOptions.SnapshotID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -8454,6 +8631,65 @@ func (powervs *PowervsV1) PcloudStoragecapacityTypesGetWithContext(ctx context.C
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalStorageTypeCapacity)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// PcloudCloudinstancesStoragetiersGetall : List all supported storage tiers for this cloud instance
+func (powervs *PowervsV1) PcloudCloudinstancesStoragetiersGetall(pcloudCloudinstancesStoragetiersGetallOptions *PcloudCloudinstancesStoragetiersGetallOptions) (result []StorageTier, response *core.DetailedResponse, err error) {
+	return powervs.PcloudCloudinstancesStoragetiersGetallWithContext(context.Background(), pcloudCloudinstancesStoragetiersGetallOptions)
+}
+
+// PcloudCloudinstancesStoragetiersGetallWithContext is an alternate form of the PcloudCloudinstancesStoragetiersGetall method which supports a Context parameter
+func (powervs *PowervsV1) PcloudCloudinstancesStoragetiersGetallWithContext(ctx context.Context, pcloudCloudinstancesStoragetiersGetallOptions *PcloudCloudinstancesStoragetiersGetallOptions) (result []StorageTier, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(pcloudCloudinstancesStoragetiersGetallOptions, "pcloudCloudinstancesStoragetiersGetallOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(pcloudCloudinstancesStoragetiersGetallOptions, "pcloudCloudinstancesStoragetiersGetallOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"cloud_instance_id": *pcloudCloudinstancesStoragetiersGetallOptions.CloudInstanceID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/pcloud/v1/cloud-instances/{cloud_instance_id}/storage-tiers`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range pcloudCloudinstancesStoragetiersGetallOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "PcloudCloudinstancesStoragetiersGetall")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse []json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalStorageTier)
 		if err != nil {
 			return
 		}
@@ -8922,7 +9158,7 @@ func (powervs *PowervsV1) PcloudTenantsSshkeysDeleteWithContext(ctx context.Cont
 	}
 
 	pathParamsMap := map[string]string{
-		"tenant_id":   *pcloudTenantsSshkeysDeleteOptions.TenantID,
+		"tenant_id": *pcloudTenantsSshkeysDeleteOptions.TenantID,
 		"sshkey_name": *pcloudTenantsSshkeysDeleteOptions.SshkeyName,
 	}
 
@@ -8980,9 +9216,9 @@ func (powervs *PowervsV1) PcloudTenantsSshkeysGetWithContext(ctx context.Context
 	if err != nil {
 		return
 	}
-	//*pcloudTenantsSshkeysGetOptions.TenantID,
+
 	pathParamsMap := map[string]string{
-		"tenant_id":   powervs.Options.UserAccount,
+		"tenant_id": *pcloudTenantsSshkeysGetOptions.TenantID,
 		"sshkey_name": *pcloudTenantsSshkeysGetOptions.SshkeyName,
 	}
 
@@ -9003,7 +9239,6 @@ func (powervs *PowervsV1) PcloudTenantsSshkeysGetWithContext(ctx context.Context
 		builder.AddHeader(headerName, headerValue)
 	}
 	builder.AddHeader("Accept", "application/json")
-	builder.AddHeader("CRN", fmt.Sprintf(powervs.CRNFormat, *pcloudTenantsSshkeysGetOptions.TenantID))
 
 	request, err := builder.Build()
 	if err != nil {
@@ -9043,7 +9278,7 @@ func (powervs *PowervsV1) PcloudTenantsSshkeysPutWithContext(ctx context.Context
 	}
 
 	pathParamsMap := map[string]string{
-		"tenant_id":   *pcloudTenantsSshkeysPutOptions.TenantID,
+		"tenant_id": *pcloudTenantsSshkeysPutOptions.TenantID,
 		"sshkey_name": *pcloudTenantsSshkeysPutOptions.SshkeyName,
 	}
 
@@ -9413,7 +9648,7 @@ func (powervs *PowervsV1) PcloudVpnconnectionsPutWithContext(ctx context.Context
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 
-	_, err = builder.SetBodyContentJSON(pcloudVpnconnectionsPutOptions.VPNConnectionUpdate)
+	_, err = builder.SetBodyContentJSON(pcloudVpnconnectionsPutOptions.Body)
 	if err != nil {
 		return
 	}
@@ -10012,7 +10247,7 @@ func (powervs *PowervsV1) PcloudIkepoliciesDeleteWithContext(ctx context.Context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIkepoliciesDeleteOptions.CloudInstanceID,
-		"ike_policy_id":     *pcloudIkepoliciesDeleteOptions.IkePolicyID,
+		"ike_policy_id": *pcloudIkepoliciesDeleteOptions.IkePolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -10073,7 +10308,7 @@ func (powervs *PowervsV1) PcloudIkepoliciesGetWithContext(ctx context.Context, p
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIkepoliciesGetOptions.CloudInstanceID,
-		"ike_policy_id":     *pcloudIkepoliciesGetOptions.IkePolicyID,
+		"ike_policy_id": *pcloudIkepoliciesGetOptions.IkePolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -10134,7 +10369,7 @@ func (powervs *PowervsV1) PcloudIkepoliciesPutWithContext(ctx context.Context, p
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIkepoliciesPutOptions.CloudInstanceID,
-		"ike_policy_id":     *pcloudIkepoliciesPutOptions.IkePolicyID,
+		"ike_policy_id": *pcloudIkepoliciesPutOptions.IkePolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -10156,7 +10391,7 @@ func (powervs *PowervsV1) PcloudIkepoliciesPutWithContext(ctx context.Context, p
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 
-	_, err = builder.SetBodyContentJSON(pcloudIkepoliciesPutOptions.IkePolicyUpdate)
+	_, err = builder.SetBodyContentJSON(pcloudIkepoliciesPutOptions.Body)
 	if err != nil {
 		return
 	}
@@ -10346,7 +10581,7 @@ func (powervs *PowervsV1) PcloudIpsecpoliciesDeleteWithContext(ctx context.Conte
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIpsecpoliciesDeleteOptions.CloudInstanceID,
-		"ipsec_policy_id":   *pcloudIpsecpoliciesDeleteOptions.IpsecPolicyID,
+		"ipsec_policy_id": *pcloudIpsecpoliciesDeleteOptions.IpsecPolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -10407,7 +10642,7 @@ func (powervs *PowervsV1) PcloudIpsecpoliciesGetWithContext(ctx context.Context,
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIpsecpoliciesGetOptions.CloudInstanceID,
-		"ipsec_policy_id":   *pcloudIpsecpoliciesGetOptions.IpsecPolicyID,
+		"ipsec_policy_id": *pcloudIpsecpoliciesGetOptions.IpsecPolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -10468,7 +10703,7 @@ func (powervs *PowervsV1) PcloudIpsecpoliciesPutWithContext(ctx context.Context,
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudIpsecpoliciesPutOptions.CloudInstanceID,
-		"ipsec_policy_id":   *pcloudIpsecpoliciesPutOptions.IpsecPolicyID,
+		"ipsec_policy_id": *pcloudIpsecpoliciesPutOptions.IpsecPolicyID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -10490,7 +10725,7 @@ func (powervs *PowervsV1) PcloudIpsecpoliciesPutWithContext(ctx context.Context,
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 
-	_, err = builder.SetBodyContentJSON(pcloudIpsecpoliciesPutOptions.IPSecPolicyUpdate)
+	_, err = builder.SetBodyContentJSON(pcloudIpsecpoliciesPutOptions.Body)
 	if err != nil {
 		return
 	}
@@ -10727,7 +10962,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsDeleteWithContext(ctx context.Contex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsDeleteOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsDeleteOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsDeleteOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -10787,7 +11022,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsGetWithContext(ctx context.Context, 
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsGetOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsGetOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsGetOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -10847,7 +11082,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsPutWithContext(ctx context.Context, 
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsPutOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsPutOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsPutOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -10920,7 +11155,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsActionPostWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsActionPostOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsActionPostOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsActionPostOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -10942,7 +11177,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsActionPostWithContext(ctx context.Co
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 
-	_, err = builder.SetBodyContentJSON(pcloudVolumegroupsActionPostOptions.VolumeGroupAction)
+	_, err = builder.SetBodyContentJSON(pcloudVolumegroupsActionPostOptions.Body)
 	if err != nil {
 		return
 	}
@@ -10986,7 +11221,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsGetDetailsWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsGetDetailsOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsGetDetailsOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsGetDetailsOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -11046,7 +11281,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsRemoteCopyRelationshipsGetWithContex
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsRemoteCopyRelationshipsGetOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsRemoteCopyRelationshipsGetOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsRemoteCopyRelationshipsGetOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -11106,7 +11341,7 @@ func (powervs *PowervsV1) PcloudVolumegroupsStorageDetailsGetWithContext(ctx con
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudVolumegroupsStorageDetailsGetOptions.CloudInstanceID,
-		"volume_group_id":   *pcloudVolumegroupsStorageDetailsGetOptions.VolumeGroupID,
+		"volume_group_id": *pcloudVolumegroupsStorageDetailsGetOptions.VolumeGroupID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -11296,7 +11531,7 @@ func (powervs *PowervsV1) PcloudVolumeOnboardingGetWithContext(ctx context.Conte
 	}
 
 	pathParamsMap := map[string]string{
-		"cloud_instance_id":    *pcloudVolumeOnboardingGetOptions.CloudInstanceID,
+		"cloud_instance_id": *pcloudVolumeOnboardingGetOptions.CloudInstanceID,
 		"volume_onboarding_id": *pcloudVolumeOnboardingGetOptions.VolumeOnboardingID,
 	}
 
@@ -11357,7 +11592,7 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesGetallWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesGetallOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesGetallOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesGetallOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -11417,8 +11652,8 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesDeleteWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesDeleteOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesDeleteOptions.PvmInstanceID,
-		"volume_id":         *pcloudPvminstancesVolumesDeleteOptions.VolumeID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesDeleteOptions.PvmInstanceID,
+		"volume_id": *pcloudPvminstancesVolumesDeleteOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -11478,8 +11713,8 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesGetWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesGetOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesGetOptions.PvmInstanceID,
-		"volume_id":         *pcloudPvminstancesVolumesGetOptions.VolumeID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesGetOptions.PvmInstanceID,
+		"volume_id": *pcloudPvminstancesVolumesGetOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -11539,8 +11774,8 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesPostWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesPostOptions.PvmInstanceID,
-		"volume_id":         *pcloudPvminstancesVolumesPostOptions.VolumeID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesPostOptions.PvmInstanceID,
+		"volume_id": *pcloudPvminstancesVolumesPostOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -11600,8 +11835,8 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesPutWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesPutOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesPutOptions.PvmInstanceID,
-		"volume_id":         *pcloudPvminstancesVolumesPutOptions.VolumeID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesPutOptions.PvmInstanceID,
+		"volume_id": *pcloudPvminstancesVolumesPutOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -11671,8 +11906,8 @@ func (powervs *PowervsV1) PcloudPvminstancesVolumesSetbootPutWithContext(ctx con
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudPvminstancesVolumesSetbootPutOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudPvminstancesVolumesSetbootPutOptions.PvmInstanceID,
-		"volume_id":         *pcloudPvminstancesVolumesSetbootPutOptions.VolumeID,
+		"pvm_instance_id": *pcloudPvminstancesVolumesSetbootPutOptions.PvmInstanceID,
+		"volume_id": *pcloudPvminstancesVolumesSetbootPutOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -11978,7 +12213,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesDeleteWithContext(ctx conte
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesDeleteOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesDeleteOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesDeleteOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -12038,7 +12273,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesGetWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesGetOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesGetOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesGetOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -12098,7 +12333,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesPutWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesPutOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesPutOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesPutOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -12177,7 +12412,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesActionPostWithContext(ctx c
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesActionPostOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesActionPostOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesActionPostOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -12202,6 +12437,9 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesActionPostWithContext(ctx c
 	body := make(map[string]interface{})
 	if pcloudCloudinstancesVolumesActionPostOptions.ReplicationEnabled != nil {
 		body["replicationEnabled"] = pcloudCloudinstancesVolumesActionPostOptions.ReplicationEnabled
+	}
+	if pcloudCloudinstancesVolumesActionPostOptions.TargetStorageTier != nil {
+		body["targetStorageTier"] = pcloudCloudinstancesVolumesActionPostOptions.TargetStorageTier
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -12247,7 +12485,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesFlashCopyMappingsGetWithCon
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesFlashCopyMappingsGetOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesFlashCopyMappingsGetOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesFlashCopyMappingsGetOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -12307,7 +12545,7 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesRemoteCopyRelationshipGetWi
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions.CloudInstanceID,
-		"volume_id":         *pcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions.VolumeID,
+		"volume_id": *pcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions.VolumeID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -12349,6 +12587,82 @@ func (powervs *PowervsV1) PcloudCloudinstancesVolumesRemoteCopyRelationshipGetWi
 	return
 }
 
+// PcloudV2PvminstancesVolumesDelete : Detach multiple volumes from a PVMInstance
+func (powervs *PowervsV1) PcloudV2PvminstancesVolumesDelete(pcloudV2PvminstancesVolumesDeleteOptions *PcloudV2PvminstancesVolumesDeleteOptions) (result *VolumesDetachmentResponse, response *core.DetailedResponse, err error) {
+	return powervs.PcloudV2PvminstancesVolumesDeleteWithContext(context.Background(), pcloudV2PvminstancesVolumesDeleteOptions)
+}
+
+// PcloudV2PvminstancesVolumesDeleteWithContext is an alternate form of the PcloudV2PvminstancesVolumesDelete method which supports a Context parameter
+func (powervs *PowervsV1) PcloudV2PvminstancesVolumesDeleteWithContext(ctx context.Context, pcloudV2PvminstancesVolumesDeleteOptions *PcloudV2PvminstancesVolumesDeleteOptions) (result *VolumesDetachmentResponse, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(pcloudV2PvminstancesVolumesDeleteOptions, "pcloudV2PvminstancesVolumesDeleteOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(pcloudV2PvminstancesVolumesDeleteOptions, "pcloudV2PvminstancesVolumesDeleteOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"cloud_instance_id": *pcloudV2PvminstancesVolumesDeleteOptions.CloudInstanceID,
+		"pvm_instance_id": *pcloudV2PvminstancesVolumesDeleteOptions.PvmInstanceID,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/pcloud/v2/cloud-instances/{cloud_instance_id}/pvm-instances/{pvm_instance_id}/volumes`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range pcloudV2PvminstancesVolumesDeleteOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "PcloudV2PvminstancesVolumesDelete")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if pcloudV2PvminstancesVolumesDeleteOptions.DetachAllVolumes != nil {
+		body["detachAllVolumes"] = pcloudV2PvminstancesVolumesDeleteOptions.DetachAllVolumes
+	}
+	if pcloudV2PvminstancesVolumesDeleteOptions.DetachPrimaryBootVolume != nil {
+		body["detachPrimaryBootVolume"] = pcloudV2PvminstancesVolumesDeleteOptions.DetachPrimaryBootVolume
+	}
+	if pcloudV2PvminstancesVolumesDeleteOptions.VolumeIDs != nil {
+		body["volumeIDs"] = pcloudV2PvminstancesVolumesDeleteOptions.VolumeIDs
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVolumesDetachmentResponse)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
 // PcloudV2PvminstancesVolumesPost : Attach all volumes to a PVMInstance
 func (powervs *PowervsV1) PcloudV2PvminstancesVolumesPost(pcloudV2PvminstancesVolumesPostOptions *PcloudV2PvminstancesVolumesPostOptions) (result *VolumesAttachmentResponse, response *core.DetailedResponse, err error) {
 	return powervs.PcloudV2PvminstancesVolumesPostWithContext(context.Background(), pcloudV2PvminstancesVolumesPostOptions)
@@ -12367,7 +12681,7 @@ func (powervs *PowervsV1) PcloudV2PvminstancesVolumesPostWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2PvminstancesVolumesPostOptions.CloudInstanceID,
-		"pvm_instance_id":   *pcloudV2PvminstancesVolumesPostOptions.PvmInstanceID,
+		"pvm_instance_id": *pcloudV2PvminstancesVolumesPostOptions.PvmInstanceID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -12393,9 +12707,6 @@ func (powervs *PowervsV1) PcloudV2PvminstancesVolumesPostWithContext(ctx context
 	if pcloudV2PvminstancesVolumesPostOptions.VolumeIDs != nil {
 		body["volumeIDs"] = pcloudV2PvminstancesVolumesPostOptions.VolumeIDs
 	}
-	if pcloudV2PvminstancesVolumesPostOptions.PerformancePath != nil {
-		body["performancePath"] = pcloudV2PvminstancesVolumesPostOptions.PerformancePath
-	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -12413,6 +12724,75 @@ func (powervs *PowervsV1) PcloudV2PvminstancesVolumesPostWithContext(ctx context
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVolumesAttachmentResponse)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// PcloudV2VolumesDelete : Delete all volumes
+func (powervs *PowervsV1) PcloudV2VolumesDelete(pcloudV2VolumesDeleteOptions *PcloudV2VolumesDeleteOptions) (result *VolumesDeleteResponse, response *core.DetailedResponse, err error) {
+	return powervs.PcloudV2VolumesDeleteWithContext(context.Background(), pcloudV2VolumesDeleteOptions)
+}
+
+// PcloudV2VolumesDeleteWithContext is an alternate form of the PcloudV2VolumesDelete method which supports a Context parameter
+func (powervs *PowervsV1) PcloudV2VolumesDeleteWithContext(ctx context.Context, pcloudV2VolumesDeleteOptions *PcloudV2VolumesDeleteOptions) (result *VolumesDeleteResponse, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(pcloudV2VolumesDeleteOptions, "pcloudV2VolumesDeleteOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(pcloudV2VolumesDeleteOptions, "pcloudV2VolumesDeleteOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"cloud_instance_id": *pcloudV2VolumesDeleteOptions.CloudInstanceID,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/pcloud/v2/cloud-instances/{cloud_instance_id}/volumes`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range pcloudV2VolumesDeleteOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "PcloudV2VolumesDelete")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if pcloudV2VolumesDeleteOptions.VolumeIDs != nil {
+		body["volumeIDs"] = pcloudV2VolumesDeleteOptions.VolumeIDs
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVolumesDeleteResponse)
 		if err != nil {
 			return
 		}
@@ -12587,7 +12967,12 @@ func (powervs *PowervsV1) PcloudV2VolumescloneGetallWithContext(ctx context.Cont
 	return
 }
 
-// PcloudV2VolumesclonePost : Create a new volumes clone request and initiates the Prepare action   Requires a minimum of two volumes   Requires a minimum of one volume to be in the 'in-use' state   Requires a unique volumes clone name   Prepare action does the preparatory work for creating the snapshot volumes
+// PcloudV2VolumesclonePost : Create a new volumes clone request and initiates the Prepare action
+// Requires a minimum of two volumes.  Requires a minimum of one volume to be in the `in-use` state.  Requires a unique
+// volumes clone name.  Prepare action does the preparatory work for creating the snapshot volumes.
+// >**Note**: If there is an existing prepare, user cannot trigger another prepare for the same set of volumes. Prepare
+// should be followed by start and execute. If existing prepare does not have to be used then it should be first
+// cancelled before the next prepare operation.
 func (powervs *PowervsV1) PcloudV2VolumesclonePost(pcloudV2VolumesclonePostOptions *PcloudV2VolumesclonePostOptions) (result *VolumesClone, response *core.DetailedResponse, err error) {
 	return powervs.PcloudV2VolumesclonePostWithContext(context.Background(), pcloudV2VolumesclonePostOptions)
 }
@@ -12633,9 +13018,6 @@ func (powervs *PowervsV1) PcloudV2VolumesclonePostWithContext(ctx context.Contex
 	if pcloudV2VolumesclonePostOptions.VolumeIDs != nil {
 		body["volumeIDs"] = pcloudV2VolumesclonePostOptions.VolumeIDs
 	}
-	if pcloudV2VolumesclonePostOptions.PerformancePath != nil {
-		body["performancePath"] = pcloudV2VolumesclonePostOptions.PerformancePath
-	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -12680,7 +13062,7 @@ func (powervs *PowervsV1) PcloudV2VolumescloneDeleteWithContext(ctx context.Cont
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumescloneDeleteOptions.CloudInstanceID,
-		"volumes_clone_id":  *pcloudV2VolumescloneDeleteOptions.VolumesCloneID,
+		"volumes_clone_id": *pcloudV2VolumescloneDeleteOptions.VolumesCloneID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -12740,7 +13122,7 @@ func (powervs *PowervsV1) PcloudV2VolumescloneGetWithContext(ctx context.Context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumescloneGetOptions.CloudInstanceID,
-		"volumes_clone_id":  *pcloudV2VolumescloneGetOptions.VolumesCloneID,
+		"volumes_clone_id": *pcloudV2VolumescloneGetOptions.VolumesCloneID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -12782,7 +13164,8 @@ func (powervs *PowervsV1) PcloudV2VolumescloneGetWithContext(ctx context.Context
 	return
 }
 
-// PcloudV2VolumescloneCancelPost : Cancel a volumes-clone request, initiates the Cleanup action Cleanup action performs the cleanup of the preparatory clones and snapshot volumes
+// PcloudV2VolumescloneCancelPost : Cancel a volumes-clone request
+// Initiates the cleanup action that performs the cleanup of the preparatory clones and snapshot volumes.
 func (powervs *PowervsV1) PcloudV2VolumescloneCancelPost(pcloudV2VolumescloneCancelPostOptions *PcloudV2VolumescloneCancelPostOptions) (result *VolumesClone, response *core.DetailedResponse, err error) {
 	return powervs.PcloudV2VolumescloneCancelPostWithContext(context.Background(), pcloudV2VolumescloneCancelPostOptions)
 }
@@ -12800,7 +13183,7 @@ func (powervs *PowervsV1) PcloudV2VolumescloneCancelPostWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumescloneCancelPostOptions.CloudInstanceID,
-		"volumes_clone_id":  *pcloudV2VolumescloneCancelPostOptions.VolumesCloneID,
+		"volumes_clone_id": *pcloudV2VolumescloneCancelPostOptions.VolumesCloneID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -12852,7 +13235,8 @@ func (powervs *PowervsV1) PcloudV2VolumescloneCancelPostWithContext(ctx context.
 	return
 }
 
-// PcloudV2VolumescloneExecutePost : Initiate the Execute action for a volumes-clone request Execute action creates the cloned volumes using the volume snapshots
+// PcloudV2VolumescloneExecutePost : Initiate the Execute action for a volumes-clone request
+// Execute action creates the cloned volumes using the volume snapshots.
 func (powervs *PowervsV1) PcloudV2VolumescloneExecutePost(pcloudV2VolumescloneExecutePostOptions *PcloudV2VolumescloneExecutePostOptions) (result *VolumesClone, response *core.DetailedResponse, err error) {
 	return powervs.PcloudV2VolumescloneExecutePostWithContext(context.Background(), pcloudV2VolumescloneExecutePostOptions)
 }
@@ -12870,7 +13254,7 @@ func (powervs *PowervsV1) PcloudV2VolumescloneExecutePostWithContext(ctx context
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumescloneExecutePostOptions.CloudInstanceID,
-		"volumes_clone_id":  *pcloudV2VolumescloneExecutePostOptions.VolumesCloneID,
+		"volumes_clone_id": *pcloudV2VolumescloneExecutePostOptions.VolumesCloneID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -12899,6 +13283,12 @@ func (powervs *PowervsV1) PcloudV2VolumescloneExecutePostWithContext(ctx context
 	if pcloudV2VolumescloneExecutePostOptions.RollbackPrepare != nil {
 		body["rollbackPrepare"] = pcloudV2VolumescloneExecutePostOptions.RollbackPrepare
 	}
+	if pcloudV2VolumescloneExecutePostOptions.TargetReplicationEnabled != nil {
+		body["targetReplicationEnabled"] = pcloudV2VolumescloneExecutePostOptions.TargetReplicationEnabled
+	}
+	if pcloudV2VolumescloneExecutePostOptions.TargetStorageTier != nil {
+		body["targetStorageTier"] = pcloudV2VolumescloneExecutePostOptions.TargetStorageTier
+	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -12925,7 +13315,8 @@ func (powervs *PowervsV1) PcloudV2VolumescloneExecutePostWithContext(ctx context
 	return
 }
 
-// PcloudV2VolumescloneStartPost : Initiate the Start action for a volumes-clone request Start action starts the consistency group to initiate the flash copy
+// PcloudV2VolumescloneStartPost : Initiate the Start action for a volumes-clone request
+// Start action starts the consistency group to initiate the flash copy.
 func (powervs *PowervsV1) PcloudV2VolumescloneStartPost(pcloudV2VolumescloneStartPostOptions *PcloudV2VolumescloneStartPostOptions) (result *VolumesClone, response *core.DetailedResponse, err error) {
 	return powervs.PcloudV2VolumescloneStartPostWithContext(context.Background(), pcloudV2VolumescloneStartPostOptions)
 }
@@ -12943,7 +13334,7 @@ func (powervs *PowervsV1) PcloudV2VolumescloneStartPostWithContext(ctx context.C
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumescloneStartPostOptions.CloudInstanceID,
-		"volumes_clone_id":  *pcloudV2VolumescloneStartPostOptions.VolumesCloneID,
+		"volumes_clone_id": *pcloudV2VolumescloneStartPostOptions.VolumesCloneID,
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
@@ -13031,6 +13422,12 @@ func (powervs *PowervsV1) PcloudV2VolumesClonePostWithContext(ctx context.Contex
 	if pcloudV2VolumesClonePostOptions.VolumeIDs != nil {
 		body["volumeIDs"] = pcloudV2VolumesClonePostOptions.VolumeIDs
 	}
+	if pcloudV2VolumesClonePostOptions.TargetReplicationEnabled != nil {
+		body["targetReplicationEnabled"] = pcloudV2VolumesClonePostOptions.TargetReplicationEnabled
+	}
+	if pcloudV2VolumesClonePostOptions.TargetStorageTier != nil {
+		body["targetStorageTier"] = pcloudV2VolumesClonePostOptions.TargetStorageTier
+	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -13075,7 +13472,7 @@ func (powervs *PowervsV1) PcloudV2VolumesClonetasksGetWithContext(ctx context.Co
 
 	pathParamsMap := map[string]string{
 		"cloud_instance_id": *pcloudV2VolumesClonetasksGetOptions.CloudInstanceID,
-		"clone_task_id":     *pcloudV2VolumesClonetasksGetOptions.CloneTaskID,
+		"clone_task_id": *pcloudV2VolumesClonetasksGetOptions.CloneTaskID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -13138,7 +13535,7 @@ func (powervs *PowervsV1) ServiceBindingUnbindingWithContext(ctx context.Context
 
 	pathParamsMap := map[string]string{
 		"instance_id": *serviceBindingUnbindingOptions.InstanceID,
-		"binding_id":  *serviceBindingUnbindingOptions.BindingID,
+		"binding_id": *serviceBindingUnbindingOptions.BindingID,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
@@ -13210,7 +13607,7 @@ func (powervs *PowervsV1) ServiceBindingGetWithContext(ctx context.Context, serv
 
 	pathParamsMap := map[string]string{
 		"instance_id": *serviceBindingGetOptions.InstanceID,
-		"binding_id":  *serviceBindingGetOptions.BindingID,
+		"binding_id": *serviceBindingGetOptions.BindingID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -13276,7 +13673,7 @@ func (powervs *PowervsV1) ServiceBindingBindingWithContext(ctx context.Context, 
 
 	pathParamsMap := map[string]string{
 		"instance_id": *serviceBindingBindingOptions.InstanceID,
-		"binding_id":  *serviceBindingBindingOptions.BindingID,
+		"binding_id": *serviceBindingBindingOptions.BindingID,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
@@ -13371,7 +13768,7 @@ func (powervs *PowervsV1) ServiceBindingLastOperationGetWithContext(ctx context.
 
 	pathParamsMap := map[string]string{
 		"instance_id": *serviceBindingLastOperationGetOptions.InstanceID,
-		"binding_id":  *serviceBindingLastOperationGetOptions.BindingID,
+		"binding_id": *serviceBindingLastOperationGetOptions.BindingID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -13820,12 +14217,18 @@ func (powervs *PowervsV1) ServiceInstanceLastOperationGetWithContext(ctx context
 }
 
 // ServiceBrokerStoragetypesGet : Available storage types in a region
+// This API is deprecated for /pcloud/v1/cloud-instances/{cloud_instance_id}/storage-tiers.
+//
+// >*Note*: Support for this API will be available till 31st October 2023.
+// Deprecated: this method is deprecated and may be removed in a future release.
 func (powervs *PowervsV1) ServiceBrokerStoragetypesGet(serviceBrokerStoragetypesGetOptions *ServiceBrokerStoragetypesGetOptions) (result map[string][]StorageType, response *core.DetailedResponse, err error) {
 	return powervs.ServiceBrokerStoragetypesGetWithContext(context.Background(), serviceBrokerStoragetypesGetOptions)
 }
 
 // ServiceBrokerStoragetypesGetWithContext is an alternate form of the ServiceBrokerStoragetypesGet method which supports a Context parameter
+// Deprecated: this method is deprecated and may be removed in a future release.
 func (powervs *PowervsV1) ServiceBrokerStoragetypesGetWithContext(ctx context.Context, serviceBrokerStoragetypesGetOptions *ServiceBrokerStoragetypesGetOptions) (result map[string][]StorageType, response *core.DetailedResponse, err error) {
+	core.GetLogger().Warn("A deprecated operation has been invoked: ServiceBrokerStoragetypesGet")
 	err = core.ValidateStruct(serviceBrokerStoragetypesGetOptions, "serviceBrokerStoragetypesGetOptions")
 	if err != nil {
 		return
@@ -13921,6 +14324,122 @@ func (powervs *PowervsV1) ServiceBrokerSwaggerspecWithContext(ctx context.Contex
 	return
 }
 
+// WorkspacesGetall : Get all Workspaces information and capabilities for a tenant
+func (powervs *PowervsV1) WorkspacesGetall(v1WorkspacesGetallOptions *V1WorkspacesGetallOptions) (result *Workspaces, response *core.DetailedResponse, err error) {
+	return powervs.WorkspacesGetallWithContext(context.Background(), v1WorkspacesGetallOptions)
+}
+
+// WorkspacesGetallWithContext is an alternate form of the WorkspacesGetall method which supports a Context parameter
+func (powervs *PowervsV1) WorkspacesGetallWithContext(ctx context.Context, v1WorkspacesGetallOptions *V1WorkspacesGetallOptions) (result *Workspaces, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(v1WorkspacesGetallOptions, "v1WorkspacesGetallOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/workspaces`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1WorkspacesGetallOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "WorkspacesGetall")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	if v1WorkspacesGetallOptions.Accept != nil {
+		builder.AddHeader("Accept", fmt.Sprint(*v1WorkspacesGetallOptions.Accept))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalWorkspaces)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// WorkspacesGet : Get a Workspace's information and capabilities
+func (powervs *PowervsV1) WorkspacesGet(v1WorkspacesGetOptions *V1WorkspacesGetOptions) (result *Workspace, response *core.DetailedResponse, err error) {
+	return powervs.WorkspacesGetWithContext(context.Background(), v1WorkspacesGetOptions)
+}
+
+// WorkspacesGetWithContext is an alternate form of the WorkspacesGet method which supports a Context parameter
+func (powervs *PowervsV1) WorkspacesGetWithContext(ctx context.Context, v1WorkspacesGetOptions *V1WorkspacesGetOptions) (result *Workspace, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1WorkspacesGetOptions, "v1WorkspacesGetOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1WorkspacesGetOptions, "v1WorkspacesGetOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"workspace_id": *v1WorkspacesGetOptions.WorkspaceID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/workspaces/{workspace_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1WorkspacesGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "WorkspacesGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	if v1WorkspacesGetOptions.Accept != nil {
+		builder.AddHeader("Accept", fmt.Sprint(*v1WorkspacesGetOptions.Accept))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalWorkspace)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
 // AccessToken : AccessToken struct
 type AccessToken struct {
 	// Access Token.
@@ -13983,7 +14502,7 @@ type AuxiliaryVolumesForOnboarding struct {
 func (*PowervsV1) NewAuxiliaryVolumesForOnboarding(auxiliaryVolumes []AuxiliaryVolumeForOnboarding, sourceCRN string) (_model *AuxiliaryVolumesForOnboarding, err error) {
 	_model = &AuxiliaryVolumesForOnboarding{
 		AuxiliaryVolumes: auxiliaryVolumes,
-		SourceCRN:        core.StringPtr(sourceCRN),
+		SourceCRN: core.StringPtr(sourceCRN),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
@@ -14056,7 +14575,7 @@ type BluemixServiceInstancePutOptions struct {
 func (*PowervsV1) NewBluemixServiceInstancePutOptions(instanceID string, enabled bool) *BluemixServiceInstancePutOptions {
 	return &BluemixServiceInstancePutOptions{
 		InstanceID: core.StringPtr(instanceID),
-		Enabled:    core.BoolPtr(enabled),
+		Enabled: core.BoolPtr(enabled),
 	}
 }
 
@@ -14177,9 +14696,9 @@ type CloneTaskStatus struct {
 // Status of the clone volumes task.
 const (
 	CloneTaskStatusStatusCompletedConst = "completed"
-	CloneTaskStatusStatusFailedConst    = "failed"
-	CloneTaskStatusStatusRunningConst   = "running"
-	CloneTaskStatusStatusUnknownConst   = "unknown"
+	CloneTaskStatusStatusFailedConst = "failed"
+	CloneTaskStatusStatusRunningConst = "running"
+	CloneTaskStatusStatusUnknownConst = "unknown"
 )
 
 // UnmarshalCloneTaskStatus unmarshals an instance of CloneTaskStatus from the specified map of raw messages.
@@ -14463,7 +14982,7 @@ type CloudConnectionGreTunnelCreate struct {
 // NewCloudConnectionGreTunnelCreate : Instantiate CloudConnectionGreTunnelCreate (Generic Model Constructor)
 func (*PowervsV1) NewCloudConnectionGreTunnelCreate(cidr string, destIPAddress string) (_model *CloudConnectionGreTunnelCreate, err error) {
 	_model = &CloudConnectionGreTunnelCreate{
-		CIDR:          core.StringPtr(cidr),
+		CIDR: core.StringPtr(cidr),
 		DestIPAddress: core.StringPtr(destIPAddress),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -14583,6 +15102,30 @@ type CloudConnections struct {
 func UnmarshalCloudConnections(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(CloudConnections)
 	err = core.UnmarshalModel(m, "cloudConnections", &obj.CloudConnections, UnmarshalCloudConnection)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// CloudInitialization : CloudInitialization struct
+type CloudInitialization struct {
+	// Virtual Machine's Cloud Initialization Virtual Optical Device.
+	VirtualOpticalDevice *string `json:"virtualOpticalDevice,omitempty"`
+}
+
+// Constants associated with the CloudInitialization.VirtualOpticalDevice property.
+// Virtual Machine's Cloud Initialization Virtual Optical Device.
+const (
+	CloudInitializationVirtualOpticalDeviceAttachConst = "attach"
+	CloudInitializationVirtualOpticalDeviceDetachConst = "detach"
+)
+
+// UnmarshalCloudInitialization unmarshals an instance of CloudInitialization from the specified map of raw messages.
+func UnmarshalCloudInitialization(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudInitialization)
+	err = core.UnmarshalPrimitive(m, "virtualOpticalDevice", &obj.VirtualOpticalDevice)
 	if err != nil {
 		return
 	}
@@ -15083,6 +15626,113 @@ func UnmarshalDashboardClient(m map[string]json.RawMessage, result interface{}) 
 	return
 }
 
+// Datacenter : Datacenter struct
+type Datacenter struct {
+	// Datacenter Capabilities.
+	Capabilities map[string]bool `json:"capabilities" validate:"required"`
+
+	// Link to Datacenter Region.
+	Href *string `json:"href,omitempty"`
+
+	Location *DatacenterLocation `json:"location" validate:"required"`
+
+	// The Datacenter status.
+	Status *string `json:"status" validate:"required"`
+
+	// The Datacenter type.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the Datacenter.Status property.
+// The Datacenter status.
+const (
+	DatacenterStatusActiveConst = "active"
+	DatacenterStatusDownConst = "down"
+	DatacenterStatusMaintenanceConst = "maintenance"
+)
+
+// Constants associated with the Datacenter.Type property.
+// The Datacenter type.
+const (
+	DatacenterTypeOffPremisesConst = "off-premises"
+	DatacenterTypeOnPremisesConst = "on-premises"
+)
+
+// UnmarshalDatacenter unmarshals an instance of Datacenter from the specified map of raw messages.
+func UnmarshalDatacenter(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Datacenter)
+	err = core.UnmarshalPrimitive(m, "capabilities", &obj.Capabilities)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "location", &obj.Location, UnmarshalDatacenterLocation)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DatacenterLocation : DatacenterLocation struct
+type DatacenterLocation struct {
+	// The Datacenter location region zone.
+	Region *string `json:"region" validate:"required"`
+
+	// The Datacenter location region type.
+	Type *string `json:"type" validate:"required"`
+
+	// The Datacenter location region url.
+	URL *string `json:"url" validate:"required"`
+}
+
+// UnmarshalDatacenterLocation unmarshals an instance of DatacenterLocation from the specified map of raw messages.
+func UnmarshalDatacenterLocation(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DatacenterLocation)
+	err = core.UnmarshalPrimitive(m, "region", &obj.Region)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "url", &obj.URL)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Datacenters : Datacenters struct
+type Datacenters struct {
+	// Power Systems Virtual Server available Datacenters.
+	Datacenters []Datacenter `json:"datacenters" validate:"required"`
+}
+
+// UnmarshalDatacenters unmarshals an instance of Datacenters from the specified map of raw messages.
+func UnmarshalDatacenters(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Datacenters)
+	err = core.UnmarshalModel(m, "datacenters", &obj.Datacenters, UnmarshalDatacenter)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // DeadPeerDetection : Dead Peer Detection of the VPN Connection.
 type DeadPeerDetection struct {
 	// Action to take when a Peer Gateway stops responding.
@@ -15239,9 +15889,9 @@ type Event struct {
 // Constants associated with the Event.Level property.
 // Level of the event (notice, info, warning, error).
 const (
-	EventLevelErrorConst   = "error"
-	EventLevelInfoConst    = "info"
-	EventLevelNoticeConst  = "notice"
+	EventLevelErrorConst = "error"
+	EventLevelInfoConst = "info"
+	EventLevelNoticeConst = "notice"
 	EventLevelWarningConst = "warning"
 )
 
@@ -15671,8 +16321,8 @@ type IkePolicy struct {
 // Constants associated with the IkePolicy.Authentication property.
 // authentication of the IKE policy.
 const (
-	IkePolicyAuthenticationNoneConst   = "none"
-	IkePolicyAuthenticationSha1Const   = "sha1"
+	IkePolicyAuthenticationNoneConst = "none"
+	IkePolicyAuthenticationSha1Const = "sha1"
 	IkePolicyAuthenticationSha256Const = "sha-256"
 	IkePolicyAuthenticationSha384Const = "sha-384"
 )
@@ -15776,8 +16426,8 @@ type IkePolicyUpdate struct {
 // Constants associated with the IkePolicyUpdate.Authentication property.
 // authentication of the IKE policy.
 const (
-	IkePolicyUpdateAuthenticationNoneConst   = "none"
-	IkePolicyUpdateAuthenticationSha1Const   = "sha1"
+	IkePolicyUpdateAuthenticationNoneConst = "none"
+	IkePolicyUpdateAuthenticationSha1Const = "sha1"
 	IkePolicyUpdateAuthenticationSha256Const = "sha-256"
 	IkePolicyUpdateAuthenticationSha384Const = "sha-384"
 )
@@ -15914,7 +16564,7 @@ type IPAddressRange struct {
 // NewIPAddressRange : Instantiate IPAddressRange (Generic Model Constructor)
 func (*PowervsV1) NewIPAddressRange(endingIPAddress string, startingIPAddress string) (_model *IPAddressRange, err error) {
 	_model = &IPAddressRange{
-		EndingIPAddress:   core.StringPtr(endingIPAddress),
+		EndingIPAddress: core.StringPtr(endingIPAddress),
 		StartingIPAddress: core.StringPtr(startingIPAddress),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -15980,9 +16630,9 @@ type IPSecPolicy struct {
 // Constants associated with the IPSecPolicy.Authentication property.
 // authentication for IPSec policy.
 const (
-	IPSecPolicyAuthenticationHmacSha196Const    = "hmac-sha1-96"
+	IPSecPolicyAuthenticationHmacSha196Const = "hmac-sha1-96"
 	IPSecPolicyAuthenticationHmacSha256128Const = "hmac-sha-256-128"
-	IPSecPolicyAuthenticationNoneConst          = "none"
+	IPSecPolicyAuthenticationNoneConst = "none"
 )
 
 // Constants associated with the IPSecPolicy.Encryption property.
@@ -16082,9 +16732,9 @@ type IPSecPolicyUpdate struct {
 // Constants associated with the IPSecPolicyUpdate.Authentication property.
 // authentication for IPSec policy.
 const (
-	IPSecPolicyUpdateAuthenticationHmacSha196Const    = "hmac-sha1-96"
+	IPSecPolicyUpdateAuthenticationHmacSha196Const = "hmac-sha1-96"
 	IPSecPolicyUpdateAuthenticationHmacSha256128Const = "hmac-sha-256-128"
-	IPSecPolicyUpdateAuthenticationNoneConst          = "none"
+	IPSecPolicyUpdateAuthenticationNoneConst = "none"
 )
 
 // Constants associated with the IPSecPolicyUpdate.Encryption property.
@@ -16214,6 +16864,9 @@ type Image struct {
 	// Last Update Date.
 	LastUpdateDate *strfmt.DateTime `json:"lastUpdateDate" validate:"required"`
 
+	// Maximum image volume size for multi-volume image.
+	MaxImageVolumeSize *float64 `json:"maxImageVolumeSize" validate:"required"`
+
 	// Image Name.
 	Name *string `json:"name" validate:"required"`
 
@@ -16256,6 +16909,10 @@ func UnmarshalImage(m map[string]json.RawMessage, result interface{}) (err error
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "lastUpdateDate", &obj.LastUpdateDate)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "maxImageVolumeSize", &obj.MaxImageVolumeSize)
 	if err != nil {
 		return
 	}
@@ -16551,7 +17208,7 @@ type InternalV1StorageRegionsStoragePoolsGetOptions struct {
 // NewInternalV1StorageRegionsStoragePoolsGetOptions : Instantiate InternalV1StorageRegionsStoragePoolsGetOptions
 func (*PowervsV1) NewInternalV1StorageRegionsStoragePoolsGetOptions(regionZoneID string, storagePoolName string) *InternalV1StorageRegionsStoragePoolsGetOptions {
 	return &InternalV1StorageRegionsStoragePoolsGetOptions{
-		RegionZoneID:    core.StringPtr(regionZoneID),
+		RegionZoneID: core.StringPtr(regionZoneID),
 		StoragePoolName: core.StringPtr(storagePoolName),
 	}
 }
@@ -16636,7 +17293,7 @@ const (
 // NewInternalV1StorageRegionsStoragePoolsPutOptions : Instantiate InternalV1StorageRegionsStoragePoolsPutOptions
 func (*PowervsV1) NewInternalV1StorageRegionsStoragePoolsPutOptions(regionZoneID string, storagePoolName string) *InternalV1StorageRegionsStoragePoolsPutOptions {
 	return &InternalV1StorageRegionsStoragePoolsPutOptions{
-		RegionZoneID:    core.StringPtr(regionZoneID),
+		RegionZoneID: core.StringPtr(regionZoneID),
 		StoragePoolName: core.StringPtr(storagePoolName),
 	}
 }
@@ -16794,7 +17451,7 @@ type InternalV1TransitgatewayGetOptions struct {
 // NewInternalV1TransitgatewayGetOptions : Instantiate InternalV1TransitgatewayGetOptions
 func (*PowervsV1) NewInternalV1TransitgatewayGetOptions(powervsServiceCRN string, ibmUserAuthorization string) *InternalV1TransitgatewayGetOptions {
 	return &InternalV1TransitgatewayGetOptions{
-		PowervsServiceCRN:    core.StringPtr(powervsServiceCRN),
+		PowervsServiceCRN: core.StringPtr(powervsServiceCRN),
 		IBMUserAuthorization: core.StringPtr(ibmUserAuthorization),
 	}
 }
@@ -16964,9 +17621,9 @@ type LastOperationResource struct {
 
 // Constants associated with the LastOperationResource.State property.
 const (
-	LastOperationResourceStateFailedConst     = "failed"
+	LastOperationResourceStateFailedConst = "failed"
 	LastOperationResourceStateInProgressConst = "in progress"
-	LastOperationResourceStateSucceededConst  = "succeeded"
+	LastOperationResourceStateSucceededConst = "succeeded"
 )
 
 // UnmarshalLastOperationResource unmarshals an instance of LastOperationResource from the specified map of raw messages.
@@ -17111,6 +17768,14 @@ func UnmarshalMinMaxDefault(m map[string]json.RawMessage, result interface{}) (e
 
 // Network : Network struct
 type Network struct {
+	// Network communication configuration (for satellite locations only)
+	//   * `internal-only` - network is only used for internal host communication
+	//   * `outbound-only` - network will be capable of egress traffic
+	//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+	//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+	//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
+	AccessConfig *string `json:"accessConfig,omitempty"`
+
 	// Network in CIDR notation (192.168.0.0/24).
 	CIDR *string `json:"cidr" validate:"required"`
 
@@ -17132,8 +17797,11 @@ type Network struct {
 	// IP Address Ranges.
 	IPAddressRanges []IPAddressRange `json:"ipAddressRanges" validate:"required"`
 
-	// MTU Jumbo Network enabled.
-	Jumbo *bool `json:"jumbo" validate:"required"`
+	// Enable MTU Jumbo Network (for multi-zone locations only).
+	Jumbo *bool `json:"jumbo,omitempty"`
+
+	// Maximum transmission unit (for satellite locations only).
+	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Network Name.
 	Name *string `json:"name" validate:"required"`
@@ -17144,23 +17812,43 @@ type Network struct {
 	// Public IP Address Ranges (for pub-vlan networks).
 	PublicIPAddressRanges []IPAddressRange `json:"publicIPAddressRanges,omitempty"`
 
-	// Type of Network {vlan, pub-vlan}.
+	// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
 	Type *string `json:"type" validate:"required"`
 
 	// VLAN ID.
 	VlanID *float64 `json:"vlanID" validate:"required"`
 }
 
-// Constants associated with the Network.Type property.
-// Type of Network {vlan, pub-vlan}.
+// Constants associated with the Network.AccessConfig property.
+// Network communication configuration (for satellite locations only)
+//   * `internal-only` - network is only used for internal host communication
+//   * `outbound-only` - network will be capable of egress traffic
+//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
 const (
+	NetworkAccessConfigBidirectionalBgpConst = "bidirectional-bgp"
+	NetworkAccessConfigBidirectionalL2outConst = "bidirectional-l2out"
+	NetworkAccessConfigBidirectionalStaticRouteConst = "bidirectional-static-route"
+	NetworkAccessConfigInternalOnlyConst = "internal-only"
+	NetworkAccessConfigOutboundOnlyConst = "outbound-only"
+)
+
+// Constants associated with the Network.Type property.
+// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
+const (
+	NetworkTypeDhcpVlanConst = "dhcp-vlan"
 	NetworkTypePubVlanConst = "pub-vlan"
-	NetworkTypeVlanConst    = "vlan"
+	NetworkTypeVlanConst = "vlan"
 )
 
 // UnmarshalNetwork unmarshals an instance of Network from the specified map of raw messages.
 func UnmarshalNetwork(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Network)
+	err = core.UnmarshalPrimitive(m, "accessConfig", &obj.AccessConfig)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "cidr", &obj.CIDR)
 	if err != nil {
 		return
@@ -17190,6 +17878,10 @@ func UnmarshalNetwork(m map[string]json.RawMessage, result interface{}) (err err
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "jumbo", &obj.Jumbo)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "mtu", &obj.Mtu)
 	if err != nil {
 		return
 	}
@@ -17405,14 +18097,25 @@ func UnmarshalNetworkPorts(m map[string]json.RawMessage, result interface{}) (er
 
 // NetworkReference : NetworkReference struct
 type NetworkReference struct {
+	// Network communication configuration (for satellite locations only)
+	//   * `internal-only` - network is only used for internal host communication
+	//   * `outbound-only` - network will be capable of egress traffic
+	//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+	//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+	//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
+	AccessConfig *string `json:"accessConfig,omitempty"`
+
 	// DHCP Managed Network.
 	DhcpManaged *bool `json:"dhcpManaged,omitempty"`
 
 	// Link to Network resource.
 	Href *string `json:"href" validate:"required"`
 
-	// MTU Jumbo Network enabled.
-	Jumbo *bool `json:"jumbo" validate:"required"`
+	// Enable MTU Jumbo Network (for multi-zone locations only).
+	Jumbo *bool `json:"jumbo,omitempty"`
+
+	// Maximum transmission unit (for satellite locations only).
+	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Network Name.
 	Name *string `json:"name" validate:"required"`
@@ -17420,23 +18123,43 @@ type NetworkReference struct {
 	// Unique Network ID.
 	NetworkID *string `json:"networkID" validate:"required"`
 
-	// Type of Network {vlan, pub-vlan}.
+	// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
 	Type *string `json:"type" validate:"required"`
 
 	// VLAN ID.
 	VlanID *float64 `json:"vlanID" validate:"required"`
 }
 
-// Constants associated with the NetworkReference.Type property.
-// Type of Network {vlan, pub-vlan}.
+// Constants associated with the NetworkReference.AccessConfig property.
+// Network communication configuration (for satellite locations only)
+//   * `internal-only` - network is only used for internal host communication
+//   * `outbound-only` - network will be capable of egress traffic
+//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
 const (
+	NetworkReferenceAccessConfigBidirectionalBgpConst = "bidirectional-bgp"
+	NetworkReferenceAccessConfigBidirectionalL2outConst = "bidirectional-l2out"
+	NetworkReferenceAccessConfigBidirectionalStaticRouteConst = "bidirectional-static-route"
+	NetworkReferenceAccessConfigInternalOnlyConst = "internal-only"
+	NetworkReferenceAccessConfigOutboundOnlyConst = "outbound-only"
+)
+
+// Constants associated with the NetworkReference.Type property.
+// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
+const (
+	NetworkReferenceTypeDhcpVlanConst = "dhcp-vlan"
 	NetworkReferenceTypePubVlanConst = "pub-vlan"
-	NetworkReferenceTypeVlanConst    = "vlan"
+	NetworkReferenceTypeVlanConst = "vlan"
 )
 
 // UnmarshalNetworkReference unmarshals an instance of NetworkReference from the specified map of raw messages.
 func UnmarshalNetworkReference(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(NetworkReference)
+	err = core.UnmarshalPrimitive(m, "accessConfig", &obj.AccessConfig)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "dhcpManaged", &obj.DhcpManaged)
 	if err != nil {
 		return
@@ -17446,6 +18169,10 @@ func UnmarshalNetworkReference(m map[string]json.RawMessage, result interface{})
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "jumbo", &obj.Jumbo)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "mtu", &obj.Mtu)
 	if err != nil {
 		return
 	}
@@ -17698,13 +18425,13 @@ const (
 // Name of the job task to execute.
 const (
 	OperationsTaskConsoleserviceConst = "consoleservice"
-	OperationsTaskDstonConst          = "dston"
-	OperationsTaskDumprestartConst    = "dumprestart"
-	OperationsTaskIopdumpConst        = "iopdump"
-	OperationsTaskIopresetConst       = "iopreset"
-	OperationsTaskRemotedstoffConst   = "remotedstoff"
-	OperationsTaskRemotedstonConst    = "remotedston"
-	OperationsTaskRetrydumpConst      = "retrydump"
+	OperationsTaskDstonConst = "dston"
+	OperationsTaskDumprestartConst = "dumprestart"
+	OperationsTaskIopdumpConst = "iopdump"
+	OperationsTaskIopresetConst = "iopreset"
+	OperationsTaskRemotedstoffConst = "remotedstoff"
+	OperationsTaskRemotedstonConst = "remotedston"
+	OperationsTaskRetrydumpConst = "retrydump"
 )
 
 // UnmarshalOperations unmarshals an instance of Operations from the specified map of raw messages.
@@ -17897,6 +18624,9 @@ type PvmInstance struct {
 	// The status of the instance.
 	Status *string `json:"status" validate:"required"`
 
+	// The storage connection type.
+	StorageConnection *string `json:"storageConnection,omitempty"`
+
 	// Storage Pool where server is deployed.
 	StoragePool *string `json:"storagePool,omitempty"`
 
@@ -17922,9 +18652,9 @@ type PvmInstance struct {
 // Constants associated with the PvmInstance.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PvmInstanceProcTypeCappedConst    = "capped"
+	PvmInstanceProcTypeCappedConst = "capped"
 	PvmInstanceProcTypeDedicatedConst = "dedicated"
-	PvmInstanceProcTypeSharedConst    = "shared"
+	PvmInstanceProcTypeSharedConst = "shared"
 )
 
 // UnmarshalPvmInstance unmarshals an instance of PvmInstance from the specified map of raw messages.
@@ -18059,6 +18789,10 @@ func UnmarshalPvmInstance(m map[string]json.RawMessage, result interface{}) (err
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "storageConnection", &obj.StorageConnection)
 	if err != nil {
 		return
 	}
@@ -18334,9 +19068,9 @@ type PvmInstanceMultiCreate struct {
 // Affinity policy for pvm-instances being created; affinity for the same host, anti-affinity for different hosts, none
 // for no preference.
 const (
-	PvmInstanceMultiCreateAffinityPolicyAffinityConst     = "affinity"
+	PvmInstanceMultiCreateAffinityPolicyAffinityConst = "affinity"
 	PvmInstanceMultiCreateAffinityPolicyAntiAffinityConst = "anti-affinity"
-	PvmInstanceMultiCreateAffinityPolicyNoneConst         = "none"
+	PvmInstanceMultiCreateAffinityPolicyNoneConst = "none"
 )
 
 // Constants associated with the PvmInstanceMultiCreate.Numerical property.
@@ -18571,6 +19305,9 @@ type PvmInstanceReference struct {
 	// The status of the instance.
 	Status *string `json:"status" validate:"required"`
 
+	// The storage connection type.
+	StorageConnection *string `json:"storageConnection,omitempty"`
+
 	// Storage Pool where server is deployed.
 	StoragePool *string `json:"storagePool,omitempty"`
 
@@ -18592,9 +19329,9 @@ type PvmInstanceReference struct {
 // Constants associated with the PvmInstanceReference.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PvmInstanceReferenceProcTypeCappedConst    = "capped"
+	PvmInstanceReferenceProcTypeCappedConst = "capped"
 	PvmInstanceReferenceProcTypeDedicatedConst = "dedicated"
-	PvmInstanceReferenceProcTypeSharedConst    = "shared"
+	PvmInstanceReferenceProcTypeSharedConst = "shared"
 )
 
 // UnmarshalPvmInstanceReference unmarshals an instance of PvmInstanceReference from the specified map of raw messages.
@@ -18724,6 +19461,10 @@ func UnmarshalPvmInstanceReference(m map[string]json.RawMessage, result interfac
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "storageConnection", &obj.StorageConnection)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "storagePool", &obj.StoragePool)
 	if err != nil {
 		return
@@ -18763,6 +19504,9 @@ type PvmInstanceReferenceV2 struct {
 
 	Deployment *PvmInstanceDeployment `json:"deployment" validate:"required"`
 
+	// PVM's health status details.
+	Health *PvmInstanceV2Health `json:"health,omitempty"`
+
 	Host *PvmInstanceHost `json:"host,omitempty"`
 
 	// Link to Cloud Instance resource.
@@ -18775,6 +19519,9 @@ type PvmInstanceReferenceV2 struct {
 
 	// Name of the server.
 	Name *string `json:"name" validate:"required"`
+
+	// The pvm instance network ports information.
+	NetworkPorts []PvmInstanceV2NetworkPort `json:"networkPorts" validate:"required"`
 
 	OperatingSystem *PvmInstanceOperatingSystem `json:"operatingSystem" validate:"required"`
 
@@ -18805,6 +19552,10 @@ func UnmarshalPvmInstanceReferenceV2(m map[string]json.RawMessage, result interf
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health", &obj.Health, UnmarshalPvmInstanceV2Health)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalModel(m, "host", &obj.Host, UnmarshalPvmInstanceHost)
 	if err != nil {
 		return
@@ -18822,6 +19573,10 @@ func UnmarshalPvmInstanceReferenceV2(m map[string]json.RawMessage, result interf
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "networkPorts", &obj.NetworkPorts, UnmarshalPvmInstanceV2NetworkPort)
 	if err != nil {
 		return
 	}
@@ -18881,9 +19636,9 @@ const (
 // Constants associated with the PvmInstanceUpdateResponse.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PvmInstanceUpdateResponseProcTypeCappedConst    = "capped"
+	PvmInstanceUpdateResponseProcTypeCappedConst = "capped"
 	PvmInstanceUpdateResponseProcTypeDedicatedConst = "dedicated"
-	PvmInstanceUpdateResponseProcTypeSharedConst    = "shared"
+	PvmInstanceUpdateResponseProcTypeSharedConst = "shared"
 )
 
 // UnmarshalPvmInstanceUpdateResponse unmarshals an instance of PvmInstanceUpdateResponse from the specified map of raw messages.
@@ -18914,6 +19669,82 @@ func UnmarshalPvmInstanceUpdateResponse(m map[string]json.RawMessage, result int
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "statusUrl", &obj.StatusURL)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// PvmInstanceV2Health : PVM's health status details.
+type PvmInstanceV2Health struct {
+	// The PVM's health status value.
+	Status *string `json:"status" validate:"required"`
+}
+
+// UnmarshalPvmInstanceV2Health unmarshals an instance of PvmInstanceV2Health from the specified map of raw messages.
+func UnmarshalPvmInstanceV2Health(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(PvmInstanceV2Health)
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// PvmInstanceV2NetworkPort : PVM's Port information.
+type PvmInstanceV2NetworkPort struct {
+	// Unique Port ID.
+	ID *string `json:"id,omitempty"`
+
+	// Dynamic Host Configuration Protocol {IPv4, IPv6}.
+	IPProtocol *string `json:"ipProtocol,omitempty"`
+
+	// The mac address of the network interface.
+	MacAddress *string `json:"macAddress,omitempty"`
+
+	// The private ip address.
+	PrivateIP *string `json:"privateIP,omitempty"`
+
+	// The type of ip allocation {dhcp, static}.
+	Type *string `json:"type,omitempty"`
+}
+
+// Constants associated with the PvmInstanceV2NetworkPort.IPProtocol property.
+// Dynamic Host Configuration Protocol {IPv4, IPv6}.
+const (
+	PvmInstanceV2NetworkPortIPProtocolIpv4Const = "IPv4"
+	PvmInstanceV2NetworkPortIPProtocolIpv6Const = "IPv6"
+)
+
+// Constants associated with the PvmInstanceV2NetworkPort.Type property.
+// The type of ip allocation {dhcp, static}.
+const (
+	PvmInstanceV2NetworkPortTypeDhcpConst = "dhcp"
+	PvmInstanceV2NetworkPortTypeStaticConst = "static"
+)
+
+// UnmarshalPvmInstanceV2NetworkPort unmarshals an instance of PvmInstanceV2NetworkPort from the specified map of raw messages.
+func UnmarshalPvmInstanceV2NetworkPort(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(PvmInstanceV2NetworkPort)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "ipProtocol", &obj.IPProtocol)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "macAddress", &obj.MacAddress)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "privateIP", &obj.PrivateIP)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
@@ -19001,7 +19832,7 @@ type PcloudCloudconnectionsDeleteOptions struct {
 // NewPcloudCloudconnectionsDeleteOptions : Instantiate PcloudCloudconnectionsDeleteOptions
 func (*PowervsV1) NewPcloudCloudconnectionsDeleteOptions(cloudInstanceID string, cloudConnectionID string) *PcloudCloudconnectionsDeleteOptions {
 	return &PcloudCloudconnectionsDeleteOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		CloudConnectionID: core.StringPtr(cloudConnectionID),
 	}
 }
@@ -19039,7 +19870,7 @@ type PcloudCloudconnectionsGetOptions struct {
 // NewPcloudCloudconnectionsGetOptions : Instantiate PcloudCloudconnectionsGetOptions
 func (*PowervsV1) NewPcloudCloudconnectionsGetOptions(cloudInstanceID string, cloudConnectionID string) *PcloudCloudconnectionsGetOptions {
 	return &PcloudCloudconnectionsGetOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		CloudConnectionID: core.StringPtr(cloudConnectionID),
 	}
 }
@@ -19108,9 +19939,9 @@ type PcloudCloudconnectionsNetworksDeleteOptions struct {
 // NewPcloudCloudconnectionsNetworksDeleteOptions : Instantiate PcloudCloudconnectionsNetworksDeleteOptions
 func (*PowervsV1) NewPcloudCloudconnectionsNetworksDeleteOptions(cloudInstanceID string, cloudConnectionID string, networkID string) *PcloudCloudconnectionsNetworksDeleteOptions {
 	return &PcloudCloudconnectionsNetworksDeleteOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		CloudConnectionID: core.StringPtr(cloudConnectionID),
-		NetworkID:         core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -19156,9 +19987,9 @@ type PcloudCloudconnectionsNetworksPutOptions struct {
 // NewPcloudCloudconnectionsNetworksPutOptions : Instantiate PcloudCloudconnectionsNetworksPutOptions
 func (*PowervsV1) NewPcloudCloudconnectionsNetworksPutOptions(cloudInstanceID string, cloudConnectionID string, networkID string) *PcloudCloudconnectionsNetworksPutOptions {
 	return &PcloudCloudconnectionsNetworksPutOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		CloudConnectionID: core.StringPtr(cloudConnectionID),
-		NetworkID:         core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -19221,8 +20052,8 @@ type PcloudCloudconnectionsPostOptions struct {
 func (*PowervsV1) NewPcloudCloudconnectionsPostOptions(cloudInstanceID string, name string, speed int64) *PcloudCloudconnectionsPostOptions {
 	return &PcloudCloudconnectionsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		Speed:           core.Int64Ptr(speed),
+		Name: core.StringPtr(name),
+		Speed: core.Int64Ptr(speed),
 	}
 }
 
@@ -19317,7 +20148,7 @@ type PcloudCloudconnectionsPutOptions struct {
 // NewPcloudCloudconnectionsPutOptions : Instantiate PcloudCloudconnectionsPutOptions
 func (*PowervsV1) NewPcloudCloudconnectionsPutOptions(cloudInstanceID string, cloudConnectionID string) *PcloudCloudconnectionsPutOptions {
 	return &PcloudCloudconnectionsPutOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		CloudConnectionID: core.StringPtr(cloudConnectionID),
 	}
 }
@@ -19476,7 +20307,7 @@ type PcloudCloudinstancesImagesDeleteOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesImagesDeleteOptions(cloudInstanceID string, imageID string) *PcloudCloudinstancesImagesDeleteOptions {
 	return &PcloudCloudinstancesImagesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
+		ImageID: core.StringPtr(imageID),
 	}
 }
 
@@ -19526,9 +20357,9 @@ type PcloudCloudinstancesImagesExportPostOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesImagesExportPostOptions(cloudInstanceID string, imageID string, accessKey string, bucketName string) *PcloudCloudinstancesImagesExportPostOptions {
 	return &PcloudCloudinstancesImagesExportPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
-		AccessKey:       core.StringPtr(accessKey),
-		BucketName:      core.StringPtr(bucketName),
+		ImageID: core.StringPtr(imageID),
+		AccessKey: core.StringPtr(accessKey),
+		BucketName: core.StringPtr(bucketName),
 	}
 }
 
@@ -19590,7 +20421,7 @@ type PcloudCloudinstancesImagesGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesImagesGetOptions(cloudInstanceID string, imageID string) *PcloudCloudinstancesImagesGetOptions {
 	return &PcloudCloudinstancesImagesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
+		ImageID: core.StringPtr(imageID),
 	}
 }
 
@@ -19655,8 +20486,8 @@ type PcloudCloudinstancesImagesPostOptions struct {
 	// Cloud Storage bucket name; bucket-name[/optional/folder]; required for import image.
 	BucketName *string `json:"bucketName,omitempty"`
 
-	// Type of Disk; will be ignored if storagePool or affinityPolicy is provided; Used only when importing an image from
-	// cloud storage.
+	// Type of Disk; if diskType is not provided the disk type will default to 'tier3'. Used only when importing an image
+	// from cloud storage.
 	DiskType *string `json:"diskType,omitempty"`
 
 	// Cloud Storage image filename; required for import image.
@@ -19681,13 +20512,10 @@ type PcloudCloudinstancesImagesPostOptions struct {
 	// Cloud Storage secret key; required for import image.
 	SecretKey *string `json:"secretKey,omitempty"`
 
-	// Source2 is added to test empty image reference.
-	Source2 *string `json:"source2,omitempty"`
-
 	StorageAffinity *StorageAffinity `json:"storageAffinity,omitempty"`
 
-	// Storage pool where the image will be loaded; if provided then storageAffinity and diskType will be ignored; Used
-	// only when importing an image from cloud storage.
+	// Storage pool where the image will be loaded; if provided then storageAffinity will be ignored; Used only when
+	// importing an image from cloud storage.
 	StoragePool *string `json:"storagePool,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -19699,13 +20527,13 @@ type PcloudCloudinstancesImagesPostOptions struct {
 // >*Note*: url option is deprecated, this option is supported till Oct 2022.
 const (
 	PcloudCloudinstancesImagesPostOptionsSourceRootProjectConst = "root-project"
-	PcloudCloudinstancesImagesPostOptionsSourceURLConst         = "url"
+	PcloudCloudinstancesImagesPostOptionsSourceURLConst = "url"
 )
 
 // Constants associated with the PcloudCloudinstancesImagesPostOptions.OsType property.
 // Image OS Type, required if importing a raw image; raw images can only be imported using the command line interface.
 const (
-	PcloudCloudinstancesImagesPostOptionsOsTypeAixConst  = "aix"
+	PcloudCloudinstancesImagesPostOptionsOsTypeAixConst = "aix"
 	PcloudCloudinstancesImagesPostOptionsOsTypeIbmiConst = "ibmi"
 	PcloudCloudinstancesImagesPostOptionsOsTypeRhelConst = "rhel"
 	PcloudCloudinstancesImagesPostOptionsOsTypeSlesConst = "sles"
@@ -19715,7 +20543,7 @@ const (
 func (*PowervsV1) NewPcloudCloudinstancesImagesPostOptions(cloudInstanceID string, source string) *PcloudCloudinstancesImagesPostOptions {
 	return &PcloudCloudinstancesImagesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Source:          core.StringPtr(source),
+		Source: core.StringPtr(source),
 	}
 }
 
@@ -19791,12 +20619,6 @@ func (_options *PcloudCloudinstancesImagesPostOptions) SetSecretKey(secretKey st
 	return _options
 }
 
-// SetSource2 : Allow user to set Source2
-func (_options *PcloudCloudinstancesImagesPostOptions) SetSource2(source2 string) *PcloudCloudinstancesImagesPostOptions {
-	_options.Source2 = core.StringPtr(source2)
-	return _options
-}
-
 // SetStorageAffinity : Allow user to set StorageAffinity
 func (_options *PcloudCloudinstancesImagesPostOptions) SetStorageAffinity(storageAffinity *StorageAffinity) *PcloudCloudinstancesImagesPostOptions {
 	_options.StorageAffinity = storageAffinity
@@ -19831,7 +20653,7 @@ type PcloudCloudinstancesJobsDeleteOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesJobsDeleteOptions(cloudInstanceID string, jobID string) *PcloudCloudinstancesJobsDeleteOptions {
 	return &PcloudCloudinstancesJobsDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		JobID:           core.StringPtr(jobID),
+		JobID: core.StringPtr(jobID),
 	}
 }
 
@@ -19869,7 +20691,7 @@ type PcloudCloudinstancesJobsGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesJobsGetOptions(cloudInstanceID string, jobID string) *PcloudCloudinstancesJobsGetOptions {
 	return &PcloudCloudinstancesJobsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		JobID:           core.StringPtr(jobID),
+		JobID: core.StringPtr(jobID),
 	}
 }
 
@@ -19915,9 +20737,9 @@ type PcloudCloudinstancesJobsGetallOptions struct {
 // Operation target to filter jobs (optional).
 const (
 	PcloudCloudinstancesJobsGetallOptionsOperationTargetCloudconnectionConst = "cloudConnection"
-	PcloudCloudinstancesJobsGetallOptionsOperationTargetImageConst           = "image"
-	PcloudCloudinstancesJobsGetallOptionsOperationTargetPvminstanceConst     = "pvmInstance"
-	PcloudCloudinstancesJobsGetallOptionsOperationTargetVpnconnectionConst   = "vpnConnection"
+	PcloudCloudinstancesJobsGetallOptionsOperationTargetImageConst = "image"
+	PcloudCloudinstancesJobsGetallOptionsOperationTargetPvminstanceConst = "pvmInstance"
+	PcloudCloudinstancesJobsGetallOptionsOperationTargetVpnconnectionConst = "vpnConnection"
 )
 
 // Constants associated with the PcloudCloudinstancesJobsGetallOptions.OperationAction property.
@@ -19927,8 +20749,8 @@ const (
 const (
 	PcloudCloudinstancesJobsGetallOptionsOperationActionImageexportConst = "imageExport"
 	PcloudCloudinstancesJobsGetallOptionsOperationActionImageimportConst = "imageImport"
-	PcloudCloudinstancesJobsGetallOptionsOperationActionStorageConst     = "storage"
-	PcloudCloudinstancesJobsGetallOptionsOperationActionVmcaptureConst   = "vmCapture"
+	PcloudCloudinstancesJobsGetallOptionsOperationActionStorageConst = "storage"
+	PcloudCloudinstancesJobsGetallOptionsOperationActionVmcaptureConst = "vmCapture"
 )
 
 // NewPcloudCloudinstancesJobsGetallOptions : Instantiate PcloudCloudinstancesJobsGetallOptions
@@ -20057,7 +20879,7 @@ type PcloudCloudinstancesSnapshotsDeleteOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesSnapshotsDeleteOptions(cloudInstanceID string, snapshotID string) *PcloudCloudinstancesSnapshotsDeleteOptions {
 	return &PcloudCloudinstancesSnapshotsDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		SnapshotID:      core.StringPtr(snapshotID),
+		SnapshotID: core.StringPtr(snapshotID),
 	}
 }
 
@@ -20095,7 +20917,7 @@ type PcloudCloudinstancesSnapshotsGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesSnapshotsGetOptions(cloudInstanceID string, snapshotID string) *PcloudCloudinstancesSnapshotsGetOptions {
 	return &PcloudCloudinstancesSnapshotsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		SnapshotID:      core.StringPtr(snapshotID),
+		SnapshotID: core.StringPtr(snapshotID),
 	}
 }
 
@@ -20167,7 +20989,7 @@ type PcloudCloudinstancesSnapshotsPutOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesSnapshotsPutOptions(cloudInstanceID string, snapshotID string) *PcloudCloudinstancesSnapshotsPutOptions {
 	return &PcloudCloudinstancesSnapshotsPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		SnapshotID:      core.StringPtr(snapshotID),
+		SnapshotID: core.StringPtr(snapshotID),
 	}
 }
 
@@ -20217,7 +21039,7 @@ type PcloudCloudinstancesStockimagesGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesStockimagesGetOptions(cloudInstanceID string, imageID string) *PcloudCloudinstancesStockimagesGetOptions {
 	return &PcloudCloudinstancesStockimagesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
+		ImageID: core.StringPtr(imageID),
 	}
 }
 
@@ -20285,6 +21107,34 @@ func (options *PcloudCloudinstancesStockimagesGetallOptions) SetHeaders(param ma
 	return options
 }
 
+// PcloudCloudinstancesStoragetiersGetallOptions : The PcloudCloudinstancesStoragetiersGetall options.
+type PcloudCloudinstancesStoragetiersGetallOptions struct {
+	// Cloud Instance ID of a PCloud Instance.
+	CloudInstanceID *string `json:"cloud_instance_id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewPcloudCloudinstancesStoragetiersGetallOptions : Instantiate PcloudCloudinstancesStoragetiersGetallOptions
+func (*PowervsV1) NewPcloudCloudinstancesStoragetiersGetallOptions(cloudInstanceID string) *PcloudCloudinstancesStoragetiersGetallOptions {
+	return &PcloudCloudinstancesStoragetiersGetallOptions{
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+	}
+}
+
+// SetCloudInstanceID : Allow user to set CloudInstanceID
+func (_options *PcloudCloudinstancesStoragetiersGetallOptions) SetCloudInstanceID(cloudInstanceID string) *PcloudCloudinstancesStoragetiersGetallOptions {
+	_options.CloudInstanceID = core.StringPtr(cloudInstanceID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *PcloudCloudinstancesStoragetiersGetallOptions) SetHeaders(param map[string]string) *PcloudCloudinstancesStoragetiersGetallOptions {
+	options.Headers = param
+	return options
+}
+
 // PcloudCloudinstancesVolumesActionPostOptions : The PcloudCloudinstancesVolumesActionPost options.
 type PcloudCloudinstancesVolumesActionPostOptions struct {
 	// Cloud Instance ID of a PCloud Instance.
@@ -20294,18 +21144,20 @@ type PcloudCloudinstancesVolumesActionPostOptions struct {
 	VolumeID *string `json:"volume_id" validate:"required,ne="`
 
 	// Indicates if the volume should be replication enabled or not.
-	ReplicationEnabled *bool `json:"replicationEnabled" validate:"required"`
+	ReplicationEnabled *bool `json:"replicationEnabled,omitempty"`
+
+	// Target storage tier; used to change a volume's storage tier.
+	TargetStorageTier *string `json:"targetStorageTier,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewPcloudCloudinstancesVolumesActionPostOptions : Instantiate PcloudCloudinstancesVolumesActionPostOptions
-func (*PowervsV1) NewPcloudCloudinstancesVolumesActionPostOptions(cloudInstanceID string, volumeID string, replicationEnabled bool) *PcloudCloudinstancesVolumesActionPostOptions {
+func (*PowervsV1) NewPcloudCloudinstancesVolumesActionPostOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesActionPostOptions {
 	return &PcloudCloudinstancesVolumesActionPostOptions{
-		CloudInstanceID:    core.StringPtr(cloudInstanceID),
-		VolumeID:           core.StringPtr(volumeID),
-		ReplicationEnabled: core.BoolPtr(replicationEnabled),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20324,6 +21176,12 @@ func (_options *PcloudCloudinstancesVolumesActionPostOptions) SetVolumeID(volume
 // SetReplicationEnabled : Allow user to set ReplicationEnabled
 func (_options *PcloudCloudinstancesVolumesActionPostOptions) SetReplicationEnabled(replicationEnabled bool) *PcloudCloudinstancesVolumesActionPostOptions {
 	_options.ReplicationEnabled = core.BoolPtr(replicationEnabled)
+	return _options
+}
+
+// SetTargetStorageTier : Allow user to set TargetStorageTier
+func (_options *PcloudCloudinstancesVolumesActionPostOptions) SetTargetStorageTier(targetStorageTier string) *PcloudCloudinstancesVolumesActionPostOptions {
+	_options.TargetStorageTier = core.StringPtr(targetStorageTier)
 	return _options
 }
 
@@ -20349,7 +21207,7 @@ type PcloudCloudinstancesVolumesDeleteOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesVolumesDeleteOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesDeleteOptions {
 	return &PcloudCloudinstancesVolumesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20387,7 +21245,7 @@ type PcloudCloudinstancesVolumesFlashCopyMappingsGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesVolumesFlashCopyMappingsGetOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesFlashCopyMappingsGetOptions {
 	return &PcloudCloudinstancesVolumesFlashCopyMappingsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20425,7 +21283,7 @@ type PcloudCloudinstancesVolumesGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesVolumesGetOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesGetOptions {
 	return &PcloudCloudinstancesVolumesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20534,7 +21392,7 @@ type PcloudCloudinstancesVolumesPostOptions struct {
 	// antiAffinityPVMInstances is not provided.
 	AntiAffinityVolumes []string `json:"antiAffinityVolumes,omitempty"`
 
-	// Type of Disk, required if affinityPolicy and volumePool not provided, otherwise ignored.
+	// Type of Disk; if diskType is not provided the disk type will default to 'tier3'.
 	DiskType *string `json:"diskType,omitempty"`
 
 	// Indicates if the volume should be replication enabled or not.
@@ -20543,7 +21401,7 @@ type PcloudCloudinstancesVolumesPostOptions struct {
 	// Indicates if the volume is shareable between VMs.
 	Shareable *bool `json:"shareable,omitempty"`
 
-	// Volume pool where the volume will be created; if provided then diskType and affinityPolicy values will be ignored.
+	// Volume pool where the volume will be created; if provided then affinityPolicy value will be ignored.
 	VolumePool *string `json:"volumePool,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -20555,7 +21413,7 @@ type PcloudCloudinstancesVolumesPostOptions struct {
 // affinityPVMInstance or affinityVolume to be specified; for policy 'anti-affinity' requires one of
 // antiAffinityPVMInstances or antiAffinityVolumes to be specified.
 const (
-	PcloudCloudinstancesVolumesPostOptionsAffinityPolicyAffinityConst     = "affinity"
+	PcloudCloudinstancesVolumesPostOptionsAffinityPolicyAffinityConst = "affinity"
 	PcloudCloudinstancesVolumesPostOptionsAffinityPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -20563,8 +21421,8 @@ const (
 func (*PowervsV1) NewPcloudCloudinstancesVolumesPostOptions(cloudInstanceID string, name string, size float64) *PcloudCloudinstancesVolumesPostOptions {
 	return &PcloudCloudinstancesVolumesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		Size:            core.Float64Ptr(size),
+		Name: core.StringPtr(name),
+		Size: core.Float64Ptr(size),
 	}
 }
 
@@ -20674,7 +21532,7 @@ type PcloudCloudinstancesVolumesPutOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesVolumesPutOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesPutOptions {
 	return &PcloudCloudinstancesVolumesPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20736,7 +21594,7 @@ type PcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions struct {
 func (*PowervsV1) NewPcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions(cloudInstanceID string, volumeID string) *PcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions {
 	return &PcloudCloudinstancesVolumesRemoteCopyRelationshipGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -20774,7 +21632,7 @@ type PcloudDhcpDeleteOptions struct {
 func (*PowervsV1) NewPcloudDhcpDeleteOptions(cloudInstanceID string, dhcpID string) *PcloudDhcpDeleteOptions {
 	return &PcloudDhcpDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		DhcpID:          core.StringPtr(dhcpID),
+		DhcpID: core.StringPtr(dhcpID),
 	}
 }
 
@@ -20812,7 +21670,7 @@ type PcloudDhcpGetOptions struct {
 func (*PowervsV1) NewPcloudDhcpGetOptions(cloudInstanceID string, dhcpID string) *PcloudDhcpGetOptions {
 	return &PcloudDhcpGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		DhcpID:          core.StringPtr(dhcpID),
+		DhcpID: core.StringPtr(dhcpID),
 	}
 }
 
@@ -20955,7 +21813,7 @@ type PcloudEventsGetOptions struct {
 func (*PowervsV1) NewPcloudEventsGetOptions(cloudInstanceID string, eventID string) *PcloudEventsGetOptions {
 	return &PcloudEventsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		EventID:         core.StringPtr(eventID),
+		EventID: core.StringPtr(eventID),
 	}
 }
 
@@ -21063,7 +21921,7 @@ type PcloudIkepoliciesDeleteOptions struct {
 func (*PowervsV1) NewPcloudIkepoliciesDeleteOptions(cloudInstanceID string, ikePolicyID string) *PcloudIkepoliciesDeleteOptions {
 	return &PcloudIkepoliciesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		IkePolicyID:     core.StringPtr(ikePolicyID),
+		IkePolicyID: core.StringPtr(ikePolicyID),
 	}
 }
 
@@ -21101,7 +21959,7 @@ type PcloudIkepoliciesGetOptions struct {
 func (*PowervsV1) NewPcloudIkepoliciesGetOptions(cloudInstanceID string, ikePolicyID string) *PcloudIkepoliciesGetOptions {
 	return &PcloudIkepoliciesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		IkePolicyID:     core.StringPtr(ikePolicyID),
+		IkePolicyID: core.StringPtr(ikePolicyID),
 	}
 }
 
@@ -21194,8 +22052,8 @@ const (
 // Constants associated with the PcloudIkepoliciesPostOptions.Authentication property.
 // authentication of the IKE policy.
 const (
-	PcloudIkepoliciesPostOptionsAuthenticationNoneConst   = "none"
-	PcloudIkepoliciesPostOptionsAuthenticationSha1Const   = "sha1"
+	PcloudIkepoliciesPostOptionsAuthenticationNoneConst = "none"
+	PcloudIkepoliciesPostOptionsAuthenticationSha1Const = "sha1"
 	PcloudIkepoliciesPostOptionsAuthenticationSha256Const = "sha-256"
 	PcloudIkepoliciesPostOptionsAuthenticationSha384Const = "sha-384"
 )
@@ -21204,12 +22062,12 @@ const (
 func (*PowervsV1) NewPcloudIkepoliciesPostOptions(cloudInstanceID string, dhGroup int64, encryption string, keyLifetime int64, name string, presharedKey string, version int64) *PcloudIkepoliciesPostOptions {
 	return &PcloudIkepoliciesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		DhGroup:         core.Int64Ptr(dhGroup),
-		Encryption:      core.StringPtr(encryption),
-		KeyLifetime:     core.Int64Ptr(keyLifetime),
-		Name:            core.StringPtr(name),
-		PresharedKey:    core.StringPtr(presharedKey),
-		Version:         core.Int64Ptr(version),
+		DhGroup: core.Int64Ptr(dhGroup),
+		Encryption: core.StringPtr(encryption),
+		KeyLifetime: core.Int64Ptr(keyLifetime),
+		Name: core.StringPtr(name),
+		PresharedKey: core.StringPtr(presharedKey),
+		Version: core.Int64Ptr(version),
 	}
 }
 
@@ -21276,18 +22134,18 @@ type PcloudIkepoliciesPutOptions struct {
 	IkePolicyID *string `json:"ike_policy_id" validate:"required,ne="`
 
 	// Parameters for updating IKE Policy.
-	IkePolicyUpdate *IkePolicyUpdate `json:"IKEPolicyUpdate" validate:"required"`
+	Body *IkePolicyUpdate `json:"body" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewPcloudIkepoliciesPutOptions : Instantiate PcloudIkepoliciesPutOptions
-func (*PowervsV1) NewPcloudIkepoliciesPutOptions(cloudInstanceID string, ikePolicyID string, ikePolicyUpdate *IkePolicyUpdate) *PcloudIkepoliciesPutOptions {
+func (*PowervsV1) NewPcloudIkepoliciesPutOptions(cloudInstanceID string, ikePolicyID string, body *IkePolicyUpdate) *PcloudIkepoliciesPutOptions {
 	return &PcloudIkepoliciesPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		IkePolicyID:     core.StringPtr(ikePolicyID),
-		IkePolicyUpdate: ikePolicyUpdate,
+		IkePolicyID: core.StringPtr(ikePolicyID),
+		Body: body,
 	}
 }
 
@@ -21303,9 +22161,9 @@ func (_options *PcloudIkepoliciesPutOptions) SetIkePolicyID(ikePolicyID string) 
 	return _options
 }
 
-// SetIkePolicyUpdate : Allow user to set IkePolicyUpdate
-func (_options *PcloudIkepoliciesPutOptions) SetIkePolicyUpdate(ikePolicyUpdate *IkePolicyUpdate) *PcloudIkepoliciesPutOptions {
-	_options.IkePolicyUpdate = ikePolicyUpdate
+// SetBody : Allow user to set Body
+func (_options *PcloudIkepoliciesPutOptions) SetBody(body *IkePolicyUpdate) *PcloudIkepoliciesPutOptions {
+	_options.Body = body
 	return _options
 }
 
@@ -21394,7 +22252,7 @@ type PcloudIpsecpoliciesDeleteOptions struct {
 func (*PowervsV1) NewPcloudIpsecpoliciesDeleteOptions(cloudInstanceID string, ipsecPolicyID string) *PcloudIpsecpoliciesDeleteOptions {
 	return &PcloudIpsecpoliciesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		IpsecPolicyID:   core.StringPtr(ipsecPolicyID),
+		IpsecPolicyID: core.StringPtr(ipsecPolicyID),
 	}
 }
 
@@ -21432,7 +22290,7 @@ type PcloudIpsecpoliciesGetOptions struct {
 func (*PowervsV1) NewPcloudIpsecpoliciesGetOptions(cloudInstanceID string, ipsecPolicyID string) *PcloudIpsecpoliciesGetOptions {
 	return &PcloudIpsecpoliciesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		IpsecPolicyID:   core.StringPtr(ipsecPolicyID),
+		IpsecPolicyID: core.StringPtr(ipsecPolicyID),
 	}
 }
 
@@ -21523,20 +22381,20 @@ const (
 // Constants associated with the PcloudIpsecpoliciesPostOptions.Authentication property.
 // authentication for IPSec policy.
 const (
-	PcloudIpsecpoliciesPostOptionsAuthenticationHmacSha196Const    = "hmac-sha1-96"
+	PcloudIpsecpoliciesPostOptionsAuthenticationHmacSha196Const = "hmac-sha1-96"
 	PcloudIpsecpoliciesPostOptionsAuthenticationHmacSha256128Const = "hmac-sha-256-128"
-	PcloudIpsecpoliciesPostOptionsAuthenticationNoneConst          = "none"
+	PcloudIpsecpoliciesPostOptionsAuthenticationNoneConst = "none"
 )
 
 // NewPcloudIpsecpoliciesPostOptions : Instantiate PcloudIpsecpoliciesPostOptions
 func (*PowervsV1) NewPcloudIpsecpoliciesPostOptions(cloudInstanceID string, dhGroup int64, encryption string, keyLifetime int64, name string, pfs bool) *PcloudIpsecpoliciesPostOptions {
 	return &PcloudIpsecpoliciesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		DhGroup:         core.Int64Ptr(dhGroup),
-		Encryption:      core.StringPtr(encryption),
-		KeyLifetime:     core.Int64Ptr(keyLifetime),
-		Name:            core.StringPtr(name),
-		Pfs:             core.BoolPtr(pfs),
+		DhGroup: core.Int64Ptr(dhGroup),
+		Encryption: core.StringPtr(encryption),
+		KeyLifetime: core.Int64Ptr(keyLifetime),
+		Name: core.StringPtr(name),
+		Pfs: core.BoolPtr(pfs),
 	}
 }
 
@@ -21597,18 +22455,18 @@ type PcloudIpsecpoliciesPutOptions struct {
 	IpsecPolicyID *string `json:"ipsec_policy_id" validate:"required,ne="`
 
 	// Parameters for the update of an IPSec Policy.
-	IPSecPolicyUpdate *IPSecPolicyUpdate `json:"IPSecPolicyUpdate" validate:"required"`
+	Body *IPSecPolicyUpdate `json:"body" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewPcloudIpsecpoliciesPutOptions : Instantiate PcloudIpsecpoliciesPutOptions
-func (*PowervsV1) NewPcloudIpsecpoliciesPutOptions(cloudInstanceID string, ipsecPolicyID string, ipSecPolicyUpdate *IPSecPolicyUpdate) *PcloudIpsecpoliciesPutOptions {
+func (*PowervsV1) NewPcloudIpsecpoliciesPutOptions(cloudInstanceID string, ipsecPolicyID string, body *IPSecPolicyUpdate) *PcloudIpsecpoliciesPutOptions {
 	return &PcloudIpsecpoliciesPutOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
-		IpsecPolicyID:     core.StringPtr(ipsecPolicyID),
-		IPSecPolicyUpdate: ipSecPolicyUpdate,
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		IpsecPolicyID: core.StringPtr(ipsecPolicyID),
+		Body: body,
 	}
 }
 
@@ -21624,9 +22482,9 @@ func (_options *PcloudIpsecpoliciesPutOptions) SetIpsecPolicyID(ipsecPolicyID st
 	return _options
 }
 
-// SetIPSecPolicyUpdate : Allow user to set IPSecPolicyUpdate
-func (_options *PcloudIpsecpoliciesPutOptions) SetIPSecPolicyUpdate(ipSecPolicyUpdate *IPSecPolicyUpdate) *PcloudIpsecpoliciesPutOptions {
-	_options.IPSecPolicyUpdate = ipSecPolicyUpdate
+// SetBody : Allow user to set Body
+func (_options *PcloudIpsecpoliciesPutOptions) SetBody(body *IPSecPolicyUpdate) *PcloudIpsecpoliciesPutOptions {
+	_options.Body = body
 	return _options
 }
 
@@ -21698,7 +22556,7 @@ type PcloudNetworksDeleteOptions struct {
 func (*PowervsV1) NewPcloudNetworksDeleteOptions(cloudInstanceID string, networkID string) *PcloudNetworksDeleteOptions {
 	return &PcloudNetworksDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -21736,7 +22594,7 @@ type PcloudNetworksGetOptions struct {
 func (*PowervsV1) NewPcloudNetworksGetOptions(cloudInstanceID string, networkID string) *PcloudNetworksGetOptions {
 	return &PcloudNetworksGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -21814,8 +22672,8 @@ type PcloudNetworksPortsDeleteOptions struct {
 func (*PowervsV1) NewPcloudNetworksPortsDeleteOptions(cloudInstanceID string, networkID string, portID string) *PcloudNetworksPortsDeleteOptions {
 	return &PcloudNetworksPortsDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
-		PortID:          core.StringPtr(portID),
+		NetworkID: core.StringPtr(networkID),
+		PortID: core.StringPtr(portID),
 	}
 }
 
@@ -21865,8 +22723,8 @@ type PcloudNetworksPortsGetOptions struct {
 func (*PowervsV1) NewPcloudNetworksPortsGetOptions(cloudInstanceID string, networkID string, portID string) *PcloudNetworksPortsGetOptions {
 	return &PcloudNetworksPortsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
-		PortID:          core.StringPtr(portID),
+		NetworkID: core.StringPtr(networkID),
+		PortID: core.StringPtr(portID),
 	}
 }
 
@@ -21916,7 +22774,7 @@ type PcloudNetworksPortsGetallOptions struct {
 func (*PowervsV1) NewPcloudNetworksPortsGetallOptions(cloudInstanceID string, networkID string) *PcloudNetworksPortsGetallOptions {
 	return &PcloudNetworksPortsGetallOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -21960,7 +22818,7 @@ type PcloudNetworksPortsPostOptions struct {
 func (*PowervsV1) NewPcloudNetworksPortsPostOptions(cloudInstanceID string, networkID string) *PcloudNetworksPortsPostOptions {
 	return &PcloudNetworksPortsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -22019,8 +22877,8 @@ type PcloudNetworksPortsPutOptions struct {
 func (*PowervsV1) NewPcloudNetworksPortsPutOptions(cloudInstanceID string, networkID string, portID string) *PcloudNetworksPortsPutOptions {
 	return &PcloudNetworksPortsPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
-		PortID:          core.StringPtr(portID),
+		NetworkID: core.StringPtr(networkID),
+		PortID: core.StringPtr(portID),
 	}
 }
 
@@ -22065,8 +22923,16 @@ type PcloudNetworksPostOptions struct {
 	// Cloud Instance ID of a PCloud Instance.
 	CloudInstanceID *string `json:"cloud_instance_id" validate:"required,ne="`
 
-	// Type of Network - 'vlan' (private network) 'pub-vlan' (public network).
+	// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
 	Type *string `json:"type" validate:"required"`
+
+	// Network communication configuration (for satellite locations only)
+	//   * `internal-only` - network is only used for internal host communication
+	//   * `outbound-only` - network will be capable of egress traffic
+	//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+	//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+	//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
+	AccessConfig *string `json:"accessConfig,omitempty"`
 
 	// Network in CIDR notation (192.168.0.0/24).
 	CIDR *string `json:"cidr,omitempty"`
@@ -22081,8 +22947,11 @@ type PcloudNetworksPostOptions struct {
 	// IP Address Ranges.
 	IPAddressRanges []IPAddressRange `json:"ipAddressRanges,omitempty"`
 
-	// Enable MTU Jumbo Network.
+	// (deprecated - replaced by mtu) Enable MTU Jumbo Network (for multi-zone locations only).
 	Jumbo *bool `json:"jumbo,omitempty"`
+
+	// Maximum transmission unit.
+	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Network Name.
 	Name *string `json:"name,omitempty"`
@@ -22092,17 +22961,33 @@ type PcloudNetworksPostOptions struct {
 }
 
 // Constants associated with the PcloudNetworksPostOptions.Type property.
-// Type of Network - 'vlan' (private network) 'pub-vlan' (public network).
+// Type of Network - 'vlan' (private network) 'pub-vlan' (public network) 'dhcp-vlan' (for satellite locations only).
 const (
+	PcloudNetworksPostOptionsTypeDhcpVlanConst = "dhcp-vlan"
 	PcloudNetworksPostOptionsTypePubVlanConst = "pub-vlan"
-	PcloudNetworksPostOptionsTypeVlanConst    = "vlan"
+	PcloudNetworksPostOptionsTypeVlanConst = "vlan"
+)
+
+// Constants associated with the PcloudNetworksPostOptions.AccessConfig property.
+// Network communication configuration (for satellite locations only)
+//   * `internal-only` - network is only used for internal host communication
+//   * `outbound-only` - network will be capable of egress traffic
+//   * `bidirectional-static-route` - network will be capable of ingress and egress traffic via static routes
+//   * `bidirectional-bgp` - network will be capable of ingress and egress traffic via bgp configuration
+//   * `bidirectional-l2out` - network will be capable of ingress and egress traffic via l2out ACI configuration.
+const (
+	PcloudNetworksPostOptionsAccessConfigBidirectionalBgpConst = "bidirectional-bgp"
+	PcloudNetworksPostOptionsAccessConfigBidirectionalL2outConst = "bidirectional-l2out"
+	PcloudNetworksPostOptionsAccessConfigBidirectionalStaticRouteConst = "bidirectional-static-route"
+	PcloudNetworksPostOptionsAccessConfigInternalOnlyConst = "internal-only"
+	PcloudNetworksPostOptionsAccessConfigOutboundOnlyConst = "outbound-only"
 )
 
 // NewPcloudNetworksPostOptions : Instantiate PcloudNetworksPostOptions
 func (*PowervsV1) NewPcloudNetworksPostOptions(cloudInstanceID string, typeVar string) *PcloudNetworksPostOptions {
 	return &PcloudNetworksPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Type:            core.StringPtr(typeVar),
+		Type: core.StringPtr(typeVar),
 	}
 }
 
@@ -22115,6 +23000,12 @@ func (_options *PcloudNetworksPostOptions) SetCloudInstanceID(cloudInstanceID st
 // SetType : Allow user to set Type
 func (_options *PcloudNetworksPostOptions) SetType(typeVar string) *PcloudNetworksPostOptions {
 	_options.Type = core.StringPtr(typeVar)
+	return _options
+}
+
+// SetAccessConfig : Allow user to set AccessConfig
+func (_options *PcloudNetworksPostOptions) SetAccessConfig(accessConfig string) *PcloudNetworksPostOptions {
+	_options.AccessConfig = core.StringPtr(accessConfig)
 	return _options
 }
 
@@ -22145,6 +23036,12 @@ func (_options *PcloudNetworksPostOptions) SetIPAddressRanges(ipAddressRanges []
 // SetJumbo : Allow user to set Jumbo
 func (_options *PcloudNetworksPostOptions) SetJumbo(jumbo bool) *PcloudNetworksPostOptions {
 	_options.Jumbo = core.BoolPtr(jumbo)
+	return _options
+}
+
+// SetMtu : Allow user to set Mtu
+func (_options *PcloudNetworksPostOptions) SetMtu(mtu int64) *PcloudNetworksPostOptions {
+	_options.Mtu = core.Int64Ptr(mtu)
 	return _options
 }
 
@@ -22188,7 +23085,7 @@ type PcloudNetworksPutOptions struct {
 func (*PowervsV1) NewPcloudNetworksPutOptions(cloudInstanceID string, networkID string) *PcloudNetworksPutOptions {
 	return &PcloudNetworksPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -22249,7 +23146,7 @@ type PcloudPlacementgroupsDeleteOptions struct {
 // NewPcloudPlacementgroupsDeleteOptions : Instantiate PcloudPlacementgroupsDeleteOptions
 func (*PowervsV1) NewPcloudPlacementgroupsDeleteOptions(cloudInstanceID string, placementGroupID string) *PcloudPlacementgroupsDeleteOptions {
 	return &PcloudPlacementgroupsDeleteOptions{
-		CloudInstanceID:  core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		PlacementGroupID: core.StringPtr(placementGroupID),
 	}
 }
@@ -22287,7 +23184,7 @@ type PcloudPlacementgroupsGetOptions struct {
 // NewPcloudPlacementgroupsGetOptions : Instantiate PcloudPlacementgroupsGetOptions
 func (*PowervsV1) NewPcloudPlacementgroupsGetOptions(cloudInstanceID string, placementGroupID string) *PcloudPlacementgroupsGetOptions {
 	return &PcloudPlacementgroupsGetOptions{
-		CloudInstanceID:  core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		PlacementGroupID: core.StringPtr(placementGroupID),
 	}
 }
@@ -22356,9 +23253,9 @@ type PcloudPlacementgroupsMembersDeleteOptions struct {
 // NewPcloudPlacementgroupsMembersDeleteOptions : Instantiate PcloudPlacementgroupsMembersDeleteOptions
 func (*PowervsV1) NewPcloudPlacementgroupsMembersDeleteOptions(cloudInstanceID string, placementGroupID string, id string) *PcloudPlacementgroupsMembersDeleteOptions {
 	return &PcloudPlacementgroupsMembersDeleteOptions{
-		CloudInstanceID:  core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		PlacementGroupID: core.StringPtr(placementGroupID),
-		ID:               core.StringPtr(id),
+		ID: core.StringPtr(id),
 	}
 }
 
@@ -22404,9 +23301,9 @@ type PcloudPlacementgroupsMembersPostOptions struct {
 // NewPcloudPlacementgroupsMembersPostOptions : Instantiate PcloudPlacementgroupsMembersPostOptions
 func (*PowervsV1) NewPcloudPlacementgroupsMembersPostOptions(cloudInstanceID string, placementGroupID string, id string) *PcloudPlacementgroupsMembersPostOptions {
 	return &PcloudPlacementgroupsMembersPostOptions{
-		CloudInstanceID:  core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		PlacementGroupID: core.StringPtr(placementGroupID),
-		ID:               core.StringPtr(id),
+		ID: core.StringPtr(id),
 	}
 }
 
@@ -22452,7 +23349,7 @@ type PcloudPlacementgroupsPostOptions struct {
 // Constants associated with the PcloudPlacementgroupsPostOptions.Policy property.
 // The Placement Group Policy.
 const (
-	PcloudPlacementgroupsPostOptionsPolicyAffinityConst     = "affinity"
+	PcloudPlacementgroupsPostOptionsPolicyAffinityConst = "affinity"
 	PcloudPlacementgroupsPostOptionsPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -22460,8 +23357,8 @@ const (
 func (*PowervsV1) NewPcloudPlacementgroupsPostOptions(cloudInstanceID string, name string, policy string) *PcloudPlacementgroupsPostOptions {
 	return &PcloudPlacementgroupsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		Policy:          core.StringPtr(policy),
+		Name: core.StringPtr(name),
+		Policy: core.StringPtr(policy),
 	}
 }
 
@@ -22489,6 +23386,34 @@ func (options *PcloudPlacementgroupsPostOptions) SetHeaders(param map[string]str
 	return options
 }
 
+// PcloudPodcapacityGetOptions : The PcloudPodcapacityGet options.
+type PcloudPodcapacityGetOptions struct {
+	// Cloud Instance ID of a PCloud Instance.
+	CloudInstanceID *string `json:"cloud_instance_id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewPcloudPodcapacityGetOptions : Instantiate PcloudPodcapacityGetOptions
+func (*PowervsV1) NewPcloudPodcapacityGetOptions(cloudInstanceID string) *PcloudPodcapacityGetOptions {
+	return &PcloudPodcapacityGetOptions{
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+	}
+}
+
+// SetCloudInstanceID : Allow user to set CloudInstanceID
+func (_options *PcloudPodcapacityGetOptions) SetCloudInstanceID(cloudInstanceID string) *PcloudPodcapacityGetOptions {
+	_options.CloudInstanceID = core.StringPtr(cloudInstanceID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *PcloudPodcapacityGetOptions) SetHeaders(param map[string]string) *PcloudPodcapacityGetOptions {
+	options.Headers = param
+	return options
+}
+
 // PcloudPvminstancesActionPostOptions : The PcloudPvminstancesActionPost options.
 type PcloudPvminstancesActionPostOptions struct {
 	// Cloud Instance ID of a PCloud Instance.
@@ -22507,20 +23432,20 @@ type PcloudPvminstancesActionPostOptions struct {
 // Constants associated with the PcloudPvminstancesActionPostOptions.Action property.
 // Name of the action to take; can be start, stop, hard-reboot, soft-reboot, immediate-shutdown, reset-state.
 const (
-	PcloudPvminstancesActionPostOptionsActionHardRebootConst        = "hard-reboot"
+	PcloudPvminstancesActionPostOptionsActionHardRebootConst = "hard-reboot"
 	PcloudPvminstancesActionPostOptionsActionImmediateShutdownConst = "immediate-shutdown"
-	PcloudPvminstancesActionPostOptionsActionResetStateConst        = "reset-state"
-	PcloudPvminstancesActionPostOptionsActionSoftRebootConst        = "soft-reboot"
-	PcloudPvminstancesActionPostOptionsActionStartConst             = "start"
-	PcloudPvminstancesActionPostOptionsActionStopConst              = "stop"
+	PcloudPvminstancesActionPostOptionsActionResetStateConst = "reset-state"
+	PcloudPvminstancesActionPostOptionsActionSoftRebootConst = "soft-reboot"
+	PcloudPvminstancesActionPostOptionsActionStartConst = "start"
+	PcloudPvminstancesActionPostOptionsActionStopConst = "stop"
 )
 
 // NewPcloudPvminstancesActionPostOptions : Instantiate PcloudPvminstancesActionPostOptions
 func (*PowervsV1) NewPcloudPvminstancesActionPostOptions(cloudInstanceID string, pvmInstanceID string, action string) *PcloudPvminstancesActionPostOptions {
 	return &PcloudPvminstancesActionPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		Action:          core.StringPtr(action),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		Action: core.StringPtr(action),
 	}
 }
 
@@ -22584,7 +23509,7 @@ type PcloudPvminstancesCapturePostOptions struct {
 // Constants associated with the PcloudPvminstancesCapturePostOptions.CaptureDestination property.
 // Destination for the deployable image.
 const (
-	PcloudPvminstancesCapturePostOptionsCaptureDestinationBothConst         = "both"
+	PcloudPvminstancesCapturePostOptionsCaptureDestinationBothConst = "both"
 	PcloudPvminstancesCapturePostOptionsCaptureDestinationCloudStorageConst = "cloud-storage"
 	PcloudPvminstancesCapturePostOptionsCaptureDestinationImageCatalogConst = "image-catalog"
 )
@@ -22592,10 +23517,10 @@ const (
 // NewPcloudPvminstancesCapturePostOptions : Instantiate PcloudPvminstancesCapturePostOptions
 func (*PowervsV1) NewPcloudPvminstancesCapturePostOptions(cloudInstanceID string, pvmInstanceID string, captureDestination string, captureName string) *PcloudPvminstancesCapturePostOptions {
 	return &PcloudPvminstancesCapturePostOptions{
-		CloudInstanceID:    core.StringPtr(cloudInstanceID),
-		PvmInstanceID:      core.StringPtr(pvmInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 		CaptureDestination: core.StringPtr(captureDestination),
-		CaptureName:        core.StringPtr(captureName),
+		CaptureName: core.StringPtr(captureName),
 	}
 }
 
@@ -22698,18 +23623,18 @@ type PcloudPvminstancesClonePostOptions struct {
 // Constants associated with the PcloudPvminstancesClonePostOptions.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PcloudPvminstancesClonePostOptionsProcTypeCappedConst    = "capped"
+	PcloudPvminstancesClonePostOptionsProcTypeCappedConst = "capped"
 	PcloudPvminstancesClonePostOptionsProcTypeDedicatedConst = "dedicated"
-	PcloudPvminstancesClonePostOptionsProcTypeSharedConst    = "shared"
+	PcloudPvminstancesClonePostOptionsProcTypeSharedConst = "shared"
 )
 
 // NewPcloudPvminstancesClonePostOptions : Instantiate PcloudPvminstancesClonePostOptions
 func (*PowervsV1) NewPcloudPvminstancesClonePostOptions(cloudInstanceID string, pvmInstanceID string, name string, networks []PvmInstanceAddNetwork) *PcloudPvminstancesClonePostOptions {
 	return &PcloudPvminstancesClonePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		Name:            core.StringPtr(name),
-		Networks:        networks,
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		Name: core.StringPtr(name),
+		Networks: networks,
 	}
 }
 
@@ -22795,7 +23720,7 @@ type PcloudPvminstancesConsoleGetOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesConsoleGetOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesConsoleGetOptions {
 	return &PcloudPvminstancesConsoleGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -22833,7 +23758,7 @@ type PcloudPvminstancesConsolePostOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesConsolePostOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesConsolePostOptions {
 	return &PcloudPvminstancesConsolePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -22877,8 +23802,8 @@ type PcloudPvminstancesConsolePutOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesConsolePutOptions(cloudInstanceID string, pvmInstanceID string, code string) *PcloudPvminstancesConsolePutOptions {
 	return &PcloudPvminstancesConsolePutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		Code:            core.StringPtr(code),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		Code: core.StringPtr(code),
 	}
 }
 
@@ -22932,7 +23857,7 @@ type PcloudPvminstancesDeleteOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesDeleteOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesDeleteOptions {
 	return &PcloudPvminstancesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -22976,7 +23901,7 @@ type PcloudPvminstancesGetOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesGetOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesGetOptions {
 	return &PcloudPvminstancesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -23048,8 +23973,8 @@ type PcloudPvminstancesNetworksDeleteOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesNetworksDeleteOptions(cloudInstanceID string, pvmInstanceID string, networkID string) *PcloudPvminstancesNetworksDeleteOptions {
 	return &PcloudPvminstancesNetworksDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -23102,8 +24027,8 @@ type PcloudPvminstancesNetworksGetOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesNetworksGetOptions(cloudInstanceID string, pvmInstanceID string, networkID string) *PcloudPvminstancesNetworksGetOptions {
 	return &PcloudPvminstancesNetworksGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -23147,7 +24072,7 @@ type PcloudPvminstancesNetworksGetallOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesNetworksGetallOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesNetworksGetallOptions {
 	return &PcloudPvminstancesNetworksGetallOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -23191,8 +24116,8 @@ type PcloudPvminstancesNetworksPostOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesNetworksPostOptions(cloudInstanceID string, pvmInstanceID string, networkID string) *PcloudPvminstancesNetworksPostOptions {
 	return &PcloudPvminstancesNetworksPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		NetworkID:       core.StringPtr(networkID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -23247,16 +24172,16 @@ type PcloudPvminstancesOperationsPostOptions struct {
 // Name of the operation to execute; can be job or boot.
 const (
 	PcloudPvminstancesOperationsPostOptionsOperationTypeBootConst = "boot"
-	PcloudPvminstancesOperationsPostOptionsOperationTypeJobConst  = "job"
+	PcloudPvminstancesOperationsPostOptionsOperationTypeJobConst = "job"
 )
 
 // NewPcloudPvminstancesOperationsPostOptions : Instantiate PcloudPvminstancesOperationsPostOptions
 func (*PowervsV1) NewPcloudPvminstancesOperationsPostOptions(cloudInstanceID string, pvmInstanceID string, operation *Operations, operationType string) *PcloudPvminstancesOperationsPostOptions {
 	return &PcloudPvminstancesOperationsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		Operation:       operation,
-		OperationType:   core.StringPtr(operationType),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		Operation: operation,
+		OperationType: core.StringPtr(operationType),
 	}
 }
 
@@ -23355,14 +24280,15 @@ type PcloudPvminstancesPostOptions struct {
 	// The storage connection type.
 	StorageConnection *string `json:"storageConnection,omitempty"`
 
-	// Storage Pool for server deployment; if provided then storageAffinity and storageType will be ignored; Only valid
-	// when you deploy one of the IBM supplied stock images. Storage type and pool for a custom image (an imported image or
-	// an image that is created from a PVMInstance capture) defaults to the storage type and pool the image was created in.
+	// The storage connection type.
+	StorageConnectionV2 *string `json:"storageConnectionV2,omitempty"`
+
+	// Storage Pool for server deployment; if provided then storageAffinity will be ignored; Only valid when you deploy one
+	// of the IBM supplied stock images. Storage pool for a custom image (an imported image or an image that is created
+	// from a PVMInstance capture) defaults to the storage pool the image was created in.
 	StoragePool *string `json:"storagePool,omitempty"`
 
-	// Storage type for server deployment; will be ignored if storagePool or storageAffinity is provided; Only valid when
-	// you deploy one of the IBM supplied stock images. Storage type and pool for a custom image (an imported image or an
-	// image that is created from a PVMInstance capture) defaults to the storage type and pool the image was created in.
+	// Storage type for server deployment; if storageType is not provided the storage type will default to 'tier3'.
 	StorageType *string `json:"storageType,omitempty"`
 
 	// System type used to host the instance.
@@ -23386,9 +24312,9 @@ type PcloudPvminstancesPostOptions struct {
 // Constants associated with the PcloudPvminstancesPostOptions.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PcloudPvminstancesPostOptionsProcTypeCappedConst    = "capped"
+	PcloudPvminstancesPostOptionsProcTypeCappedConst = "capped"
 	PcloudPvminstancesPostOptionsProcTypeDedicatedConst = "dedicated"
-	PcloudPvminstancesPostOptionsProcTypeSharedConst    = "shared"
+	PcloudPvminstancesPostOptionsProcTypeSharedConst = "shared"
 )
 
 // Constants associated with the PcloudPvminstancesPostOptions.PinPolicy property.
@@ -23403,9 +24329,9 @@ const (
 // Affinity policy for replicants being created; affinity for the same host, anti-affinity for different hosts, none for
 // no preference.
 const (
-	PcloudPvminstancesPostOptionsReplicantAffinityPolicyAffinityConst     = "affinity"
+	PcloudPvminstancesPostOptionsReplicantAffinityPolicyAffinityConst = "affinity"
 	PcloudPvminstancesPostOptionsReplicantAffinityPolicyAntiAffinityConst = "anti-affinity"
-	PcloudPvminstancesPostOptionsReplicantAffinityPolicyNoneConst         = "none"
+	PcloudPvminstancesPostOptionsReplicantAffinityPolicyNoneConst = "none"
 )
 
 // Constants associated with the PcloudPvminstancesPostOptions.ReplicantNamingScheme property.
@@ -23421,15 +24347,22 @@ const (
 	PcloudPvminstancesPostOptionsStorageConnectionVscsiConst = "vSCSI"
 )
 
+// Constants associated with the PcloudPvminstancesPostOptions.StorageConnectionV2 property.
+// The storage connection type.
+const (
+	PcloudPvminstancesPostOptionsStorageConnectionV2MaxvolumeattachementConst = "maxVolumeAttachement"
+	PcloudPvminstancesPostOptionsStorageConnectionV2VscsiConst = "vSCSI"
+)
+
 // NewPcloudPvminstancesPostOptions : Instantiate PcloudPvminstancesPostOptions
 func (*PowervsV1) NewPcloudPvminstancesPostOptions(cloudInstanceID string, imageID string, memory float64, procType string, processors float64, serverName string) *PcloudPvminstancesPostOptions {
 	return &PcloudPvminstancesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
-		Memory:          core.Float64Ptr(memory),
-		ProcType:        core.StringPtr(procType),
-		Processors:      core.Float64Ptr(processors),
-		ServerName:      core.StringPtr(serverName),
+		ImageID: core.StringPtr(imageID),
+		Memory: core.Float64Ptr(memory),
+		ProcType: core.StringPtr(procType),
+		Processors: core.Float64Ptr(processors),
+		ServerName: core.StringPtr(serverName),
 	}
 }
 
@@ -23559,6 +24492,12 @@ func (_options *PcloudPvminstancesPostOptions) SetStorageConnection(storageConne
 	return _options
 }
 
+// SetStorageConnectionV2 : Allow user to set StorageConnectionV2
+func (_options *PcloudPvminstancesPostOptions) SetStorageConnectionV2(storageConnectionV2 string) *PcloudPvminstancesPostOptions {
+	_options.StorageConnectionV2 = core.StringPtr(storageConnectionV2)
+	return _options
+}
+
 // SetStoragePool : Allow user to set StoragePool
 func (_options *PcloudPvminstancesPostOptions) SetStoragePool(storagePool string) *PcloudPvminstancesPostOptions {
 	_options.StoragePool = core.StringPtr(storagePool)
@@ -23615,6 +24554,8 @@ type PcloudPvminstancesPutOptions struct {
 	// PCloud PVM Instance ID.
 	PvmInstanceID *string `json:"pvm_instance_id" validate:"required,ne="`
 
+	CloudInitialization *CloudInitialization `json:"cloudInitialization,omitempty"`
+
 	// The VTL license repository capacity TB value.
 	LicenseRepositoryCapacity *int64 `json:"licenseRepositoryCapacity,omitempty"`
 
@@ -23666,16 +24607,16 @@ const (
 // Constants associated with the PcloudPvminstancesPutOptions.ProcType property.
 // Processor type (dedicated, shared, capped).
 const (
-	PcloudPvminstancesPutOptionsProcTypeCappedConst    = "capped"
+	PcloudPvminstancesPutOptionsProcTypeCappedConst = "capped"
 	PcloudPvminstancesPutOptionsProcTypeDedicatedConst = "dedicated"
-	PcloudPvminstancesPutOptionsProcTypeSharedConst    = "shared"
+	PcloudPvminstancesPutOptionsProcTypeSharedConst = "shared"
 )
 
 // NewPcloudPvminstancesPutOptions : Instantiate PcloudPvminstancesPutOptions
 func (*PowervsV1) NewPcloudPvminstancesPutOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesPutOptions {
 	return &PcloudPvminstancesPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -23688,6 +24629,12 @@ func (_options *PcloudPvminstancesPutOptions) SetCloudInstanceID(cloudInstanceID
 // SetPvmInstanceID : Allow user to set PvmInstanceID
 func (_options *PcloudPvminstancesPutOptions) SetPvmInstanceID(pvmInstanceID string) *PcloudPvminstancesPutOptions {
 	_options.PvmInstanceID = core.StringPtr(pvmInstanceID)
+	return _options
+}
+
+// SetCloudInitialization : Allow user to set CloudInitialization
+func (_options *PcloudPvminstancesPutOptions) SetCloudInitialization(cloudInitialization *CloudInitialization) *PcloudPvminstancesPutOptions {
+	_options.CloudInitialization = cloudInitialization
 	return _options
 }
 
@@ -23779,7 +24726,7 @@ type PcloudPvminstancesSnapshotsGetallOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesSnapshotsGetallOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesSnapshotsGetallOptions {
 	return &PcloudPvminstancesSnapshotsGetallOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -23815,9 +24762,6 @@ type PcloudPvminstancesSnapshotsPostOptions struct {
 	// Description of the PVM instance snapshot.
 	Description *string `json:"description,omitempty"`
 
-	// Enables optimized performance path for creating snapshots of PVM instances.
-	PerformancePath *bool `json:"performancePath,omitempty"`
-
 	// List of volumes to include in the PVM instance snapshot.
 	VolumeIDs []string `json:"volumeIDs,omitempty"`
 
@@ -23829,8 +24773,8 @@ type PcloudPvminstancesSnapshotsPostOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesSnapshotsPostOptions(cloudInstanceID string, pvmInstanceID string, name string) *PcloudPvminstancesSnapshotsPostOptions {
 	return &PcloudPvminstancesSnapshotsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		Name:            core.StringPtr(name),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		Name: core.StringPtr(name),
 	}
 }
 
@@ -23855,12 +24799,6 @@ func (_options *PcloudPvminstancesSnapshotsPostOptions) SetName(name string) *Pc
 // SetDescription : Allow user to set Description
 func (_options *PcloudPvminstancesSnapshotsPostOptions) SetDescription(description string) *PcloudPvminstancesSnapshotsPostOptions {
 	_options.Description = core.StringPtr(description)
-	return _options
-}
-
-// SetPerformancePath : Allow user to set PerformancePath
-func (_options *PcloudPvminstancesSnapshotsPostOptions) SetPerformancePath(performancePath bool) *PcloudPvminstancesSnapshotsPostOptions {
-	_options.PerformancePath = core.BoolPtr(performancePath)
 	return _options
 }
 
@@ -23901,7 +24839,7 @@ type PcloudPvminstancesSnapshotsRestorePostOptions struct {
 // Constants associated with the PcloudPvminstancesSnapshotsRestorePostOptions.RestoreFailAction property.
 // Action to take on a failed snapshot restore.
 const (
-	PcloudPvminstancesSnapshotsRestorePostOptionsRestoreFailActionRetryConst    = "retry"
+	PcloudPvminstancesSnapshotsRestorePostOptionsRestoreFailActionRetryConst = "retry"
 	PcloudPvminstancesSnapshotsRestorePostOptionsRestoreFailActionRollbackConst = "rollback"
 )
 
@@ -23909,8 +24847,8 @@ const (
 func (*PowervsV1) NewPcloudPvminstancesSnapshotsRestorePostOptions(cloudInstanceID string, pvmInstanceID string, snapshotID string) *PcloudPvminstancesSnapshotsRestorePostOptions {
 	return &PcloudPvminstancesSnapshotsRestorePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		SnapshotID:      core.StringPtr(snapshotID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		SnapshotID: core.StringPtr(snapshotID),
 	}
 }
 
@@ -23969,8 +24907,8 @@ type PcloudPvminstancesVolumesDeleteOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesVolumesDeleteOptions(cloudInstanceID string, pvmInstanceID string, volumeID string) *PcloudPvminstancesVolumesDeleteOptions {
 	return &PcloudPvminstancesVolumesDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -24017,8 +24955,8 @@ type PcloudPvminstancesVolumesGetOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesVolumesGetOptions(cloudInstanceID string, pvmInstanceID string, volumeID string) *PcloudPvminstancesVolumesGetOptions {
 	return &PcloudPvminstancesVolumesGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -24062,7 +25000,7 @@ type PcloudPvminstancesVolumesGetallOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesVolumesGetallOptions(cloudInstanceID string, pvmInstanceID string) *PcloudPvminstancesVolumesGetallOptions {
 	return &PcloudPvminstancesVolumesGetallOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -24103,8 +25041,8 @@ type PcloudPvminstancesVolumesPostOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesVolumesPostOptions(cloudInstanceID string, pvmInstanceID string, volumeID string) *PcloudPvminstancesVolumesPostOptions {
 	return &PcloudPvminstancesVolumesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -24153,9 +25091,9 @@ type PcloudPvminstancesVolumesPutOptions struct {
 // NewPcloudPvminstancesVolumesPutOptions : Instantiate PcloudPvminstancesVolumesPutOptions
 func (*PowervsV1) NewPcloudPvminstancesVolumesPutOptions(cloudInstanceID string, pvmInstanceID string, volumeID string, deleteOnTermination bool) *PcloudPvminstancesVolumesPutOptions {
 	return &PcloudPvminstancesVolumesPutOptions{
-		CloudInstanceID:     core.StringPtr(cloudInstanceID),
-		PvmInstanceID:       core.StringPtr(pvmInstanceID),
-		VolumeID:            core.StringPtr(volumeID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 		DeleteOnTermination: core.BoolPtr(deleteOnTermination),
 	}
 }
@@ -24209,8 +25147,8 @@ type PcloudPvminstancesVolumesSetbootPutOptions struct {
 func (*PowervsV1) NewPcloudPvminstancesVolumesSetbootPutOptions(cloudInstanceID string, pvmInstanceID string, volumeID string) *PcloudPvminstancesVolumesSetbootPutOptions {
 	return &PcloudPvminstancesVolumesSetbootPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		VolumeID:        core.StringPtr(volumeID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeID: core.StringPtr(volumeID),
 	}
 }
 
@@ -24254,7 +25192,7 @@ type PcloudSapGetOptions struct {
 func (*PowervsV1) NewPcloudSapGetOptions(cloudInstanceID string, sapProfileID string) *PcloudSapGetOptions {
 	return &PcloudSapGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		SapProfileID:    core.StringPtr(sapProfileID),
+		SapProfileID: core.StringPtr(sapProfileID),
 	}
 }
 
@@ -24338,13 +25276,11 @@ type PcloudSapPostOptions struct {
 	StorageAffinity *StorageAffinity `json:"storageAffinity,omitempty"`
 
 	// Storage Pool for server deployment; if provided then storageAffinity and storageType will be ignored; Only valid
-	// when you deploy one of the IBM supplied stock images. Storage type and pool for a custom image (an imported image or
-	// an image that is created from a PVMInstance capture) defaults to the storage type and pool the image was created in.
+	// when you deploy one of the IBM supplied stock images. Storage pool for a custom image (an imported image or an image
+	// that is created from a PVMInstance capture) defaults to the storage pool the image was created in.
 	StoragePool *string `json:"storagePool,omitempty"`
 
-	// Storage type for server deployment; will be ignored if storagePool or storageAffinity is provided; Only valid when
-	// you deploy one of the IBM supplied stock images. Storage type and pool for a custom image (an imported image or an
-	// image that is created from a PVMInstance capture) defaults to the storage type and pool the image was created in.
+	// Storage type for server deployment; if storageType is not provided the storage type will default to 'tier3'.
 	StorageType *string `json:"storageType,omitempty"`
 
 	// System type used to host the instance. Only e880, e980, e1080 are supported.
@@ -24372,10 +25308,10 @@ const (
 func (*PowervsV1) NewPcloudSapPostOptions(cloudInstanceID string, imageID string, name string, networks []PvmInstanceAddNetwork, profileID string) *PcloudSapPostOptions {
 	return &PcloudSapPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
-		Name:            core.StringPtr(name),
-		Networks:        networks,
-		ProfileID:       core.StringPtr(profileID),
+		ImageID: core.StringPtr(imageID),
+		Name: core.StringPtr(name),
+		Networks: networks,
+		ProfileID: core.StringPtr(profileID),
 	}
 }
 
@@ -24496,7 +25432,7 @@ type PcloudSharedprocessorpoolsDeleteOptions struct {
 // NewPcloudSharedprocessorpoolsDeleteOptions : Instantiate PcloudSharedprocessorpoolsDeleteOptions
 func (*PowervsV1) NewPcloudSharedprocessorpoolsDeleteOptions(cloudInstanceID string, sharedProcessorPoolID string) *PcloudSharedprocessorpoolsDeleteOptions {
 	return &PcloudSharedprocessorpoolsDeleteOptions{
-		CloudInstanceID:       core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		SharedProcessorPoolID: core.StringPtr(sharedProcessorPoolID),
 	}
 }
@@ -24534,7 +25470,7 @@ type PcloudSharedprocessorpoolsGetOptions struct {
 // NewPcloudSharedprocessorpoolsGetOptions : Instantiate PcloudSharedprocessorpoolsGetOptions
 func (*PowervsV1) NewPcloudSharedprocessorpoolsGetOptions(cloudInstanceID string, sharedProcessorPoolID string) *PcloudSharedprocessorpoolsGetOptions {
 	return &PcloudSharedprocessorpoolsGetOptions{
-		CloudInstanceID:       core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		SharedProcessorPoolID: core.StringPtr(sharedProcessorPoolID),
 	}
 }
@@ -24611,9 +25547,9 @@ type PcloudSharedprocessorpoolsPostOptions struct {
 func (*PowervsV1) NewPcloudSharedprocessorpoolsPostOptions(cloudInstanceID string, hostGroup string, name string, reservedCores int64) *PcloudSharedprocessorpoolsPostOptions {
 	return &PcloudSharedprocessorpoolsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		HostGroup:       core.StringPtr(hostGroup),
-		Name:            core.StringPtr(name),
-		ReservedCores:   core.Int64Ptr(reservedCores),
+		HostGroup: core.StringPtr(hostGroup),
+		Name: core.StringPtr(name),
+		ReservedCores: core.Int64Ptr(reservedCores),
 	}
 }
 
@@ -24677,7 +25613,7 @@ type PcloudSharedprocessorpoolsPutOptions struct {
 // NewPcloudSharedprocessorpoolsPutOptions : Instantiate PcloudSharedprocessorpoolsPutOptions
 func (*PowervsV1) NewPcloudSharedprocessorpoolsPutOptions(cloudInstanceID string, sharedProcessorPoolID string) *PcloudSharedprocessorpoolsPutOptions {
 	return &PcloudSharedprocessorpoolsPutOptions{
-		CloudInstanceID:       core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		SharedProcessorPoolID: core.StringPtr(sharedProcessorPoolID),
 	}
 }
@@ -24727,7 +25663,7 @@ type PcloudSppplacementgroupsDeleteOptions struct {
 // NewPcloudSppplacementgroupsDeleteOptions : Instantiate PcloudSppplacementgroupsDeleteOptions
 func (*PowervsV1) NewPcloudSppplacementgroupsDeleteOptions(cloudInstanceID string, sppPlacementGroupID string) *PcloudSppplacementgroupsDeleteOptions {
 	return &PcloudSppplacementgroupsDeleteOptions{
-		CloudInstanceID:     core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		SppPlacementGroupID: core.StringPtr(sppPlacementGroupID),
 	}
 }
@@ -24765,7 +25701,7 @@ type PcloudSppplacementgroupsGetOptions struct {
 // NewPcloudSppplacementgroupsGetOptions : Instantiate PcloudSppplacementgroupsGetOptions
 func (*PowervsV1) NewPcloudSppplacementgroupsGetOptions(cloudInstanceID string, sppPlacementGroupID string) *PcloudSppplacementgroupsGetOptions {
 	return &PcloudSppplacementgroupsGetOptions{
-		CloudInstanceID:     core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		SppPlacementGroupID: core.StringPtr(sppPlacementGroupID),
 	}
 }
@@ -24834,8 +25770,8 @@ type PcloudSppplacementgroupsMembersDeleteOptions struct {
 // NewPcloudSppplacementgroupsMembersDeleteOptions : Instantiate PcloudSppplacementgroupsMembersDeleteOptions
 func (*PowervsV1) NewPcloudSppplacementgroupsMembersDeleteOptions(cloudInstanceID string, sppPlacementGroupID string, sharedProcessorPoolID string) *PcloudSppplacementgroupsMembersDeleteOptions {
 	return &PcloudSppplacementgroupsMembersDeleteOptions{
-		CloudInstanceID:       core.StringPtr(cloudInstanceID),
-		SppPlacementGroupID:   core.StringPtr(sppPlacementGroupID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		SppPlacementGroupID: core.StringPtr(sppPlacementGroupID),
 		SharedProcessorPoolID: core.StringPtr(sharedProcessorPoolID),
 	}
 }
@@ -24882,8 +25818,8 @@ type PcloudSppplacementgroupsMembersPostOptions struct {
 // NewPcloudSppplacementgroupsMembersPostOptions : Instantiate PcloudSppplacementgroupsMembersPostOptions
 func (*PowervsV1) NewPcloudSppplacementgroupsMembersPostOptions(cloudInstanceID string, sppPlacementGroupID string, sharedProcessorPoolID string) *PcloudSppplacementgroupsMembersPostOptions {
 	return &PcloudSppplacementgroupsMembersPostOptions{
-		CloudInstanceID:       core.StringPtr(cloudInstanceID),
-		SppPlacementGroupID:   core.StringPtr(sppPlacementGroupID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		SppPlacementGroupID: core.StringPtr(sppPlacementGroupID),
 		SharedProcessorPoolID: core.StringPtr(sharedProcessorPoolID),
 	}
 }
@@ -24931,7 +25867,7 @@ type PcloudSppplacementgroupsPostOptions struct {
 // Constants associated with the PcloudSppplacementgroupsPostOptions.Policy property.
 // The placement group policy.
 const (
-	PcloudSppplacementgroupsPostOptionsPolicyAffinityConst     = "affinity"
+	PcloudSppplacementgroupsPostOptionsPolicyAffinityConst = "affinity"
 	PcloudSppplacementgroupsPostOptionsPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -24939,8 +25875,8 @@ const (
 func (*PowervsV1) NewPcloudSppplacementgroupsPostOptions(cloudInstanceID string, name string, policy string) *PcloudSppplacementgroupsPostOptions {
 	return &PcloudSppplacementgroupsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		Policy:          core.StringPtr(policy),
+		Name: core.StringPtr(name),
+		Policy: core.StringPtr(policy),
 	}
 }
 
@@ -25273,7 +26209,7 @@ type PcloudTenantsSshkeysDeleteOptions struct {
 // NewPcloudTenantsSshkeysDeleteOptions : Instantiate PcloudTenantsSshkeysDeleteOptions
 func (*PowervsV1) NewPcloudTenantsSshkeysDeleteOptions(tenantID string, sshkeyName string) *PcloudTenantsSshkeysDeleteOptions {
 	return &PcloudTenantsSshkeysDeleteOptions{
-		TenantID:   core.StringPtr(tenantID),
+		TenantID: core.StringPtr(tenantID),
 		SshkeyName: core.StringPtr(sshkeyName),
 	}
 }
@@ -25311,7 +26247,7 @@ type PcloudTenantsSshkeysGetOptions struct {
 // NewPcloudTenantsSshkeysGetOptions : Instantiate PcloudTenantsSshkeysGetOptions
 func (*PowervsV1) NewPcloudTenantsSshkeysGetOptions(tenantID string, sshkeyName string) *PcloudTenantsSshkeysGetOptions {
 	return &PcloudTenantsSshkeysGetOptions{
-		TenantID:   core.StringPtr(tenantID),
+		TenantID: core.StringPtr(tenantID),
 		SshkeyName: core.StringPtr(sshkeyName),
 	}
 }
@@ -25384,8 +26320,8 @@ type PcloudTenantsSshkeysPostOptions struct {
 func (*PowervsV1) NewPcloudTenantsSshkeysPostOptions(tenantID string, name string, sshKey string) *PcloudTenantsSshkeysPostOptions {
 	return &PcloudTenantsSshkeysPostOptions{
 		TenantID: core.StringPtr(tenantID),
-		Name:     core.StringPtr(name),
-		SshKey:   core.StringPtr(sshKey),
+		Name: core.StringPtr(name),
+		SshKey: core.StringPtr(sshKey),
 	}
 }
 
@@ -25443,10 +26379,10 @@ type PcloudTenantsSshkeysPutOptions struct {
 // NewPcloudTenantsSshkeysPutOptions : Instantiate PcloudTenantsSshkeysPutOptions
 func (*PowervsV1) NewPcloudTenantsSshkeysPutOptions(tenantID string, sshkeyName string, name string, sshKey string) *PcloudTenantsSshkeysPutOptions {
 	return &PcloudTenantsSshkeysPutOptions{
-		TenantID:   core.StringPtr(tenantID),
+		TenantID: core.StringPtr(tenantID),
 		SshkeyName: core.StringPtr(sshkeyName),
-		Name:       core.StringPtr(name),
-		SshKey:     core.StringPtr(sshKey),
+		Name: core.StringPtr(name),
+		SshKey: core.StringPtr(sshKey),
 	}
 }
 
@@ -25546,11 +26482,11 @@ type PcloudV1CloudinstancesCosimagesPostOptions struct {
 
 	StorageAffinity *StorageAffinity `json:"storageAffinity,omitempty"`
 
-	// Storage pool where the image will be loaded, if provided then storageType and storageAffinity will be ignored.
+	// Storage pool where the image will be loaded, if provided then storageAffinity will be ignored.
 	StoragePool *string `json:"storagePool,omitempty"`
 
-	// Type of storage; will be ignored if storagePool or storageAffinity is provided. If only using storageType for
-	// storage selection then the storage pool with the most available space will be selected.
+	// Type of storage; If only using storageType for storage selection then the storage pool with the most available space
+	// will be selected if storageType is not provided the storage type will default to 'tier3'.
 	StorageType *string `json:"storageType,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -25562,13 +26498,13 @@ type PcloudV1CloudinstancesCosimagesPostOptions struct {
 // requires hmac authentication keys (access,secret).
 const (
 	PcloudV1CloudinstancesCosimagesPostOptionsBucketAccessPrivateConst = "private"
-	PcloudV1CloudinstancesCosimagesPostOptionsBucketAccessPublicConst  = "public"
+	PcloudV1CloudinstancesCosimagesPostOptionsBucketAccessPublicConst = "public"
 )
 
 // Constants associated with the PcloudV1CloudinstancesCosimagesPostOptions.OsType property.
 // Image OS Type, required if importing a raw image; raw images can only be imported using the command line interface.
 const (
-	PcloudV1CloudinstancesCosimagesPostOptionsOsTypeAixConst  = "aix"
+	PcloudV1CloudinstancesCosimagesPostOptionsOsTypeAixConst = "aix"
 	PcloudV1CloudinstancesCosimagesPostOptionsOsTypeIbmiConst = "ibmi"
 	PcloudV1CloudinstancesCosimagesPostOptionsOsTypeRhelConst = "rhel"
 	PcloudV1CloudinstancesCosimagesPostOptionsOsTypeSlesConst = "sles"
@@ -25578,10 +26514,10 @@ const (
 func (*PowervsV1) NewPcloudV1CloudinstancesCosimagesPostOptions(cloudInstanceID string, bucketName string, imageFilename string, imageName string, region string) *PcloudV1CloudinstancesCosimagesPostOptions {
 	return &PcloudV1CloudinstancesCosimagesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		BucketName:      core.StringPtr(bucketName),
-		ImageFilename:   core.StringPtr(imageFilename),
-		ImageName:       core.StringPtr(imageName),
-		Region:          core.StringPtr(region),
+		BucketName: core.StringPtr(bucketName),
+		ImageFilename: core.StringPtr(imageFilename),
+		ImageName: core.StringPtr(imageName),
+		Region: core.StringPtr(region),
 	}
 }
 
@@ -25679,7 +26615,7 @@ type PcloudV2ImagesExportGetOptions struct {
 func (*PowervsV1) NewPcloudV2ImagesExportGetOptions(cloudInstanceID string, imageID string) *PcloudV2ImagesExportGetOptions {
 	return &PcloudV2ImagesExportGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
+		ImageID: core.StringPtr(imageID),
 	}
 }
 
@@ -25729,9 +26665,9 @@ type PcloudV2ImagesExportPostOptions struct {
 func (*PowervsV1) NewPcloudV2ImagesExportPostOptions(cloudInstanceID string, imageID string, accessKey string, bucketName string) *PcloudV2ImagesExportPostOptions {
 	return &PcloudV2ImagesExportPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		ImageID:         core.StringPtr(imageID),
-		AccessKey:       core.StringPtr(accessKey),
-		BucketName:      core.StringPtr(bucketName),
+		ImageID: core.StringPtr(imageID),
+		AccessKey: core.StringPtr(accessKey),
+		BucketName: core.StringPtr(bucketName),
 	}
 }
 
@@ -25793,7 +26729,7 @@ type PcloudV2PvminstancesCaptureGetOptions struct {
 func (*PowervsV1) NewPcloudV2PvminstancesCaptureGetOptions(cloudInstanceID string, pvmInstanceID string) *PcloudV2PvminstancesCaptureGetOptions {
 	return &PcloudV2PvminstancesCaptureGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
 
@@ -25851,7 +26787,7 @@ type PcloudV2PvminstancesCapturePostOptions struct {
 // Constants associated with the PcloudV2PvminstancesCapturePostOptions.CaptureDestination property.
 // Destination for the deployable image.
 const (
-	PcloudV2PvminstancesCapturePostOptionsCaptureDestinationBothConst         = "both"
+	PcloudV2PvminstancesCapturePostOptionsCaptureDestinationBothConst = "both"
 	PcloudV2PvminstancesCapturePostOptionsCaptureDestinationCloudStorageConst = "cloud-storage"
 	PcloudV2PvminstancesCapturePostOptionsCaptureDestinationImageCatalogConst = "image-catalog"
 )
@@ -25859,10 +26795,10 @@ const (
 // NewPcloudV2PvminstancesCapturePostOptions : Instantiate PcloudV2PvminstancesCapturePostOptions
 func (*PowervsV1) NewPcloudV2PvminstancesCapturePostOptions(cloudInstanceID string, pvmInstanceID string, captureDestination string, captureName string) *PcloudV2PvminstancesCapturePostOptions {
 	return &PcloudV2PvminstancesCapturePostOptions{
-		CloudInstanceID:    core.StringPtr(cloudInstanceID),
-		PvmInstanceID:      core.StringPtr(pvmInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
 		CaptureDestination: core.StringPtr(captureDestination),
-		CaptureName:        core.StringPtr(captureName),
+		CaptureName: core.StringPtr(captureName),
 	}
 }
 
@@ -25954,6 +26890,72 @@ func (options *PcloudV2PvminstancesGetallOptions) SetHeaders(param map[string]st
 	return options
 }
 
+// PcloudV2PvminstancesVolumesDeleteOptions : The PcloudV2PvminstancesVolumesDelete options.
+type PcloudV2PvminstancesVolumesDeleteOptions struct {
+	// Cloud Instance ID of a PCloud Instance.
+	CloudInstanceID *string `json:"cloud_instance_id" validate:"required,ne="`
+
+	// PCloud PVM Instance ID.
+	PvmInstanceID *string `json:"pvm_instance_id" validate:"required,ne="`
+
+	// Indicates if all volumes, except primary boot volume, attached to the PVMInstance should be detached
+	// (default=false); required if volumeIDs is not provided.
+	DetachAllVolumes *bool `json:"detachAllVolumes,omitempty"`
+
+	// Indicates if primary boot volume attached to the PVMInstance should be detached (default=false).
+	DetachPrimaryBootVolume *bool `json:"detachPrimaryBootVolume,omitempty"`
+
+	// List of volumes to be detached from a PVM instance; required if detachAllVolumes is not provided.
+	VolumeIDs []string `json:"volumeIDs,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewPcloudV2PvminstancesVolumesDeleteOptions : Instantiate PcloudV2PvminstancesVolumesDeleteOptions
+func (*PowervsV1) NewPcloudV2PvminstancesVolumesDeleteOptions(cloudInstanceID string, pvmInstanceID string) *PcloudV2PvminstancesVolumesDeleteOptions {
+	return &PcloudV2PvminstancesVolumesDeleteOptions{
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+	}
+}
+
+// SetCloudInstanceID : Allow user to set CloudInstanceID
+func (_options *PcloudV2PvminstancesVolumesDeleteOptions) SetCloudInstanceID(cloudInstanceID string) *PcloudV2PvminstancesVolumesDeleteOptions {
+	_options.CloudInstanceID = core.StringPtr(cloudInstanceID)
+	return _options
+}
+
+// SetPvmInstanceID : Allow user to set PvmInstanceID
+func (_options *PcloudV2PvminstancesVolumesDeleteOptions) SetPvmInstanceID(pvmInstanceID string) *PcloudV2PvminstancesVolumesDeleteOptions {
+	_options.PvmInstanceID = core.StringPtr(pvmInstanceID)
+	return _options
+}
+
+// SetDetachAllVolumes : Allow user to set DetachAllVolumes
+func (_options *PcloudV2PvminstancesVolumesDeleteOptions) SetDetachAllVolumes(detachAllVolumes bool) *PcloudV2PvminstancesVolumesDeleteOptions {
+	_options.DetachAllVolumes = core.BoolPtr(detachAllVolumes)
+	return _options
+}
+
+// SetDetachPrimaryBootVolume : Allow user to set DetachPrimaryBootVolume
+func (_options *PcloudV2PvminstancesVolumesDeleteOptions) SetDetachPrimaryBootVolume(detachPrimaryBootVolume bool) *PcloudV2PvminstancesVolumesDeleteOptions {
+	_options.DetachPrimaryBootVolume = core.BoolPtr(detachPrimaryBootVolume)
+	return _options
+}
+
+// SetVolumeIDs : Allow user to set VolumeIDs
+func (_options *PcloudV2PvminstancesVolumesDeleteOptions) SetVolumeIDs(volumeIDs []string) *PcloudV2PvminstancesVolumesDeleteOptions {
+	_options.VolumeIDs = volumeIDs
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *PcloudV2PvminstancesVolumesDeleteOptions) SetHeaders(param map[string]string) *PcloudV2PvminstancesVolumesDeleteOptions {
+	options.Headers = param
+	return options
+}
+
 // PcloudV2PvminstancesVolumesPostOptions : The PcloudV2PvminstancesVolumesPost options.
 type PcloudV2PvminstancesVolumesPostOptions struct {
 	// Cloud Instance ID of a PCloud Instance.
@@ -25965,9 +26967,6 @@ type PcloudV2PvminstancesVolumesPostOptions struct {
 	// List of volumes to be attached to a PVM instance.
 	VolumeIDs []string `json:"volumeIDs" validate:"required"`
 
-	// Enables performance path for volume attach.
-	PerformancePath *bool `json:"performancePath,omitempty"`
-
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -25976,8 +26975,8 @@ type PcloudV2PvminstancesVolumesPostOptions struct {
 func (*PowervsV1) NewPcloudV2PvminstancesVolumesPostOptions(cloudInstanceID string, pvmInstanceID string, volumeIDs []string) *PcloudV2PvminstancesVolumesPostOptions {
 	return &PcloudV2PvminstancesVolumesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		PvmInstanceID:   core.StringPtr(pvmInstanceID),
-		VolumeIDs:       volumeIDs,
+		PvmInstanceID: core.StringPtr(pvmInstanceID),
+		VolumeIDs: volumeIDs,
 	}
 }
 
@@ -25996,12 +26995,6 @@ func (_options *PcloudV2PvminstancesVolumesPostOptions) SetPvmInstanceID(pvmInst
 // SetVolumeIDs : Allow user to set VolumeIDs
 func (_options *PcloudV2PvminstancesVolumesPostOptions) SetVolumeIDs(volumeIDs []string) *PcloudV2PvminstancesVolumesPostOptions {
 	_options.VolumeIDs = volumeIDs
-	return _options
-}
-
-// SetPerformancePath : Allow user to set PerformancePath
-func (_options *PcloudV2PvminstancesVolumesPostOptions) SetPerformancePath(performancePath bool) *PcloudV2PvminstancesVolumesPostOptions {
-	_options.PerformancePath = core.BoolPtr(performancePath)
 	return _options
 }
 
@@ -26027,6 +27020,14 @@ type PcloudV2VolumesClonePostOptions struct {
 	// List of volumes to be cloned.
 	VolumeIDs []string `json:"volumeIDs" validate:"required"`
 
+	// Cloned volume will be non replication enabled if it is set to false. By default, the replication property of the
+	// source volume will be used to determine the replication property of the cloned target volume.
+	TargetReplicationEnabled *bool `json:"targetReplicationEnabled,omitempty"`
+
+	// Target storage tier for the cloned volumes. Use to clone a set of volumes from one storage tier to a different
+	// storage tier. Cloned volumes must remain in the same storage pool as the source volumes.
+	TargetStorageTier *string `json:"targetStorageTier,omitempty"`
+
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -26035,8 +27036,8 @@ type PcloudV2VolumesClonePostOptions struct {
 func (*PowervsV1) NewPcloudV2VolumesClonePostOptions(cloudInstanceID string, name string, volumeIDs []string) *PcloudV2VolumesClonePostOptions {
 	return &PcloudV2VolumesClonePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		VolumeIDs:       volumeIDs,
+		Name: core.StringPtr(name),
+		VolumeIDs: volumeIDs,
 	}
 }
 
@@ -26055,6 +27056,18 @@ func (_options *PcloudV2VolumesClonePostOptions) SetName(name string) *PcloudV2V
 // SetVolumeIDs : Allow user to set VolumeIDs
 func (_options *PcloudV2VolumesClonePostOptions) SetVolumeIDs(volumeIDs []string) *PcloudV2VolumesClonePostOptions {
 	_options.VolumeIDs = volumeIDs
+	return _options
+}
+
+// SetTargetReplicationEnabled : Allow user to set TargetReplicationEnabled
+func (_options *PcloudV2VolumesClonePostOptions) SetTargetReplicationEnabled(targetReplicationEnabled bool) *PcloudV2VolumesClonePostOptions {
+	_options.TargetReplicationEnabled = core.BoolPtr(targetReplicationEnabled)
+	return _options
+}
+
+// SetTargetStorageTier : Allow user to set TargetStorageTier
+func (_options *PcloudV2VolumesClonePostOptions) SetTargetStorageTier(targetStorageTier string) *PcloudV2VolumesClonePostOptions {
+	_options.TargetStorageTier = core.StringPtr(targetStorageTier)
 	return _options
 }
 
@@ -26083,7 +27096,7 @@ type PcloudV2VolumesClonetasksGetOptions struct {
 func (*PowervsV1) NewPcloudV2VolumesClonetasksGetOptions(cloudInstanceID string, cloneTaskID string) *PcloudV2VolumesClonetasksGetOptions {
 	return &PcloudV2VolumesClonetasksGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		CloneTaskID:     core.StringPtr(cloneTaskID),
+		CloneTaskID: core.StringPtr(cloneTaskID),
 	}
 }
 
@@ -26107,6 +27120,44 @@ func (_options *PcloudV2VolumesClonetasksGetOptions) SetAccept(accept string) *P
 
 // SetHeaders : Allow user to set Headers
 func (options *PcloudV2VolumesClonetasksGetOptions) SetHeaders(param map[string]string) *PcloudV2VolumesClonetasksGetOptions {
+	options.Headers = param
+	return options
+}
+
+// PcloudV2VolumesDeleteOptions : The PcloudV2VolumesDelete options.
+type PcloudV2VolumesDeleteOptions struct {
+	// Cloud Instance ID of a PCloud Instance.
+	CloudInstanceID *string `json:"cloud_instance_id" validate:"required,ne="`
+
+	// List of volumes to be deleted.
+	VolumeIDs []string `json:"volumeIDs" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewPcloudV2VolumesDeleteOptions : Instantiate PcloudV2VolumesDeleteOptions
+func (*PowervsV1) NewPcloudV2VolumesDeleteOptions(cloudInstanceID string, volumeIDs []string) *PcloudV2VolumesDeleteOptions {
+	return &PcloudV2VolumesDeleteOptions{
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		VolumeIDs: volumeIDs,
+	}
+}
+
+// SetCloudInstanceID : Allow user to set CloudInstanceID
+func (_options *PcloudV2VolumesDeleteOptions) SetCloudInstanceID(cloudInstanceID string) *PcloudV2VolumesDeleteOptions {
+	_options.CloudInstanceID = core.StringPtr(cloudInstanceID)
+	return _options
+}
+
+// SetVolumeIDs : Allow user to set VolumeIDs
+func (_options *PcloudV2VolumesDeleteOptions) SetVolumeIDs(volumeIDs []string) *PcloudV2VolumesDeleteOptions {
+	_options.VolumeIDs = volumeIDs
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *PcloudV2VolumesDeleteOptions) SetHeaders(param map[string]string) *PcloudV2VolumesDeleteOptions {
 	options.Headers = param
 	return options
 }
@@ -26146,7 +27197,7 @@ type PcloudV2VolumesPostOptions struct {
 	// Number of volumes to create.
 	Count *int64 `json:"count,omitempty"`
 
-	// Type of Disk, required if affinityPolicy and volumePool not provided, otherwise ignored.
+	// Type of Disk; if diskType is not provided the disk type will default to 'tier3'.
 	DiskType *string `json:"diskType,omitempty"`
 
 	// Indicates if the volume should be replication enabled or not.
@@ -26155,7 +27206,7 @@ type PcloudV2VolumesPostOptions struct {
 	// Indicates if the volume is shareable between VMs.
 	Shareable *bool `json:"shareable,omitempty"`
 
-	// Volume pool where the volume will be created; if provided then diskType and affinityPolicy values will be ignored.
+	// Volume pool where the volume will be created; if provided then affinityPolicy value will be ignored.
 	VolumePool *string `json:"volumePool,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -26167,7 +27218,7 @@ type PcloudV2VolumesPostOptions struct {
 // affinityPVMInstance or affinityVolume to be specified; for policy 'anti-affinity' requires one of
 // antiAffinityPVMInstances or antiAffinityVolumes to be specified.
 const (
-	PcloudV2VolumesPostOptionsAffinityPolicyAffinityConst     = "affinity"
+	PcloudV2VolumesPostOptionsAffinityPolicyAffinityConst = "affinity"
 	PcloudV2VolumesPostOptionsAffinityPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -26175,8 +27226,8 @@ const (
 func (*PowervsV1) NewPcloudV2VolumesPostOptions(cloudInstanceID string, name string, size int64) *PcloudV2VolumesPostOptions {
 	return &PcloudV2VolumesPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		Size:            core.Int64Ptr(size),
+		Name: core.StringPtr(name),
+		Size: core.Int64Ptr(size),
 	}
 }
 
@@ -26284,7 +27335,7 @@ type PcloudV2VolumescloneCancelPostOptions struct {
 func (*PowervsV1) NewPcloudV2VolumescloneCancelPostOptions(cloudInstanceID string, volumesCloneID string) *PcloudV2VolumescloneCancelPostOptions {
 	return &PcloudV2VolumescloneCancelPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumesCloneID:  core.StringPtr(volumesCloneID),
+		VolumesCloneID: core.StringPtr(volumesCloneID),
 	}
 }
 
@@ -26328,7 +27379,7 @@ type PcloudV2VolumescloneDeleteOptions struct {
 func (*PowervsV1) NewPcloudV2VolumescloneDeleteOptions(cloudInstanceID string, volumesCloneID string) *PcloudV2VolumescloneDeleteOptions {
 	return &PcloudV2VolumescloneDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumesCloneID:  core.StringPtr(volumesCloneID),
+		VolumesCloneID: core.StringPtr(volumesCloneID),
 	}
 }
 
@@ -26370,6 +27421,14 @@ type PcloudV2VolumescloneExecutePostOptions struct {
 	// back clone activity and removes the prepared snapshot.
 	RollbackPrepare *bool `json:"rollbackPrepare,omitempty"`
 
+	// Cloned volume will be non replication enabled if it is set to false. By default, the replication property of the
+	// source volume will be used to determine the replication property of the cloned target volume.
+	TargetReplicationEnabled *bool `json:"targetReplicationEnabled,omitempty"`
+
+	// Target storage tier for the cloned volumes. Use to clone a set of volumes from one storage tier to a different
+	// storage tier. Cloned volumes must remain in the same storage pool as the source volumes.
+	TargetStorageTier *string `json:"targetStorageTier,omitempty"`
+
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -26378,8 +27437,8 @@ type PcloudV2VolumescloneExecutePostOptions struct {
 func (*PowervsV1) NewPcloudV2VolumescloneExecutePostOptions(cloudInstanceID string, volumesCloneID string, name string) *PcloudV2VolumescloneExecutePostOptions {
 	return &PcloudV2VolumescloneExecutePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumesCloneID:  core.StringPtr(volumesCloneID),
-		Name:            core.StringPtr(name),
+		VolumesCloneID: core.StringPtr(volumesCloneID),
+		Name: core.StringPtr(name),
 	}
 }
 
@@ -26407,6 +27466,18 @@ func (_options *PcloudV2VolumescloneExecutePostOptions) SetRollbackPrepare(rollb
 	return _options
 }
 
+// SetTargetReplicationEnabled : Allow user to set TargetReplicationEnabled
+func (_options *PcloudV2VolumescloneExecutePostOptions) SetTargetReplicationEnabled(targetReplicationEnabled bool) *PcloudV2VolumescloneExecutePostOptions {
+	_options.TargetReplicationEnabled = core.BoolPtr(targetReplicationEnabled)
+	return _options
+}
+
+// SetTargetStorageTier : Allow user to set TargetStorageTier
+func (_options *PcloudV2VolumescloneExecutePostOptions) SetTargetStorageTier(targetStorageTier string) *PcloudV2VolumescloneExecutePostOptions {
+	_options.TargetStorageTier = core.StringPtr(targetStorageTier)
+	return _options
+}
+
 // SetHeaders : Allow user to set Headers
 func (options *PcloudV2VolumescloneExecutePostOptions) SetHeaders(param map[string]string) *PcloudV2VolumescloneExecutePostOptions {
 	options.Headers = param
@@ -26429,7 +27500,7 @@ type PcloudV2VolumescloneGetOptions struct {
 func (*PowervsV1) NewPcloudV2VolumescloneGetOptions(cloudInstanceID string, volumesCloneID string) *PcloudV2VolumescloneGetOptions {
 	return &PcloudV2VolumescloneGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumesCloneID:  core.StringPtr(volumesCloneID),
+		VolumesCloneID: core.StringPtr(volumesCloneID),
 	}
 }
 
@@ -26473,24 +27544,23 @@ type PcloudV2VolumescloneGetallOptions struct {
 
 // Constants associated with the PcloudV2VolumescloneGetallOptions.Filter property.
 // volumes-clone filter to limit list items:
-//
-//	prepare - includes status values (preparing, prepared)
-//	start   - includes status values (starting, available)
-//	execute - includes status values (executing, available-rollback)
-//	cancel  - includes status values (cancelling)
-//	completed - includes status values (completed)
-//	failed - includes status values (failed)
-//	cancelled - includes status values (cancelled)
-//	finalized - included status values (completed, failed, cancelled).
+//   prepare - includes status values (preparing, prepared)
+//   start   - includes status values (starting, available)
+//   execute - includes status values (executing, available-rollback)
+//   cancel  - includes status values (cancelling)
+//   completed - includes status values (completed)
+//   failed - includes status values (failed)
+//   cancelled - includes status values (cancelled)
+//   finalized - included status values (completed, failed, cancelled).
 const (
-	PcloudV2VolumescloneGetallOptionsFilterCancelConst    = "cancel"
+	PcloudV2VolumescloneGetallOptionsFilterCancelConst = "cancel"
 	PcloudV2VolumescloneGetallOptionsFilterCancelledConst = "cancelled"
 	PcloudV2VolumescloneGetallOptionsFilterCompletedConst = "completed"
-	PcloudV2VolumescloneGetallOptionsFilterExecuteConst   = "execute"
-	PcloudV2VolumescloneGetallOptionsFilterFailedConst    = "failed"
+	PcloudV2VolumescloneGetallOptionsFilterExecuteConst = "execute"
+	PcloudV2VolumescloneGetallOptionsFilterFailedConst = "failed"
 	PcloudV2VolumescloneGetallOptionsFilterFinalizedConst = "finalized"
-	PcloudV2VolumescloneGetallOptionsFilterPrepareConst   = "prepare"
-	PcloudV2VolumescloneGetallOptionsFilterStartConst     = "start"
+	PcloudV2VolumescloneGetallOptionsFilterPrepareConst = "prepare"
+	PcloudV2VolumescloneGetallOptionsFilterStartConst = "start"
 )
 
 // NewPcloudV2VolumescloneGetallOptions : Instantiate PcloudV2VolumescloneGetallOptions
@@ -26530,9 +27600,6 @@ type PcloudV2VolumesclonePostOptions struct {
 	// List of volumes to be cloned.
 	VolumeIDs []string `json:"volumeIDs" validate:"required"`
 
-	// Enables performance path for creating volume clones.
-	PerformancePath *bool `json:"performancePath,omitempty"`
-
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -26541,8 +27608,8 @@ type PcloudV2VolumesclonePostOptions struct {
 func (*PowervsV1) NewPcloudV2VolumesclonePostOptions(cloudInstanceID string, name string, volumeIDs []string) *PcloudV2VolumesclonePostOptions {
 	return &PcloudV2VolumesclonePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Name:            core.StringPtr(name),
-		VolumeIDs:       volumeIDs,
+		Name: core.StringPtr(name),
+		VolumeIDs: volumeIDs,
 	}
 }
 
@@ -26561,12 +27628,6 @@ func (_options *PcloudV2VolumesclonePostOptions) SetName(name string) *PcloudV2V
 // SetVolumeIDs : Allow user to set VolumeIDs
 func (_options *PcloudV2VolumesclonePostOptions) SetVolumeIDs(volumeIDs []string) *PcloudV2VolumesclonePostOptions {
 	_options.VolumeIDs = volumeIDs
-	return _options
-}
-
-// SetPerformancePath : Allow user to set PerformancePath
-func (_options *PcloudV2VolumesclonePostOptions) SetPerformancePath(performancePath bool) *PcloudV2VolumesclonePostOptions {
-	_options.PerformancePath = core.BoolPtr(performancePath)
 	return _options
 }
 
@@ -26592,7 +27653,7 @@ type PcloudV2VolumescloneStartPostOptions struct {
 func (*PowervsV1) NewPcloudV2VolumescloneStartPostOptions(cloudInstanceID string, volumesCloneID string) *PcloudV2VolumescloneStartPostOptions {
 	return &PcloudV2VolumescloneStartPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumesCloneID:  core.StringPtr(volumesCloneID),
+		VolumesCloneID: core.StringPtr(volumesCloneID),
 	}
 }
 
@@ -26629,7 +27690,7 @@ type PcloudVolumeOnboardingGetOptions struct {
 // NewPcloudVolumeOnboardingGetOptions : Instantiate PcloudVolumeOnboardingGetOptions
 func (*PowervsV1) NewPcloudVolumeOnboardingGetOptions(cloudInstanceID string, volumeOnboardingID string) *PcloudVolumeOnboardingGetOptions {
 	return &PcloudVolumeOnboardingGetOptions{
-		CloudInstanceID:    core.StringPtr(cloudInstanceID),
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		VolumeOnboardingID: core.StringPtr(volumeOnboardingID),
 	}
 }
@@ -26698,7 +27759,7 @@ type PcloudVolumeOnboardingPostOptions struct {
 func (*PowervsV1) NewPcloudVolumeOnboardingPostOptions(cloudInstanceID string, volumes []AuxiliaryVolumesForOnboarding) *PcloudVolumeOnboardingPostOptions {
 	return &PcloudVolumeOnboardingPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		Volumes:         volumes,
+		Volumes: volumes,
 	}
 }
 
@@ -26735,18 +27796,18 @@ type PcloudVolumegroupsActionPostOptions struct {
 	VolumeGroupID *string `json:"volume_group_id" validate:"required,ne="`
 
 	// Parameters for the desire action.
-	VolumeGroupAction *VolumeGroupAction `json:"VolumeGroupAction" validate:"required"`
+	Body *VolumeGroupAction `json:"body" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewPcloudVolumegroupsActionPostOptions : Instantiate PcloudVolumegroupsActionPostOptions
-func (*PowervsV1) NewPcloudVolumegroupsActionPostOptions(cloudInstanceID string, volumeGroupID string, volumeGroupAction *VolumeGroupAction) *PcloudVolumegroupsActionPostOptions {
+func (*PowervsV1) NewPcloudVolumegroupsActionPostOptions(cloudInstanceID string, volumeGroupID string, body *VolumeGroupAction) *PcloudVolumegroupsActionPostOptions {
 	return &PcloudVolumegroupsActionPostOptions{
-		CloudInstanceID:   core.StringPtr(cloudInstanceID),
-		VolumeGroupID:     core.StringPtr(volumeGroupID),
-		VolumeGroupAction: volumeGroupAction,
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
+		Body: body,
 	}
 }
 
@@ -26762,9 +27823,9 @@ func (_options *PcloudVolumegroupsActionPostOptions) SetVolumeGroupID(volumeGrou
 	return _options
 }
 
-// SetVolumeGroupAction : Allow user to set VolumeGroupAction
-func (_options *PcloudVolumegroupsActionPostOptions) SetVolumeGroupAction(volumeGroupAction *VolumeGroupAction) *PcloudVolumegroupsActionPostOptions {
-	_options.VolumeGroupAction = volumeGroupAction
+// SetBody : Allow user to set Body
+func (_options *PcloudVolumegroupsActionPostOptions) SetBody(body *VolumeGroupAction) *PcloudVolumegroupsActionPostOptions {
+	_options.Body = body
 	return _options
 }
 
@@ -26790,7 +27851,7 @@ type PcloudVolumegroupsDeleteOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsDeleteOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsDeleteOptions {
 	return &PcloudVolumegroupsDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -26828,7 +27889,7 @@ type PcloudVolumegroupsGetDetailsOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsGetDetailsOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsGetDetailsOptions {
 	return &PcloudVolumegroupsGetDetailsOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -26866,7 +27927,7 @@ type PcloudVolumegroupsGetOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsGetOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsGetOptions {
 	return &PcloudVolumegroupsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -26968,7 +28029,7 @@ type PcloudVolumegroupsPostOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsPostOptions(cloudInstanceID string, volumeIDs []string) *PcloudVolumegroupsPostOptions {
 	return &PcloudVolumegroupsPostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeIDs:       volumeIDs,
+		VolumeIDs: volumeIDs,
 	}
 }
 
@@ -27024,7 +28085,7 @@ type PcloudVolumegroupsPutOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsPutOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsPutOptions {
 	return &PcloudVolumegroupsPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -27074,7 +28135,7 @@ type PcloudVolumegroupsRemoteCopyRelationshipsGetOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsRemoteCopyRelationshipsGetOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsRemoteCopyRelationshipsGetOptions {
 	return &PcloudVolumegroupsRemoteCopyRelationshipsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -27112,7 +28173,7 @@ type PcloudVolumegroupsStorageDetailsGetOptions struct {
 func (*PowervsV1) NewPcloudVolumegroupsStorageDetailsGetOptions(cloudInstanceID string, volumeGroupID string) *PcloudVolumegroupsStorageDetailsGetOptions {
 	return &PcloudVolumegroupsStorageDetailsGetOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		VolumeGroupID:   core.StringPtr(volumeGroupID),
+		VolumeGroupID: core.StringPtr(volumeGroupID),
 	}
 }
 
@@ -27157,8 +28218,8 @@ type PcloudVolumesClonePostOptions struct {
 func (*PowervsV1) NewPcloudVolumesClonePostOptions(cloudInstanceID string, displayName string, volumeIDs []string) *PcloudVolumesClonePostOptions {
 	return &PcloudVolumesClonePostOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
-		DisplayName:     core.StringPtr(displayName),
-		VolumeIDs:       volumeIDs,
+		DisplayName: core.StringPtr(displayName),
+		VolumeIDs: volumeIDs,
 	}
 }
 
@@ -27309,7 +28370,7 @@ func (*PowervsV1) NewPcloudVpnconnectionsNetworksDeleteOptions(cloudInstanceID s
 	return &PcloudVpnconnectionsNetworksDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		VPNConnectionID: core.StringPtr(vpnConnectionID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -27394,7 +28455,7 @@ func (*PowervsV1) NewPcloudVpnconnectionsNetworksPutOptions(cloudInstanceID stri
 	return &PcloudVpnconnectionsNetworksPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		VPNConnectionID: core.StringPtr(vpnConnectionID),
-		NetworkID:       core.StringPtr(networkID),
+		NetworkID: core.StringPtr(networkID),
 	}
 }
 
@@ -27441,7 +28502,7 @@ func (*PowervsV1) NewPcloudVpnconnectionsPeersubnetsDeleteOptions(cloudInstanceI
 	return &PcloudVpnconnectionsPeersubnetsDeleteOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		VPNConnectionID: core.StringPtr(vpnConnectionID),
-		CIDR:            core.StringPtr(cidr),
+		CIDR: core.StringPtr(cidr),
 	}
 }
 
@@ -27526,7 +28587,7 @@ func (*PowervsV1) NewPcloudVpnconnectionsPeersubnetsPutOptions(cloudInstanceID s
 	return &PcloudVpnconnectionsPeersubnetsPutOptions{
 		CloudInstanceID: core.StringPtr(cloudInstanceID),
 		VPNConnectionID: core.StringPtr(vpnConnectionID),
-		CIDR:            core.StringPtr(cidr),
+		CIDR: core.StringPtr(cidr),
 	}
 }
 
@@ -27590,20 +28651,20 @@ type PcloudVpnconnectionsPostOptions struct {
 // cannot be updated later.
 const (
 	PcloudVpnconnectionsPostOptionsModePolicyConst = "policy"
-	PcloudVpnconnectionsPostOptionsModeRouteConst  = "route"
+	PcloudVpnconnectionsPostOptionsModeRouteConst = "route"
 )
 
 // NewPcloudVpnconnectionsPostOptions : Instantiate PcloudVpnconnectionsPostOptions
 func (*PowervsV1) NewPcloudVpnconnectionsPostOptions(cloudInstanceID string, ikePolicy string, ipSecPolicy string, mode string, name string, networks []string, peerGatewayAddress string, peerSubnets []string) *PcloudVpnconnectionsPostOptions {
 	return &PcloudVpnconnectionsPostOptions{
-		CloudInstanceID:    core.StringPtr(cloudInstanceID),
-		IkePolicy:          core.StringPtr(ikePolicy),
-		IPSecPolicy:        core.StringPtr(ipSecPolicy),
-		Mode:               core.StringPtr(mode),
-		Name:               core.StringPtr(name),
-		Networks:           networks,
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		IkePolicy: core.StringPtr(ikePolicy),
+		IPSecPolicy: core.StringPtr(ipSecPolicy),
+		Mode: core.StringPtr(mode),
+		Name: core.StringPtr(name),
+		Networks: networks,
 		PeerGatewayAddress: core.StringPtr(peerGatewayAddress),
-		PeerSubnets:        peerSubnets,
+		PeerSubnets: peerSubnets,
 	}
 }
 
@@ -27670,18 +28731,18 @@ type PcloudVpnconnectionsPutOptions struct {
 	VPNConnectionID *string `json:"vpn_connection_id" validate:"required,ne="`
 
 	// VPN Connection object used for update.
-	VPNConnectionUpdate *VPNConnectionUpdate `json:"VPNConnectionUpdate" validate:"required"`
+	Body *VPNConnectionUpdate `json:"body" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewPcloudVpnconnectionsPutOptions : Instantiate PcloudVpnconnectionsPutOptions
-func (*PowervsV1) NewPcloudVpnconnectionsPutOptions(cloudInstanceID string, vpnConnectionID string, vpnConnectionUpdate *VPNConnectionUpdate) *PcloudVpnconnectionsPutOptions {
+func (*PowervsV1) NewPcloudVpnconnectionsPutOptions(cloudInstanceID string, vpnConnectionID string, body *VPNConnectionUpdate) *PcloudVpnconnectionsPutOptions {
 	return &PcloudVpnconnectionsPutOptions{
-		CloudInstanceID:     core.StringPtr(cloudInstanceID),
-		VPNConnectionID:     core.StringPtr(vpnConnectionID),
-		VPNConnectionUpdate: vpnConnectionUpdate,
+		CloudInstanceID: core.StringPtr(cloudInstanceID),
+		VPNConnectionID: core.StringPtr(vpnConnectionID),
+		Body: body,
 	}
 }
 
@@ -27697,9 +28758,9 @@ func (_options *PcloudVpnconnectionsPutOptions) SetVPNConnectionID(vpnConnection
 	return _options
 }
 
-// SetVPNConnectionUpdate : Allow user to set VPNConnectionUpdate
-func (_options *PcloudVpnconnectionsPutOptions) SetVPNConnectionUpdate(vpnConnectionUpdate *VPNConnectionUpdate) *PcloudVpnconnectionsPutOptions {
-	_options.VPNConnectionUpdate = vpnConnectionUpdate
+// SetBody : Allow user to set Body
+func (_options *PcloudVpnconnectionsPutOptions) SetBody(body *VPNConnectionUpdate) *PcloudVpnconnectionsPutOptions {
+	_options.Body = body
 	return _options
 }
 
@@ -27741,7 +28802,7 @@ type PeeringNetwork struct {
 // NewPeeringNetwork : Instantiate PeeringNetwork (Generic Model Constructor)
 func (*PowervsV1) NewPeeringNetwork(cidr string, projectName string) (_model *PeeringNetwork, err error) {
 	_model = &PeeringNetwork{
-		CIDR:        core.StringPtr(cidr),
+		CIDR: core.StringPtr(cidr),
 		ProjectName: core.StringPtr(projectName),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -27785,7 +28846,7 @@ type PlacementGroup struct {
 // Constants associated with the PlacementGroup.Policy property.
 // The Placement Group Policy.
 const (
-	PlacementGroupPolicyAffinityConst     = "affinity"
+	PlacementGroupPolicyAffinityConst = "affinity"
 	PlacementGroupPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -27877,6 +28938,96 @@ func UnmarshalPlan(m map[string]json.RawMessage, result interface{}) (err error)
 		return
 	}
 	err = core.UnmarshalModel(m, "schemas", &obj.Schemas, UnmarshalSchemasObject)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// PodCapacity : List of available resources within a Pod.
+type PodCapacity struct {
+	// Description of a PPCaaS Pod.
+	PodData *PodData `json:"PodData,omitempty"`
+
+	// List of available storage controllers within a particular DataCenter.
+	StorageControllers map[string]StorageController `json:"StorageControllers,omitempty"`
+
+	// List of available system pools within a Pod.
+	SystemPools map[string]SystemPoolCapacity `json:"SystemPools,omitempty"`
+}
+
+// UnmarshalPodCapacity unmarshals an instance of PodCapacity from the specified map of raw messages.
+func UnmarshalPodCapacity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(PodCapacity)
+	err = core.UnmarshalModel(m, "PodData", &obj.PodData, UnmarshalPodData)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "StorageControllers", &obj.StorageControllers, UnmarshalStorageController)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "SystemPools", &obj.SystemPools, UnmarshalSystemPoolCapacity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// PodData : Description of a PPCaaS Pod.
+type PodData struct {
+	// Number of available cores in the Pod.
+	Cores *float64 `json:"cores" validate:"required"`
+
+	// Amount of available memory in the Pod (GB).
+	Memory *int64 `json:"memory" validate:"required"`
+
+	// ID of the Satellite Location.
+	SatLocationID *string `json:"satLocationID" validate:"required"`
+
+	// Amount of available storage in the Pod (GB).
+	Storage *int64 `json:"storage" validate:"required"`
+
+	// Total number of cores in the Pod.
+	TotalCores *float64 `json:"totalCores" validate:"required"`
+
+	// Total amount of memory in the Pod (GB).
+	TotalMemory *int64 `json:"totalMemory" validate:"required"`
+
+	// Total amount of storage in the Pod (GB).
+	TotalStorage *int64 `json:"totalStorage" validate:"required"`
+}
+
+// UnmarshalPodData unmarshals an instance of PodData from the specified map of raw messages.
+func UnmarshalPodData(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(PodData)
+	err = core.UnmarshalPrimitive(m, "cores", &obj.Cores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "memory", &obj.Memory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "satLocationID", &obj.SatLocationID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "storage", &obj.Storage)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalCores", &obj.TotalCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalStorage", &obj.TotalStorage)
 	if err != nil {
 		return
 	}
@@ -28007,9 +29158,9 @@ type PvmInstanceDeployment struct {
 // Constants associated with the PvmInstanceDeployment.ProcessorMode property.
 // Processor mode (dedicated, shared, capped).
 const (
-	PvmInstanceDeploymentProcessorModeCappedConst    = "capped"
+	PvmInstanceDeploymentProcessorModeCappedConst = "capped"
 	PvmInstanceDeploymentProcessorModeDedicatedConst = "dedicated"
-	PvmInstanceDeploymentProcessorModeSharedConst    = "shared"
+	PvmInstanceDeploymentProcessorModeSharedConst = "shared"
 )
 
 // UnmarshalPvmInstanceDeployment unmarshals an instance of PvmInstanceDeployment from the specified map of raw messages.
@@ -28198,11 +29349,11 @@ type SapProfile struct {
 // Constants associated with the SapProfile.Type property.
 // Type of profile.
 const (
-	SapProfileTypeBalancedConst      = "balanced"
-	SapProfileTypeComputeConst       = "compute"
-	SapProfileTypeMemoryConst        = "memory"
+	SapProfileTypeBalancedConst = "balanced"
+	SapProfileTypeComputeConst = "compute"
+	SapProfileTypeMemoryConst = "memory"
 	SapProfileTypeNonProductionConst = "non-production"
-	SapProfileTypeUltraMemoryConst   = "ultra-memory"
+	SapProfileTypeUltraMemoryConst = "ultra-memory"
 )
 
 // UnmarshalSapProfile unmarshals an instance of SapProfile from the specified map of raw messages.
@@ -28367,7 +29518,7 @@ type SshKey struct {
 // NewSshKey : Instantiate SshKey (Generic Model Constructor)
 func (*PowervsV1) NewSshKey(name string, sshKey string) (_model *SshKey, err error) {
 	_model = &SshKey{
-		Name:   core.StringPtr(name),
+		Name: core.StringPtr(name),
 		SshKey: core.StringPtr(sshKey),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -28485,8 +29636,8 @@ type Service struct {
 // Constants associated with the Service.Requires property.
 const (
 	ServiceRequiresRouteForwardingConst = "route_forwarding"
-	ServiceRequiresSyslogDrainConst     = "syslog_drain"
-	ServiceRequiresVolumeMountConst     = "volume_mount"
+	ServiceRequiresSyslogDrainConst = "syslog_drain"
+	ServiceRequiresVolumeMountConst = "volume_mount"
 )
 
 // UnmarshalService unmarshals an instance of Service from the specified map of raw messages.
@@ -28626,10 +29777,10 @@ type ServiceBindingBindingOptions struct {
 func (*PowervsV1) NewServiceBindingBindingOptions(xBrokerApiVersion string, instanceID string, bindingID string, planID string, serviceID string) *ServiceBindingBindingOptions {
 	return &ServiceBindingBindingOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		BindingID:         core.StringPtr(bindingID),
-		PlanID:            core.StringPtr(planID),
-		ServiceID:         core.StringPtr(serviceID),
+		InstanceID: core.StringPtr(instanceID),
+		BindingID: core.StringPtr(bindingID),
+		PlanID: core.StringPtr(planID),
+		ServiceID: core.StringPtr(serviceID),
 	}
 }
 
@@ -28727,8 +29878,8 @@ type ServiceBindingGetOptions struct {
 func (*PowervsV1) NewServiceBindingGetOptions(xBrokerApiVersion string, instanceID string, bindingID string) *ServiceBindingGetOptions {
 	return &ServiceBindingGetOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		BindingID:         core.StringPtr(bindingID),
+		InstanceID: core.StringPtr(instanceID),
+		BindingID: core.StringPtr(bindingID),
 	}
 }
 
@@ -28790,8 +29941,8 @@ type ServiceBindingLastOperationGetOptions struct {
 func (*PowervsV1) NewServiceBindingLastOperationGetOptions(xBrokerApiVersion string, instanceID string, bindingID string) *ServiceBindingLastOperationGetOptions {
 	return &ServiceBindingLastOperationGetOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		BindingID:         core.StringPtr(bindingID),
+		InstanceID: core.StringPtr(instanceID),
+		BindingID: core.StringPtr(bindingID),
 	}
 }
 
@@ -28946,10 +30097,10 @@ type ServiceBindingUnbindingOptions struct {
 func (*PowervsV1) NewServiceBindingUnbindingOptions(xBrokerApiVersion string, instanceID string, bindingID string, serviceID string, planID string) *ServiceBindingUnbindingOptions {
 	return &ServiceBindingUnbindingOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		BindingID:         core.StringPtr(bindingID),
-		ServiceID:         core.StringPtr(serviceID),
-		PlanID:            core.StringPtr(planID),
+		InstanceID: core.StringPtr(instanceID),
+		BindingID: core.StringPtr(bindingID),
+		ServiceID: core.StringPtr(serviceID),
+		PlanID: core.StringPtr(planID),
 	}
 }
 
@@ -29021,7 +30172,7 @@ const (
 
 // Constants associated with the ServiceBindingVolumeMount.Mode property.
 const (
-	ServiceBindingVolumeMountModeRConst  = "r"
+	ServiceBindingVolumeMountModeRConst = "r"
 	ServiceBindingVolumeMountModeRwConst = "rw"
 )
 
@@ -29191,7 +30342,7 @@ type ServiceBrokerAuthLoginOptions struct {
 // Determines if a refresh token is returned.
 const (
 	ServiceBrokerAuthLoginOptionsAccessTypeOfflineConst = "offline"
-	ServiceBrokerAuthLoginOptionsAccessTypeOnlineConst  = "online"
+	ServiceBrokerAuthLoginOptionsAccessTypeOnlineConst = "online"
 )
 
 // NewServiceBrokerAuthLoginOptions : Instantiate ServiceBrokerAuthLoginOptions
@@ -29286,11 +30437,11 @@ type ServiceBrokerAuthRegistrationOptions struct {
 // NewServiceBrokerAuthRegistrationOptions : Instantiate ServiceBrokerAuthRegistrationOptions
 func (*PowervsV1) NewServiceBrokerAuthRegistrationOptions(tenantID string, entitlementID string, plan string, icn string, regions []string) *ServiceBrokerAuthRegistrationOptions {
 	return &ServiceBrokerAuthRegistrationOptions{
-		TenantID:      core.StringPtr(tenantID),
+		TenantID: core.StringPtr(tenantID),
 		EntitlementID: core.StringPtr(entitlementID),
-		Plan:          core.StringPtr(plan),
-		Icn:           core.StringPtr(icn),
-		Regions:       regions,
+		Plan: core.StringPtr(plan),
+		Icn: core.StringPtr(icn),
+		Regions: regions,
 	}
 }
 
@@ -29359,7 +30510,7 @@ const (
 func (*PowervsV1) NewServiceBrokerAuthTokenPostOptions(refreshToken string, source string) *ServiceBrokerAuthTokenPostOptions {
 	return &ServiceBrokerAuthTokenPostOptions{
 		RefreshToken: core.StringPtr(refreshToken),
-		Source:       core.StringPtr(source),
+		Source: core.StringPtr(source),
 	}
 }
 
@@ -29393,9 +30544,9 @@ type ServiceBrokerHardwareplatformsGetOptions struct {
 // Constants associated with the ServiceBrokerHardwareplatformsGetOptions.RegionZone property.
 // The region zone of the cloud instance.
 const (
-	ServiceBrokerHardwareplatformsGetOptionsRegionZoneEuDe1Const   = "eu-de-1"
-	ServiceBrokerHardwareplatformsGetOptionsRegionZoneEuDe2Const   = "eu-de-2"
-	ServiceBrokerHardwareplatformsGetOptionsRegionZoneUsEastConst  = "us-east"
+	ServiceBrokerHardwareplatformsGetOptionsRegionZoneEuDe1Const = "eu-de-1"
+	ServiceBrokerHardwareplatformsGetOptionsRegionZoneEuDe2Const = "eu-de-2"
+	ServiceBrokerHardwareplatformsGetOptionsRegionZoneUsEastConst = "us-east"
 	ServiceBrokerHardwareplatformsGetOptionsRegionZoneUsEast4Const = "us-east4"
 	ServiceBrokerHardwareplatformsGetOptionsRegionZoneUsSouthConst = "us-south"
 )
@@ -29486,7 +30637,7 @@ type ServiceBrokerOpenstacksHostsGetOptions struct {
 // NewServiceBrokerOpenstacksHostsGetOptions : Instantiate ServiceBrokerOpenstacksHostsGetOptions
 func (*PowervsV1) NewServiceBrokerOpenstacksHostsGetOptions(hostname string, openstackID string) *ServiceBrokerOpenstacksHostsGetOptions {
 	return &ServiceBrokerOpenstacksHostsGetOptions{
-		Hostname:    core.StringPtr(hostname),
+		Hostname: core.StringPtr(hostname),
 		OpenstackID: core.StringPtr(openstackID),
 	}
 }
@@ -29556,8 +30707,8 @@ type ServiceBrokerOpenstacksPostOptions struct {
 func (*PowervsV1) NewServiceBrokerOpenstacksPostOptions(ipAddress string, name string, region string) *ServiceBrokerOpenstacksPostOptions {
 	return &ServiceBrokerOpenstacksPostOptions{
 		IPAddress: core.StringPtr(ipAddress),
-		Name:      core.StringPtr(name),
-		Region:    core.StringPtr(region),
+		Name: core.StringPtr(name),
+		Region: core.StringPtr(region),
 	}
 }
 
@@ -29600,7 +30751,7 @@ type ServiceBrokerOpenstacksServersGetOptions struct {
 // NewServiceBrokerOpenstacksServersGetOptions : Instantiate ServiceBrokerOpenstacksServersGetOptions
 func (*PowervsV1) NewServiceBrokerOpenstacksServersGetOptions(openstackID string, pvmInstanceID string) *ServiceBrokerOpenstacksServersGetOptions {
 	return &ServiceBrokerOpenstacksServersGetOptions{
-		OpenstackID:   core.StringPtr(openstackID),
+		OpenstackID: core.StringPtr(openstackID),
 		PvmInstanceID: core.StringPtr(pvmInstanceID),
 	}
 }
@@ -29766,9 +30917,9 @@ type ServiceInstanceDeprovisionOptions struct {
 func (*PowervsV1) NewServiceInstanceDeprovisionOptions(xBrokerApiVersion string, instanceID string, serviceID string, planID string) *ServiceInstanceDeprovisionOptions {
 	return &ServiceInstanceDeprovisionOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		ServiceID:         core.StringPtr(serviceID),
-		PlanID:            core.StringPtr(planID),
+		InstanceID: core.StringPtr(instanceID),
+		ServiceID: core.StringPtr(serviceID),
+		PlanID: core.StringPtr(planID),
 	}
 }
 
@@ -29833,7 +30984,7 @@ type ServiceInstanceGetOptions struct {
 func (*PowervsV1) NewServiceInstanceGetOptions(xBrokerApiVersion string, instanceID string) *ServiceInstanceGetOptions {
 	return &ServiceInstanceGetOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
+		InstanceID: core.StringPtr(instanceID),
 	}
 }
 
@@ -29886,7 +31037,7 @@ type ServiceInstanceLastOperationGetOptions struct {
 func (*PowervsV1) NewServiceInstanceLastOperationGetOptions(xBrokerApiVersion string, instanceID string) *ServiceInstanceLastOperationGetOptions {
 	return &ServiceInstanceLastOperationGetOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
+		InstanceID: core.StringPtr(instanceID),
 	}
 }
 
@@ -30013,9 +31164,9 @@ type ServiceInstanceProvisionOptions struct {
 func (*PowervsV1) NewServiceInstanceProvisionOptions(xBrokerApiVersion string, instanceID string, planID string, serviceID string) *ServiceInstanceProvisionOptions {
 	return &ServiceInstanceProvisionOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		PlanID:            core.StringPtr(planID),
-		ServiceID:         core.StringPtr(serviceID),
+		InstanceID: core.StringPtr(instanceID),
+		PlanID: core.StringPtr(planID),
+		ServiceID: core.StringPtr(serviceID),
 	}
 }
 
@@ -30176,8 +31327,8 @@ type ServiceInstanceUpdateOptions struct {
 func (*PowervsV1) NewServiceInstanceUpdateOptions(xBrokerApiVersion string, instanceID string, serviceID string) *ServiceInstanceUpdateOptions {
 	return &ServiceInstanceUpdateOptions{
 		XBrokerApiVersion: core.StringPtr(xBrokerApiVersion),
-		InstanceID:        core.StringPtr(instanceID),
-		ServiceID:         core.StringPtr(serviceID),
+		InstanceID: core.StringPtr(instanceID),
+		ServiceID: core.StringPtr(serviceID),
 	}
 }
 
@@ -30773,7 +31924,7 @@ type StorageAffinity struct {
 // affinityPVMInstance or affinityVolume to be specified; for policy 'anti-affinity' requires one of
 // antiAffinityPVMInstances or antiAffinityVolumes to be specified.
 const (
-	StorageAffinityAffinityPolicyAffinityConst     = "affinity"
+	StorageAffinityAffinityPolicyAffinityConst = "affinity"
 	StorageAffinityAffinityPolicyAntiAffinityConst = "anti-affinity"
 )
 
@@ -30797,6 +31948,51 @@ func UnmarshalStorageAffinity(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "antiAffinityVolumes", &obj.AntiAffinityVolumes)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// StorageController : Description of a Storage Controller.
+type StorageController struct {
+	// Display Name of the Storage Controller.
+	DisplayName *string `json:"displayName" validate:"required"`
+
+	// Health status of this storage controller.
+	Health *string `json:"health" validate:"required"`
+
+	// Free storage in user pools on this storage controller (GB).
+	PoolStorage *float64 `json:"poolStorage" validate:"required"`
+
+	// Total storage capacity of user pools in this storage controller (GB).
+	PoolTotalStorage *float64 `json:"poolTotalStorage" validate:"required"`
+
+	// List of storage pools within this storage controller.
+	Pools map[string]StoragePoolCombined `json:"pools" validate:"required"`
+}
+
+// UnmarshalStorageController unmarshals an instance of StorageController from the specified map of raw messages.
+func UnmarshalStorageController(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(StorageController)
+	err = core.UnmarshalPrimitive(m, "displayName", &obj.DisplayName)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "poolStorage", &obj.PoolStorage)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "poolTotalStorage", &obj.PoolTotalStorage)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "pools", &obj.Pools, UnmarshalStoragePoolCombined)
 	if err != nil {
 		return
 	}
@@ -30889,11 +32085,20 @@ func UnmarshalStoragePool(m map[string]json.RawMessage, result interface{}) (err
 
 // StoragePoolCapacity : Storage pool capacity.
 type StoragePoolCapacity struct {
+	// Available/Unused pool capacity (GB).
+	AvailableCapacity *int64 `json:"availableCapacity,omitempty"`
+
 	// Maximum allocation storage size (GB).
 	MaxAllocationSize *int64 `json:"maxAllocationSize" validate:"required"`
 
 	// Pool name.
 	PoolName *string `json:"poolName,omitempty"`
+
+	// true if storage-pool is replication enabled and can be used to manage replication enabled volumes.
+	ReplicationEnabled *bool `json:"replicationEnabled,omitempty"`
+
+	// Storage host/controller for this storage pool.
+	StorageHost *string `json:"storageHost,omitempty"`
 
 	// Storage type of the storage pool.
 	StorageType *string `json:"storageType,omitempty"`
@@ -30905,6 +32110,10 @@ type StoragePoolCapacity struct {
 // UnmarshalStoragePoolCapacity unmarshals an instance of StoragePoolCapacity from the specified map of raw messages.
 func UnmarshalStoragePoolCapacity(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(StoragePoolCapacity)
+	err = core.UnmarshalPrimitive(m, "availableCapacity", &obj.AvailableCapacity)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "maxAllocationSize", &obj.MaxAllocationSize)
 	if err != nil {
 		return
@@ -30913,11 +32122,50 @@ func UnmarshalStoragePoolCapacity(m map[string]json.RawMessage, result interface
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "replicationEnabled", &obj.ReplicationEnabled)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "storageHost", &obj.StorageHost)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "storageType", &obj.StorageType)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "totalCapacity", &obj.TotalCapacity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// StoragePoolCombined : Combined Storage Pool Capacity.
+type StoragePoolCombined struct {
+	// Pool name.
+	PoolName *string `json:"poolName" validate:"required"`
+
+	// Available/Unused pool capacity (GB).
+	Storage *int64 `json:"storage" validate:"required"`
+
+	// Total pool capacity (GB).
+	TotalStorage *int64 `json:"totalStorage" validate:"required"`
+}
+
+// UnmarshalStoragePoolCombined unmarshals an instance of StoragePoolCombined from the specified map of raw messages.
+func UnmarshalStoragePoolCombined(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(StoragePoolCombined)
+	err = core.UnmarshalPrimitive(m, "poolName", &obj.PoolName)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "storage", &obj.Storage)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalStorage", &obj.TotalStorage)
 	if err != nil {
 		return
 	}
@@ -30948,6 +32196,44 @@ func UnmarshalStoragePoolsCapacity(m map[string]json.RawMessage, result interfac
 	return
 }
 
+// StorageTier : Storage tier detail.
+type StorageTier struct {
+	// Description, storage tier label.
+	Description *string `json:"description,omitempty"`
+
+	// Name of the storage tier.
+	Name *string `json:"name,omitempty"`
+
+	// State of the storage tier (active or inactive).
+	State *string `json:"state,omitempty"`
+}
+
+// Constants associated with the StorageTier.State property.
+// State of the storage tier (active or inactive).
+const (
+	StorageTierStateActiveConst = "active"
+	StorageTierStateInactiveConst = "inactive"
+)
+
+// UnmarshalStorageTier unmarshals an instance of StorageTier from the specified map of raw messages.
+func UnmarshalStorageTier(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(StorageTier)
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "state", &obj.State)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // StorageType : Storage type detail.
 type StorageType struct {
 	// Identifies if the storage type is the default for a region.
@@ -30966,7 +32252,7 @@ type StorageType struct {
 // Constants associated with the StorageType.State property.
 // State of the storage type (active or inactive).
 const (
-	StorageTypeStateActiveConst   = "active"
+	StorageTypeStateActiveConst = "active"
 	StorageTypeStateInactiveConst = "inactive"
 )
 
@@ -31050,18 +32336,38 @@ func UnmarshalStorageTypesCapacity(m map[string]json.RawMessage, result interfac
 // System : System struct
 type System struct {
 	// The host available Processor units.
+	AvailableCores *float64 `json:"availableCores,omitempty"`
+
+	// The host available RAM memory in GiB.
+	AvailableMemory *int64 `json:"availableMemory,omitempty"`
+
+	// The host available Processor units.
 	Cores *float64 `json:"cores" validate:"required"`
 
 	// The host identifier.
 	ID *int64 `json:"id,omitempty"`
 
-	// The host available RAM memory in GiB.
+	// The host total RAM memory in GiB.
 	Memory *int64 `json:"memory" validate:"required"`
+
+	// The host total Processor units.
+	TotalCores *float64 `json:"totalCores" validate:"required"`
+
+	// The host total RAM memory in GiB.
+	TotalMemory *int64 `json:"totalMemory" validate:"required"`
 }
 
 // UnmarshalSystem unmarshals an instance of System from the specified map of raw messages.
 func UnmarshalSystem(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(System)
+	err = core.UnmarshalPrimitive(m, "availableCores", &obj.AvailableCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "availableMemory", &obj.AvailableMemory)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "cores", &obj.Cores)
 	if err != nil {
 		return
@@ -31071,6 +32377,14 @@ func UnmarshalSystem(m map[string]json.RawMessage, result interface{}) (err erro
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "memory", &obj.Memory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalCores", &obj.TotalCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
 	if err != nil {
 		return
 	}
@@ -31132,6 +32446,51 @@ func UnmarshalSystemPool(m map[string]json.RawMessage, result interface{}) (err 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// SystemPoolCapacity : Description of a System Pool's Capacity.
+type SystemPoolCapacity struct {
+	// Number of available cores in the System Pool.
+	Cores *float64 `json:"cores" validate:"required"`
+
+	// Amount of available memory in the System Pool (GB).
+	Memory *int64 `json:"memory" validate:"required"`
+
+	// The DataCenter list of servers and their available resources.
+	Systems []System `json:"systems,omitempty"`
+
+	// Total number of cores in the System Pool.
+	TotalCores *float64 `json:"totalCores" validate:"required"`
+
+	// Total amount of memory in the System Pool (GB).
+	TotalMemory *int64 `json:"totalMemory" validate:"required"`
+}
+
+// UnmarshalSystemPoolCapacity unmarshals an instance of SystemPoolCapacity from the specified map of raw messages.
+func UnmarshalSystemPoolCapacity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SystemPoolCapacity)
+	err = core.UnmarshalPrimitive(m, "cores", &obj.Cores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "memory", &obj.Memory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "systems", &obj.Systems, UnmarshalSystem)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalCores", &obj.TotalCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
 	if err != nil {
 		return
 	}
@@ -31539,8 +32898,8 @@ type TransitGatewayLocation struct {
 // Location Type of the PowerVS Service.
 const (
 	TransitGatewayLocationLocationTypeDataCenterConst = "data-center"
-	TransitGatewayLocationLocationTypeRegionConst     = "region"
-	TransitGatewayLocationLocationTypeZoneConst       = "zone"
+	TransitGatewayLocationLocationTypeRegionConst = "region"
+	TransitGatewayLocationLocationTypeZoneConst = "zone"
 )
 
 // UnmarshalTransitGatewayLocation unmarshals an instance of TransitGatewayLocation from the specified map of raw messages.
@@ -31624,6 +32983,132 @@ func UnmarshalUserInfo(m map[string]json.RawMessage, result interface{}) (err er
 	return
 }
 
+// V1DatacentersGetOptions : The DatacentersGet options.
+type V1DatacentersGetOptions struct {
+	// Datacenter Region.
+	DatacenterRegion *string `json:"datacenter_region" validate:"required,ne="`
+
+	// The type of the response: application/json, capabilities, location, status, or type.
+	Accept *string `json:"Accept,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1DatacentersGetOptions : Instantiate V1DatacentersGetOptions
+func (*PowervsV1) NewV1DatacentersGetOptions(datacenterRegion string) *V1DatacentersGetOptions {
+	return &V1DatacentersGetOptions{
+		DatacenterRegion: core.StringPtr(datacenterRegion),
+	}
+}
+
+// SetDatacenterRegion : Allow user to set DatacenterRegion
+func (_options *V1DatacentersGetOptions) SetDatacenterRegion(datacenterRegion string) *V1DatacentersGetOptions {
+	_options.DatacenterRegion = core.StringPtr(datacenterRegion)
+	return _options
+}
+
+// SetAccept : Allow user to set Accept
+func (_options *V1DatacentersGetOptions) SetAccept(accept string) *V1DatacentersGetOptions {
+	_options.Accept = core.StringPtr(accept)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1DatacentersGetOptions) SetHeaders(param map[string]string) *V1DatacentersGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1DatacentersGetallOptions : The DatacentersGetall options.
+type V1DatacentersGetallOptions struct {
+	// The type of the response: application/json or applicaton/json.
+	Accept *string `json:"Accept,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1DatacentersGetallOptions : Instantiate V1DatacentersGetallOptions
+func (*PowervsV1) NewV1DatacentersGetallOptions() *V1DatacentersGetallOptions {
+	return &V1DatacentersGetallOptions{}
+}
+
+// SetAccept : Allow user to set Accept
+func (_options *V1DatacentersGetallOptions) SetAccept(accept string) *V1DatacentersGetallOptions {
+	_options.Accept = core.StringPtr(accept)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1DatacentersGetallOptions) SetHeaders(param map[string]string) *V1DatacentersGetallOptions {
+	options.Headers = param
+	return options
+}
+
+// V1WorkspacesGetOptions : The WorkspacesGet options.
+type V1WorkspacesGetOptions struct {
+	// Workspace ID.
+	WorkspaceID *string `json:"workspace_id" validate:"required,ne="`
+
+	// The type of the response: application/json or applicaton/json.
+	Accept *string `json:"Accept,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1WorkspacesGetOptions : Instantiate V1WorkspacesGetOptions
+func (*PowervsV1) NewV1WorkspacesGetOptions(workspaceID string) *V1WorkspacesGetOptions {
+	return &V1WorkspacesGetOptions{
+		WorkspaceID: core.StringPtr(workspaceID),
+	}
+}
+
+// SetWorkspaceID : Allow user to set WorkspaceID
+func (_options *V1WorkspacesGetOptions) SetWorkspaceID(workspaceID string) *V1WorkspacesGetOptions {
+	_options.WorkspaceID = core.StringPtr(workspaceID)
+	return _options
+}
+
+// SetAccept : Allow user to set Accept
+func (_options *V1WorkspacesGetOptions) SetAccept(accept string) *V1WorkspacesGetOptions {
+	_options.Accept = core.StringPtr(accept)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1WorkspacesGetOptions) SetHeaders(param map[string]string) *V1WorkspacesGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1WorkspacesGetallOptions : The WorkspacesGetall options.
+type V1WorkspacesGetallOptions struct {
+	// The type of the response: application/json or applicaton/json.
+	Accept *string `json:"Accept,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1WorkspacesGetallOptions : Instantiate V1WorkspacesGetallOptions
+func (*PowervsV1) NewV1WorkspacesGetallOptions() *V1WorkspacesGetallOptions {
+	return &V1WorkspacesGetallOptions{}
+}
+
+// SetAccept : Allow user to set Accept
+func (_options *V1WorkspacesGetallOptions) SetAccept(accept string) *V1WorkspacesGetallOptions {
+	_options.Accept = core.StringPtr(accept)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1WorkspacesGetallOptions) SetHeaders(param map[string]string) *V1WorkspacesGetallOptions {
+	options.Headers = param
+	return options
+}
+
 // VPNConnection : VPNConnection struct
 type VPNConnection struct {
 	// Dead Peer Detection of the VPN Connection.
@@ -31669,15 +33154,15 @@ type VPNConnection struct {
 // cannot be updated later.
 const (
 	VPNConnectionModePolicyConst = "policy"
-	VPNConnectionModeRouteConst  = "route"
+	VPNConnectionModeRouteConst = "route"
 )
 
 // Constants associated with the VPNConnection.Status property.
 // status of the VPN connection.
 const (
-	VPNConnectionStatusActiveConst   = "active"
+	VPNConnectionStatusActiveConst = "active"
 	VPNConnectionStatusDisabledConst = "disabled"
-	VPNConnectionStatusWarningConst  = "warning"
+	VPNConnectionStatusWarningConst = "warning"
 )
 
 // UnmarshalVPNConnection unmarshals an instance of VPNConnection from the specified map of raw messages.
@@ -31782,15 +33267,15 @@ type VPNConnectionCreateResponse struct {
 // cannot be updated later.
 const (
 	VPNConnectionCreateResponseModePolicyConst = "policy"
-	VPNConnectionCreateResponseModeRouteConst  = "route"
+	VPNConnectionCreateResponseModeRouteConst = "route"
 )
 
 // Constants associated with the VPNConnectionCreateResponse.Status property.
 // status of the VPN connection.
 const (
-	VPNConnectionCreateResponseStatusActiveConst   = "active"
+	VPNConnectionCreateResponseStatusActiveConst = "active"
 	VPNConnectionCreateResponseStatusDisabledConst = "disabled"
-	VPNConnectionCreateResponseStatusWarningConst  = "warning"
+	VPNConnectionCreateResponseStatusWarningConst = "warning"
 )
 
 // UnmarshalVPNConnectionCreateResponse unmarshals an instance of VPNConnectionCreateResponse from the specified map of raw messages.
@@ -32080,6 +33565,9 @@ type Volume struct {
 	// Volume Group ID.
 	GroupID *string `json:"groupID,omitempty"`
 
+	// Amount of iops assigned to the volume.
+	IoThrottleRate *string `json:"ioThrottleRate,omitempty"`
+
 	// Last Update Date.
 	LastUpdateDate *strfmt.DateTime `json:"lastUpdateDate" validate:"required"`
 
@@ -32136,7 +33624,7 @@ type Volume struct {
 // Constants associated with the Volume.PrimaryRole property.
 // indicates whether master/aux volume is playing the primary role.
 const (
-	VolumePrimaryRoleAuxConst    = "aux"
+	VolumePrimaryRoleAuxConst = "aux"
 	VolumePrimaryRoleMasterConst = "master"
 )
 
@@ -32176,6 +33664,10 @@ func UnmarshalVolume(m map[string]json.RawMessage, result interface{}) (err erro
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "groupID", &obj.GroupID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "ioThrottleRate", &obj.IoThrottleRate)
 	if err != nil {
 		return
 	}
@@ -32437,7 +33929,7 @@ type VolumeGroupActionStart struct {
 // Constants associated with the VolumeGroupActionStart.Source property.
 // Indicates the source of the action.
 const (
-	VolumeGroupActionStartSourceAuxConst    = "aux"
+	VolumeGroupActionStartSourceAuxConst = "aux"
 	VolumeGroupActionStartSourceMasterConst = "master"
 )
 
@@ -32955,6 +34447,9 @@ type VolumeReference struct {
 	// Link to Volume resource.
 	Href *string `json:"href" validate:"required"`
 
+	// Amount of iops assigned to the volume.
+	IoThrottleRate *string `json:"ioThrottleRate,omitempty"`
+
 	// Last Update Date.
 	LastUpdateDate *strfmt.DateTime `json:"lastUpdateDate" validate:"required"`
 
@@ -33011,7 +34506,7 @@ type VolumeReference struct {
 // Constants associated with the VolumeReference.PrimaryRole property.
 // indicates whether master/aux volume is playing the primary role.
 const (
-	VolumeReferencePrimaryRoleAuxConst    = "aux"
+	VolumeReferencePrimaryRoleAuxConst = "aux"
 	VolumeReferencePrimaryRoleMasterConst = "master"
 )
 
@@ -33055,6 +34550,10 @@ func UnmarshalVolumeReference(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "ioThrottleRate", &obj.IoThrottleRate)
 	if err != nil {
 		return
 	}
@@ -33459,6 +34958,247 @@ type VolumesClones struct {
 func UnmarshalVolumesClones(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VolumesClones)
 	err = core.UnmarshalModel(m, "volumesClone", &obj.VolumesClone, UnmarshalVolumesClone)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VolumesDeleteResponse : VolumesDeleteResponse struct
+type VolumesDeleteResponse struct {
+	// status summary for volumes deletion request.
+	Summary *string `json:"summary,omitempty"`
+}
+
+// UnmarshalVolumesDeleteResponse unmarshals an instance of VolumesDeleteResponse from the specified map of raw messages.
+func UnmarshalVolumesDeleteResponse(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VolumesDeleteResponse)
+	err = core.UnmarshalPrimitive(m, "summary", &obj.Summary)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VolumesDetachmentResponse : VolumesDetachmentResponse struct
+type VolumesDetachmentResponse struct {
+	// status summary for volume detachment from a PVM Instance.
+	Summary *string `json:"summary" validate:"required"`
+}
+
+// UnmarshalVolumesDetachmentResponse unmarshals an instance of VolumesDetachmentResponse from the specified map of raw messages.
+func UnmarshalVolumesDetachmentResponse(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VolumesDetachmentResponse)
+	err = core.UnmarshalPrimitive(m, "summary", &obj.Summary)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Workspace : Workspace struct
+type Workspace struct {
+	// Workspace Capabilities.
+	Capabilities map[string]bool `json:"capabilities" validate:"required"`
+
+	Details *WorkspaceDetails `json:"details" validate:"required"`
+
+	// Workspace ID.
+	ID *string `json:"id" validate:"required"`
+
+	Location *WorkspaceLocation `json:"location" validate:"required"`
+
+	// The Workspace name.
+	Name *string `json:"name" validate:"required"`
+
+	// The Workspace status.
+	Status *string `json:"status" validate:"required"`
+
+	// The Workspace type.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the Workspace.Type property.
+// The Workspace type.
+const (
+	WorkspaceTypeOffPremisesConst = "off-premises"
+	WorkspaceTypeOnPremisesConst = "on-premises"
+)
+
+// UnmarshalWorkspace unmarshals an instance of Workspace from the specified map of raw messages.
+func UnmarshalWorkspace(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Workspace)
+	err = core.UnmarshalPrimitive(m, "capabilities", &obj.Capabilities)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "details", &obj.Details, UnmarshalWorkspaceDetails)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "location", &obj.Location, UnmarshalWorkspaceLocation)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// WorkspaceDetails : WorkspaceDetails struct
+type WorkspaceDetails struct {
+	// Workspace creation date.
+	CreationDate *strfmt.DateTime `json:"creationDate" validate:"required"`
+
+	// The Workspace crn.
+	CRN *string `json:"crn" validate:"required"`
+
+	// Link to Workspace Resource.
+	Href *string `json:"href,omitempty"`
+
+	PowerEdgeRouter *WorkspacePowerEdgeRouterDetails `json:"powerEdgeRouter,omitempty"`
+}
+
+// UnmarshalWorkspaceDetails unmarshals an instance of WorkspaceDetails from the specified map of raw messages.
+func UnmarshalWorkspaceDetails(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(WorkspaceDetails)
+	err = core.UnmarshalPrimitive(m, "creationDate", &obj.CreationDate)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "powerEdgeRouter", &obj.PowerEdgeRouter, UnmarshalWorkspacePowerEdgeRouterDetails)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// WorkspaceLocation : WorkspaceLocation struct
+type WorkspaceLocation struct {
+	// The Workspace location region zone.
+	Region *string `json:"region" validate:"required"`
+
+	// The Workspace location region type.
+	Type *string `json:"type,omitempty"`
+
+	// The Workspace location region url.
+	URL *string `json:"url,omitempty"`
+}
+
+// UnmarshalWorkspaceLocation unmarshals an instance of WorkspaceLocation from the specified map of raw messages.
+func UnmarshalWorkspaceLocation(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(WorkspaceLocation)
+	err = core.UnmarshalPrimitive(m, "region", &obj.Region)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "url", &obj.URL)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// WorkspacePowerEdgeRouterDetails : WorkspacePowerEdgeRouterDetails struct
+type WorkspacePowerEdgeRouterDetails struct {
+	// The migration status of a Power Edge Router.
+	MigrationStatus *string `json:"migrationStatus,omitempty"`
+
+	// The state of a Power Edge Router.
+	State *string `json:"state" validate:"required"`
+
+	// The Power Edge Router type.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the WorkspacePowerEdgeRouterDetails.MigrationStatus property.
+// The migration status of a Power Edge Router.
+const (
+	WorkspacePowerEdgeRouterDetailsMigrationStatusCompletedConst = "completed"
+	WorkspacePowerEdgeRouterDetailsMigrationStatusDeletedConst = "deleted"
+	WorkspacePowerEdgeRouterDetailsMigrationStatusIntializingConst = "intializing"
+	WorkspacePowerEdgeRouterDetailsMigrationStatusMigratingConst = "migrating"
+)
+
+// Constants associated with the WorkspacePowerEdgeRouterDetails.State property.
+// The state of a Power Edge Router.
+const (
+	WorkspacePowerEdgeRouterDetailsStateActiveConst = "active"
+	WorkspacePowerEdgeRouterDetailsStateConfiguringConst = "configuring"
+	WorkspacePowerEdgeRouterDetailsStateErrorConst = "error"
+	WorkspacePowerEdgeRouterDetailsStateInactiveConst = "inactive"
+	WorkspacePowerEdgeRouterDetailsStateRemovingConst = "removing"
+	WorkspacePowerEdgeRouterDetailsStateWarningConst = "warning"
+)
+
+// Constants associated with the WorkspacePowerEdgeRouterDetails.Type property.
+// The Power Edge Router type.
+const (
+	WorkspacePowerEdgeRouterDetailsTypeAutomatedConst = "automated"
+	WorkspacePowerEdgeRouterDetailsTypeManualConst = "manual"
+)
+
+// UnmarshalWorkspacePowerEdgeRouterDetails unmarshals an instance of WorkspacePowerEdgeRouterDetails from the specified map of raw messages.
+func UnmarshalWorkspacePowerEdgeRouterDetails(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(WorkspacePowerEdgeRouterDetails)
+	err = core.UnmarshalPrimitive(m, "migrationStatus", &obj.MigrationStatus)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "state", &obj.State)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Workspaces : Workspaces struct
+type Workspaces struct {
+	// The list of available workspaces.
+	Workspaces []Workspace `json:"workspaces" validate:"required"`
+}
+
+// UnmarshalWorkspaces unmarshals an instance of Workspaces from the specified map of raw messages.
+func UnmarshalWorkspaces(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Workspaces)
+	err = core.UnmarshalModel(m, "workspaces", &obj.Workspaces, UnmarshalWorkspace)
 	if err != nil {
 		return
 	}
