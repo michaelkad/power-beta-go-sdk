@@ -43,6 +43,9 @@ type PowervsV1 struct {
 	Service *core.BaseService
 }
 
+// DefaultServiceURL is the default URL to make service requests to.
+const DefaultServiceURL = "http://localhost"
+
 // DefaultServiceName is the default key used to find external configuration information.
 const DefaultServiceName = "powervs"
 
@@ -85,6 +88,7 @@ func NewPowervsV1UsingExternalConfig(options *PowervsV1Options) (powervs *Powerv
 // NewPowervsV1 : constructs an instance of PowervsV1 with passed in options.
 func NewPowervsV1(options *PowervsV1Options) (service *PowervsV1, err error) {
 	serviceOptions := &core.ServiceOptions{
+		URL:           DefaultServiceURL,
 		Authenticator: options.Authenticator,
 	}
 
@@ -1085,6 +1089,616 @@ func (powervs *PowervsV1) ServiceBrokerHardwareplatformsGetWithContext(ctx conte
 	return
 }
 
+// AvailableHosts : List all the hosts that can be reserved
+func (powervs *PowervsV1) AvailableHosts(v1AvailableHostsOptions *V1AvailableHostsOptions) (result map[string]AvailableHost, response *core.DetailedResponse, err error) {
+	return powervs.AvailableHostsWithContext(context.Background(), v1AvailableHostsOptions)
+}
+
+// AvailableHostsWithContext is an alternate form of the AvailableHosts method which supports a Context parameter
+func (powervs *PowervsV1) AvailableHostsWithContext(ctx context.Context, v1AvailableHostsOptions *V1AvailableHostsOptions) (result map[string]AvailableHost, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(v1AvailableHostsOptions, "v1AvailableHostsOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/available-hosts`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1AvailableHostsOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "AvailableHosts")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalAvailableHost)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostgroupsGet : Get the list of hostgroups for the workspace
+func (powervs *PowervsV1) HostgroupsGet(v1HostgroupsGetOptions *V1HostgroupsGetOptions) (result []Hostgroup, response *core.DetailedResponse, err error) {
+	return powervs.HostgroupsGetWithContext(context.Background(), v1HostgroupsGetOptions)
+}
+
+// HostgroupsGetWithContext is an alternate form of the HostgroupsGet method which supports a Context parameter
+func (powervs *PowervsV1) HostgroupsGetWithContext(ctx context.Context, v1HostgroupsGetOptions *V1HostgroupsGetOptions) (result []Hostgroup, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(v1HostgroupsGetOptions, "v1HostgroupsGetOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hostgroups`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostgroupsGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostgroupsGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse []json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHostgroup)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostgroupsPost : Create a hostgroup with one (or more) host
+func (powervs *PowervsV1) HostgroupsPost(v1HostgroupsPostOptions *V1HostgroupsPostOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	return powervs.HostgroupsPostWithContext(context.Background(), v1HostgroupsPostOptions)
+}
+
+// HostgroupsPostWithContext is an alternate form of the HostgroupsPost method which supports a Context parameter
+func (powervs *PowervsV1) HostgroupsPostWithContext(ctx context.Context, v1HostgroupsPostOptions *V1HostgroupsPostOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostgroupsPostOptions, "v1HostgroupsPostOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostgroupsPostOptions, "v1HostgroupsPostOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hostgroups`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostgroupsPostOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostgroupsPost")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if v1HostgroupsPostOptions.Hosts != nil {
+		body["hosts"] = v1HostgroupsPostOptions.Hosts
+	}
+	if v1HostgroupsPostOptions.Name != nil {
+		body["name"] = v1HostgroupsPostOptions.Name
+	}
+	if v1HostgroupsPostOptions.Secondaries != nil {
+		body["secondaries"] = v1HostgroupsPostOptions.Secondaries
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHostgroup)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostgroupsIDGet : Get the details of a hostgroup
+func (powervs *PowervsV1) HostgroupsIDGet(v1HostgroupsIDGetOptions *V1HostgroupsIDGetOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	return powervs.HostgroupsIDGetWithContext(context.Background(), v1HostgroupsIDGetOptions)
+}
+
+// HostgroupsIDGetWithContext is an alternate form of the HostgroupsIDGet method which supports a Context parameter
+func (powervs *PowervsV1) HostgroupsIDGetWithContext(ctx context.Context, v1HostgroupsIDGetOptions *V1HostgroupsIDGetOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostgroupsIDGetOptions, "v1HostgroupsIDGetOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostgroupsIDGetOptions, "v1HostgroupsIDGetOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"hostgroup_id": *v1HostgroupsIDGetOptions.HostgroupID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hostgroups/{hostgroup_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostgroupsIDGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostgroupsIDGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHostgroup)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostgroupsIDPut : Share/unshare a hostgroup with another workspace
+func (powervs *PowervsV1) HostgroupsIDPut(v1HostgroupsIDPutOptions *V1HostgroupsIDPutOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	return powervs.HostgroupsIDPutWithContext(context.Background(), v1HostgroupsIDPutOptions)
+}
+
+// HostgroupsIDPutWithContext is an alternate form of the HostgroupsIDPut method which supports a Context parameter
+func (powervs *PowervsV1) HostgroupsIDPutWithContext(ctx context.Context, v1HostgroupsIDPutOptions *V1HostgroupsIDPutOptions) (result *Hostgroup, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostgroupsIDPutOptions, "v1HostgroupsIDPutOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostgroupsIDPutOptions, "v1HostgroupsIDPutOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"hostgroup_id": *v1HostgroupsIDPutOptions.HostgroupID,
+	}
+
+	builder := core.NewRequestBuilder(core.PUT)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hostgroups/{hostgroup_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostgroupsIDPutOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostgroupsIDPut")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if v1HostgroupsIDPutOptions.Add != nil {
+		body["add"] = v1HostgroupsIDPutOptions.Add
+	}
+	if v1HostgroupsIDPutOptions.Remove != nil {
+		body["remove"] = v1HostgroupsIDPutOptions.Remove
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHostgroup)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostsGet : Get the list of all the hosts the workspace has access to
+func (powervs *PowervsV1) HostsGet(v1HostsGetOptions *V1HostsGetOptions) (result []Host, response *core.DetailedResponse, err error) {
+	return powervs.HostsGetWithContext(context.Background(), v1HostsGetOptions)
+}
+
+// HostsGetWithContext is an alternate form of the HostsGet method which supports a Context parameter
+func (powervs *PowervsV1) HostsGetWithContext(ctx context.Context, v1HostsGetOptions *V1HostsGetOptions) (result []Host, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(v1HostsGetOptions, "v1HostsGetOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hosts`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostsGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostsGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse []json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHost)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostsPost : Add new host(s) to an existing hostgroup
+func (powervs *PowervsV1) HostsPost(v1HostsPostOptions *V1HostsPostOptions) (result *Host, response *core.DetailedResponse, err error) {
+	return powervs.HostsPostWithContext(context.Background(), v1HostsPostOptions)
+}
+
+// HostsPostWithContext is an alternate form of the HostsPost method which supports a Context parameter
+func (powervs *PowervsV1) HostsPostWithContext(ctx context.Context, v1HostsPostOptions *V1HostsPostOptions) (result *Host, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostsPostOptions, "v1HostsPostOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostsPostOptions, "v1HostsPostOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hosts`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostsPostOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostsPost")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if v1HostsPostOptions.Host != nil {
+		body["host"] = v1HostsPostOptions.Host
+	}
+	if v1HostsPostOptions.HostgroupID != nil {
+		body["hostgroupID"] = v1HostsPostOptions.HostgroupID
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHost)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostsIDDelete : Release a host from its hostgroup
+func (powervs *PowervsV1) HostsIDDelete(v1HostsIDDeleteOptions *V1HostsIDDeleteOptions) (result *Object, response *core.DetailedResponse, err error) {
+	return powervs.HostsIDDeleteWithContext(context.Background(), v1HostsIDDeleteOptions)
+}
+
+// HostsIDDeleteWithContext is an alternate form of the HostsIDDelete method which supports a Context parameter
+func (powervs *PowervsV1) HostsIDDeleteWithContext(ctx context.Context, v1HostsIDDeleteOptions *V1HostsIDDeleteOptions) (result *Object, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostsIDDeleteOptions, "v1HostsIDDeleteOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostsIDDeleteOptions, "v1HostsIDDeleteOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"host_id": *v1HostsIDDeleteOptions.HostID,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hosts/{host_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostsIDDeleteOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostsIDDelete")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalObject)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostsIDGet : Get the details about a host
+func (powervs *PowervsV1) HostsIDGet(v1HostsIDGetOptions *V1HostsIDGetOptions) (result *Host, response *core.DetailedResponse, err error) {
+	return powervs.HostsIDGetWithContext(context.Background(), v1HostsIDGetOptions)
+}
+
+// HostsIDGetWithContext is an alternate form of the HostsIDGet method which supports a Context parameter
+func (powervs *PowervsV1) HostsIDGetWithContext(ctx context.Context, v1HostsIDGetOptions *V1HostsIDGetOptions) (result *Host, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostsIDGetOptions, "v1HostsIDGetOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostsIDGetOptions, "v1HostsIDGetOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"host_id": *v1HostsIDGetOptions.HostID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hosts/{host_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostsIDGetOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostsIDGet")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHost)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// HostsIDPut : Modify the display name of a host
+func (powervs *PowervsV1) HostsIDPut(v1HostsIDPutOptions *V1HostsIDPutOptions) (result *Host, response *core.DetailedResponse, err error) {
+	return powervs.HostsIDPutWithContext(context.Background(), v1HostsIDPutOptions)
+}
+
+// HostsIDPutWithContext is an alternate form of the HostsIDPut method which supports a Context parameter
+func (powervs *PowervsV1) HostsIDPutWithContext(ctx context.Context, v1HostsIDPutOptions *V1HostsIDPutOptions) (result *Host, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(v1HostsIDPutOptions, "v1HostsIDPutOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(v1HostsIDPutOptions, "v1HostsIDPutOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"host_id": *v1HostsIDPutOptions.HostID,
+	}
+
+	builder := core.NewRequestBuilder(core.PUT)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/v1/hosts/{host_id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range v1HostsIDPutOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "HostsIDPut")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if v1HostsIDPutOptions.DisplayName != nil {
+		body["displayName"] = v1HostsIDPutOptions.DisplayName
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalHost)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
 // ServiceBrokerHealthHead : Get current server health
 func (powervs *PowervsV1) ServiceBrokerHealthHead(serviceBrokerHealthHeadOptions *ServiceBrokerHealthHeadOptions) (response *core.DetailedResponse, err error) {
 	return powervs.ServiceBrokerHealthHeadWithContext(context.Background(), serviceBrokerHealthHeadOptions)
@@ -1334,6 +1948,183 @@ func (powervs *PowervsV1) InternalV1PowervsInstancesGetWithContext(ctx context.C
 		}
 		response.Result = result
 	}
+
+	return
+}
+
+// InternalV1PowervsLocationsActivatePut : Activate a PowerVS On-Prem location
+func (powervs *PowervsV1) InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptions *InternalV1PowervsLocationsActivatePutOptions) (result *SatelliteOrder, response *core.DetailedResponse, err error) {
+	return powervs.InternalV1PowervsLocationsActivatePutWithContext(context.Background(), internalV1PowervsLocationsActivatePutOptions)
+}
+
+// InternalV1PowervsLocationsActivatePutWithContext is an alternate form of the InternalV1PowervsLocationsActivatePut method which supports a Context parameter
+func (powervs *PowervsV1) InternalV1PowervsLocationsActivatePutWithContext(ctx context.Context, internalV1PowervsLocationsActivatePutOptions *InternalV1PowervsLocationsActivatePutOptions) (result *SatelliteOrder, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(internalV1PowervsLocationsActivatePutOptions, "internalV1PowervsLocationsActivatePutOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(internalV1PowervsLocationsActivatePutOptions, "internalV1PowervsLocationsActivatePutOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.PUT)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/internal/v1/powervs/locations/activate`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range internalV1PowervsLocationsActivatePutOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "InternalV1PowervsLocationsActivatePut")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if internalV1PowervsLocationsActivatePutOptions.OrderID != nil {
+		body["orderID"] = internalV1PowervsLocationsActivatePutOptions.OrderID
+	}
+	if internalV1PowervsLocationsActivatePutOptions.SatelliteID != nil {
+		body["satelliteID"] = internalV1PowervsLocationsActivatePutOptions.SatelliteID
+	}
+	if internalV1PowervsLocationsActivatePutOptions.DaysToDelay != nil {
+		body["daysToDelay"] = internalV1PowervsLocationsActivatePutOptions.DaysToDelay
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = powervs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalSatelliteOrder)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// InternalV1PowervsLocationsTagDelete : Delete a Power Satellite Tag
+func (powervs *PowervsV1) InternalV1PowervsLocationsTagDelete(internalV1PowervsLocationsTagDeleteOptions *InternalV1PowervsLocationsTagDeleteOptions) (response *core.DetailedResponse, err error) {
+	return powervs.InternalV1PowervsLocationsTagDeleteWithContext(context.Background(), internalV1PowervsLocationsTagDeleteOptions)
+}
+
+// InternalV1PowervsLocationsTagDeleteWithContext is an alternate form of the InternalV1PowervsLocationsTagDelete method which supports a Context parameter
+func (powervs *PowervsV1) InternalV1PowervsLocationsTagDeleteWithContext(ctx context.Context, internalV1PowervsLocationsTagDeleteOptions *InternalV1PowervsLocationsTagDeleteOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(internalV1PowervsLocationsTagDeleteOptions, "internalV1PowervsLocationsTagDeleteOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(internalV1PowervsLocationsTagDeleteOptions, "internalV1PowervsLocationsTagDeleteOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/internal/v1/powervs/locations/tag`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range internalV1PowervsLocationsTagDeleteOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "InternalV1PowervsLocationsTagDelete")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if internalV1PowervsLocationsTagDeleteOptions.SatelliteID != nil {
+		body["satelliteID"] = internalV1PowervsLocationsTagDeleteOptions.SatelliteID
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = powervs.Service.Request(request, nil)
+
+	return
+}
+
+// InternalV1PowervsLocationsTagPost : Add a Power Satellite Tag
+func (powervs *PowervsV1) InternalV1PowervsLocationsTagPost(internalV1PowervsLocationsTagPostOptions *InternalV1PowervsLocationsTagPostOptions) (response *core.DetailedResponse, err error) {
+	return powervs.InternalV1PowervsLocationsTagPostWithContext(context.Background(), internalV1PowervsLocationsTagPostOptions)
+}
+
+// InternalV1PowervsLocationsTagPostWithContext is an alternate form of the InternalV1PowervsLocationsTagPost method which supports a Context parameter
+func (powervs *PowervsV1) InternalV1PowervsLocationsTagPostWithContext(ctx context.Context, internalV1PowervsLocationsTagPostOptions *InternalV1PowervsLocationsTagPostOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(internalV1PowervsLocationsTagPostOptions, "internalV1PowervsLocationsTagPostOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(internalV1PowervsLocationsTagPostOptions, "internalV1PowervsLocationsTagPostOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = powervs.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(powervs.Service.Options.URL, `/internal/v1/powervs/locations/tag`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range internalV1PowervsLocationsTagPostOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("powervs", "V1", "InternalV1PowervsLocationsTagPost")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Content-Type", "application/json")
+
+	body := make(map[string]interface{})
+	if internalV1PowervsLocationsTagPostOptions.SatelliteID != nil {
+		body["satelliteID"] = internalV1PowervsLocationsTagPostOptions.SatelliteID
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = powervs.Service.Request(request, nil)
 
 	return
 }
@@ -4983,6 +5774,9 @@ func (powervs *PowervsV1) PcloudPvminstancesPostWithContext(ctx context.Context,
 	}
 	if pcloudPvminstancesPostOptions.ServerName != nil {
 		body["serverName"] = pcloudPvminstancesPostOptions.ServerName
+	}
+	if pcloudPvminstancesPostOptions.DeployTarget != nil {
+		body["deployTarget"] = pcloudPvminstancesPostOptions.DeployTarget
 	}
 	if pcloudPvminstancesPostOptions.DeploymentType != nil {
 		body["deploymentType"] = pcloudPvminstancesPostOptions.DeploymentType
@@ -12707,6 +13501,9 @@ func (powervs *PowervsV1) PcloudV2PvminstancesVolumesPostWithContext(ctx context
 	if pcloudV2PvminstancesVolumesPostOptions.VolumeIDs != nil {
 		body["volumeIDs"] = pcloudV2PvminstancesVolumesPostOptions.VolumeIDs
 	}
+	if pcloudV2PvminstancesVolumesPostOptions.BootVolumeID != nil {
+		body["bootVolumeID"] = pcloudV2PvminstancesVolumesPostOptions.BootVolumeID
+	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -14457,6 +15254,40 @@ func UnmarshalAccessToken(m map[string]json.RawMessage, result interface{}) (err
 	return
 }
 
+// AddHost : Host to add to a hostgroup.
+type AddHost struct {
+	// Name of the host chosen by the user.
+	DisplayName *string `json:"displayName" validate:"required"`
+
+	// System type.
+	SysType *string `json:"sysType" validate:"required"`
+}
+
+// NewAddHost : Instantiate AddHost (Generic Model Constructor)
+func (*PowervsV1) NewAddHost(displayName string, sysType string) (_model *AddHost, err error) {
+	_model = &AddHost{
+		DisplayName: core.StringPtr(displayName),
+		SysType: core.StringPtr(sysType),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalAddHost unmarshals an instance of AddHost from the specified map of raw messages.
+func UnmarshalAddHost(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(AddHost)
+	err = core.UnmarshalPrimitive(m, "displayName", &obj.DisplayName)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "sysType", &obj.SysType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // AuxiliaryVolumeForOnboarding : AuxiliaryVolumeForOnboarding struct
 type AuxiliaryVolumeForOnboarding struct {
 	// auxiliary volume name at storage host level.
@@ -14516,6 +15347,36 @@ func UnmarshalAuxiliaryVolumesForOnboarding(m map[string]json.RawMessage, result
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "sourceCRN", &obj.SourceCRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// AvailableHost : Reservable host description.
+type AvailableHost struct {
+	Capacity *HostAvailableCapacity `json:"capacity,omitempty"`
+
+	// How many hosts of such type/capacities are available.
+	Count *int64 `json:"count,omitempty"`
+
+	// System type.
+	SysType *string `json:"sysType,omitempty"`
+}
+
+// UnmarshalAvailableHost unmarshals an instance of AvailableHost from the specified map of raw messages.
+func UnmarshalAvailableHost(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(AvailableHost)
+	err = core.UnmarshalModel(m, "capacity", &obj.Capacity, UnmarshalHostAvailableCapacity)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "sysType", &obj.SysType)
 	if err != nil {
 		return
 	}
@@ -16121,6 +16982,154 @@ func UnmarshalHealth(m map[string]json.RawMessage, result interface{}) (err erro
 	return
 }
 
+// Host : Host description.
+type Host struct {
+	Capacity *HostCapacity `json:"capacity,omitempty"`
+
+	// Name of the host (chosen by the user).
+	DisplayName *string `json:"displayName,omitempty"`
+
+	// Link to hostgroup resource.
+	Hostgroup *string `json:"hostgroup,omitempty"`
+
+	// ID of the host.
+	ID *string `json:"id,omitempty"`
+
+	// State of the host (up/down).
+	State *string `json:"state,omitempty"`
+
+	// Status of the host (enabled/disabled).
+	Status *string `json:"status,omitempty"`
+
+	// System type.
+	SysType *string `json:"sysType,omitempty"`
+}
+
+// UnmarshalHost unmarshals an instance of Host from the specified map of raw messages.
+func UnmarshalHost(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Host)
+	err = core.UnmarshalModel(m, "capacity", &obj.Capacity, UnmarshalHostCapacity)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "displayName", &obj.DisplayName)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "hostgroup", &obj.Hostgroup)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "state", &obj.State)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "sysType", &obj.SysType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// HostAvailableCapacity : HostAvailableCapacity struct
+type HostAvailableCapacity struct {
+	// Number of cores available on the host.
+	AvailableCore *float64 `json:"availableCore,omitempty"`
+
+	// Memory capacity available on the host (in MB).
+	AvailableMemory *float64 `json:"availableMemory,omitempty"`
+}
+
+// UnmarshalHostAvailableCapacity unmarshals an instance of HostAvailableCapacity from the specified map of raw messages.
+func UnmarshalHostAvailableCapacity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(HostAvailableCapacity)
+	err = core.UnmarshalPrimitive(m, "availableCore", &obj.AvailableCore)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "availableMemory", &obj.AvailableMemory)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// HostCapacity : HostCapacity struct
+type HostCapacity struct {
+	// Number of cores currently available.
+	AvailableCore *float64 `json:"availableCore,omitempty"`
+
+	// Amount of memory currently available (in MB).
+	AvailableMemory *float64 `json:"availableMemory,omitempty"`
+
+	// Number of cores reserved for system use.
+	ReservedCore *float64 `json:"reservedCore,omitempty"`
+
+	// Amount of memory reserved for system use (in MB).
+	ReservedMemory *float64 `json:"reservedMemory,omitempty"`
+
+	// Total number of cores of the host.
+	TotalCore *float64 `json:"totalCore,omitempty"`
+
+	// Total amount of memory of the host (in MB).
+	TotalMemory *float64 `json:"totalMemory,omitempty"`
+
+	// Number of cores in use on the host.
+	UsedCore *float64 `json:"usedCore,omitempty"`
+
+	// Amount of memory used on the host (in MB).
+	UsedMemory *float64 `json:"usedMemory,omitempty"`
+}
+
+// UnmarshalHostCapacity unmarshals an instance of HostCapacity from the specified map of raw messages.
+func UnmarshalHostCapacity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(HostCapacity)
+	err = core.UnmarshalPrimitive(m, "availableCore", &obj.AvailableCore)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "availableMemory", &obj.AvailableMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "reservedCore", &obj.ReservedCore)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "reservedMemory", &obj.ReservedMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalCore", &obj.TotalCore)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "usedCore", &obj.UsedCore)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "usedMemory", &obj.UsedMemory)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // HostInfo : HostInfo struct
 type HostInfo struct {
 	Cores *HostResource `json:"cores" validate:"required"`
@@ -16270,6 +17279,58 @@ func UnmarshalHostResources(m map[string]json.RawMessage, result interface{}) (e
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "memory", &obj.Memory)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Hostgroup : Description of a hostgroup.
+type Hostgroup struct {
+	// Date/Time of hostgroup creation.
+	CreationDate *strfmt.DateTime `json:"creationDate,omitempty"`
+
+	// List of hosts.
+	Hosts []string `json:"hosts,omitempty"`
+
+	// Hostgroup ID.
+	ID *string `json:"id,omitempty"`
+
+	// Name of the hostgroup.
+	Name *string `json:"name,omitempty"`
+
+	// Name of the workspace owning the hostgroup.
+	Primary *string `json:"primary,omitempty"`
+
+	// Names of workspaces the hostgroup has been shared with.
+	Secondaries []string `json:"secondaries,omitempty"`
+}
+
+// UnmarshalHostgroup unmarshals an instance of Hostgroup from the specified map of raw messages.
+func UnmarshalHostgroup(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Hostgroup)
+	err = core.UnmarshalPrimitive(m, "creationDate", &obj.CreationDate)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "hosts", &obj.Hosts)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "primary", &obj.Primary)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "secondaries", &obj.Secondaries)
 	if err != nil {
 		return
 	}
@@ -17175,6 +18236,109 @@ func (options *InternalV1PowervsInstancesGetOptions) SetHeaders(param map[string
 	return options
 }
 
+// InternalV1PowervsLocationsActivatePutOptions : The InternalV1PowervsLocationsActivatePut options.
+type InternalV1PowervsLocationsActivatePutOptions struct {
+	// Billing ID for Power Private Cloud Satellite Subscription.
+	OrderID *string `json:"orderID" validate:"required"`
+
+	// CRN of satellite to register.
+	SatelliteID *string `json:"satelliteID" validate:"required"`
+
+	// Requested Number of Days to Delay Order Activation. Defaults to 1.
+	DaysToDelay *int64 `json:"daysToDelay,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewInternalV1PowervsLocationsActivatePutOptions : Instantiate InternalV1PowervsLocationsActivatePutOptions
+func (*PowervsV1) NewInternalV1PowervsLocationsActivatePutOptions(orderID string, satelliteID string) *InternalV1PowervsLocationsActivatePutOptions {
+	return &InternalV1PowervsLocationsActivatePutOptions{
+		OrderID: core.StringPtr(orderID),
+		SatelliteID: core.StringPtr(satelliteID),
+	}
+}
+
+// SetOrderID : Allow user to set OrderID
+func (_options *InternalV1PowervsLocationsActivatePutOptions) SetOrderID(orderID string) *InternalV1PowervsLocationsActivatePutOptions {
+	_options.OrderID = core.StringPtr(orderID)
+	return _options
+}
+
+// SetSatelliteID : Allow user to set SatelliteID
+func (_options *InternalV1PowervsLocationsActivatePutOptions) SetSatelliteID(satelliteID string) *InternalV1PowervsLocationsActivatePutOptions {
+	_options.SatelliteID = core.StringPtr(satelliteID)
+	return _options
+}
+
+// SetDaysToDelay : Allow user to set DaysToDelay
+func (_options *InternalV1PowervsLocationsActivatePutOptions) SetDaysToDelay(daysToDelay int64) *InternalV1PowervsLocationsActivatePutOptions {
+	_options.DaysToDelay = core.Int64Ptr(daysToDelay)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *InternalV1PowervsLocationsActivatePutOptions) SetHeaders(param map[string]string) *InternalV1PowervsLocationsActivatePutOptions {
+	options.Headers = param
+	return options
+}
+
+// InternalV1PowervsLocationsTagDeleteOptions : The InternalV1PowervsLocationsTagDelete options.
+type InternalV1PowervsLocationsTagDeleteOptions struct {
+	// CRN of satellite to perform tag operation.
+	SatelliteID *string `json:"satelliteID" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewInternalV1PowervsLocationsTagDeleteOptions : Instantiate InternalV1PowervsLocationsTagDeleteOptions
+func (*PowervsV1) NewInternalV1PowervsLocationsTagDeleteOptions(satelliteID string) *InternalV1PowervsLocationsTagDeleteOptions {
+	return &InternalV1PowervsLocationsTagDeleteOptions{
+		SatelliteID: core.StringPtr(satelliteID),
+	}
+}
+
+// SetSatelliteID : Allow user to set SatelliteID
+func (_options *InternalV1PowervsLocationsTagDeleteOptions) SetSatelliteID(satelliteID string) *InternalV1PowervsLocationsTagDeleteOptions {
+	_options.SatelliteID = core.StringPtr(satelliteID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *InternalV1PowervsLocationsTagDeleteOptions) SetHeaders(param map[string]string) *InternalV1PowervsLocationsTagDeleteOptions {
+	options.Headers = param
+	return options
+}
+
+// InternalV1PowervsLocationsTagPostOptions : The InternalV1PowervsLocationsTagPost options.
+type InternalV1PowervsLocationsTagPostOptions struct {
+	// CRN of satellite to perform tag operation.
+	SatelliteID *string `json:"satelliteID" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewInternalV1PowervsLocationsTagPostOptions : Instantiate InternalV1PowervsLocationsTagPostOptions
+func (*PowervsV1) NewInternalV1PowervsLocationsTagPostOptions(satelliteID string) *InternalV1PowervsLocationsTagPostOptions {
+	return &InternalV1PowervsLocationsTagPostOptions{
+		SatelliteID: core.StringPtr(satelliteID),
+	}
+}
+
+// SetSatelliteID : Allow user to set SatelliteID
+func (_options *InternalV1PowervsLocationsTagPostOptions) SetSatelliteID(satelliteID string) *InternalV1PowervsLocationsTagPostOptions {
+	_options.SatelliteID = core.StringPtr(satelliteID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *InternalV1PowervsLocationsTagPostOptions) SetHeaders(param map[string]string) *InternalV1PowervsLocationsTagPostOptions {
+	options.Headers = param
+	return options
+}
+
 // InternalV1PowervsLocationsTransitgatewayGetOptions : The InternalV1PowervsLocationsTransitgatewayGet options.
 type InternalV1PowervsLocationsTransitgatewayGetOptions struct {
 
@@ -17797,10 +18961,10 @@ type Network struct {
 	// IP Address Ranges.
 	IPAddressRanges []IPAddressRange `json:"ipAddressRanges" validate:"required"`
 
-	// Enable MTU Jumbo Network (for multi-zone locations only).
+	// (deprecated - replaced by mtu) Enable MTU Jumbo Network (for multi-zone locations only).
 	Jumbo *bool `json:"jumbo,omitempty"`
 
-	// Maximum transmission unit (for satellite locations only).
+	// Maximum transmission unit.
 	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Network Name.
@@ -18111,10 +19275,10 @@ type NetworkReference struct {
 	// Link to Network resource.
 	Href *string `json:"href" validate:"required"`
 
-	// Enable MTU Jumbo Network (for multi-zone locations only).
+	// (deprecated - replaced by mtu) Enable MTU Jumbo Network (for multi-zone locations only).
 	Jumbo *bool `json:"jumbo,omitempty"`
 
-	// Maximum transmission unit (for satellite locations only).
+	// Maximum transmission unit.
 	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Network Name.
@@ -23422,7 +24586,8 @@ type PcloudPvminstancesActionPostOptions struct {
 	// PCloud PVM Instance ID.
 	PvmInstanceID *string `json:"pvm_instance_id" validate:"required,ne="`
 
-	// Name of the action to take; can be start, stop, hard-reboot, soft-reboot, immediate-shutdown, reset-state.
+	// Name of the action to take; can be start, stop, hard-reboot, soft-reboot, immediate-shutdown, reset-state,
+	// dhcp-ip-sync (on-prem only).
 	Action *string `json:"action" validate:"required"`
 
 	// Allows users to set headers on API requests
@@ -23430,8 +24595,10 @@ type PcloudPvminstancesActionPostOptions struct {
 }
 
 // Constants associated with the PcloudPvminstancesActionPostOptions.Action property.
-// Name of the action to take; can be start, stop, hard-reboot, soft-reboot, immediate-shutdown, reset-state.
+// Name of the action to take; can be start, stop, hard-reboot, soft-reboot, immediate-shutdown, reset-state,
+// dhcp-ip-sync (on-prem only).
 const (
+	PcloudPvminstancesActionPostOptionsActionDhcpIPSyncConst = "dhcp-ip-sync"
 	PcloudPvminstancesActionPostOptionsActionHardRebootConst = "hard-reboot"
 	PcloudPvminstancesActionPostOptionsActionImmediateShutdownConst = "immediate-shutdown"
 	PcloudPvminstancesActionPostOptionsActionResetStateConst = "reset-state"
@@ -24235,6 +25402,9 @@ type PcloudPvminstancesPostOptions struct {
 	// Name of the server to create.
 	ServerName *string `json:"serverName" validate:"required"`
 
+	// The name of the host or hostgroup where to deploy the VM.
+	DeployTarget *string `json:"deployTarget,omitempty"`
+
 	// The custom deployment type.
 	DeploymentType *string `json:"deploymentType,omitempty"`
 
@@ -24294,7 +25464,8 @@ type PcloudPvminstancesPostOptions struct {
 	// System type used to host the instance.
 	SysType *string `json:"sysType,omitempty"`
 
-	// Cloud init user defined data.
+	// Cloud init user defined data; For FLS, only cloud-config instance-data is supported and data must not be compressed
+	// or exceed 63K.
 	UserData *string `json:"userData,omitempty"`
 
 	VirtualCores *VirtualCores `json:"virtualCores,omitempty"`
@@ -24350,7 +25521,7 @@ const (
 // Constants associated with the PcloudPvminstancesPostOptions.StorageConnectionV2 property.
 // The storage connection type.
 const (
-	PcloudPvminstancesPostOptionsStorageConnectionV2MaxvolumeattachementConst = "maxVolumeAttachement"
+	PcloudPvminstancesPostOptionsStorageConnectionV2MaxvolumesupportConst = "maxVolumeSupport"
 	PcloudPvminstancesPostOptionsStorageConnectionV2VscsiConst = "vSCSI"
 )
 
@@ -24399,6 +25570,12 @@ func (_options *PcloudPvminstancesPostOptions) SetProcessors(processors float64)
 // SetServerName : Allow user to set ServerName
 func (_options *PcloudPvminstancesPostOptions) SetServerName(serverName string) *PcloudPvminstancesPostOptions {
 	_options.ServerName = core.StringPtr(serverName)
+	return _options
+}
+
+// SetDeployTarget : Allow user to set DeployTarget
+func (_options *PcloudPvminstancesPostOptions) SetDeployTarget(deployTarget string) *PcloudPvminstancesPostOptions {
+	_options.DeployTarget = core.StringPtr(deployTarget)
 	return _options
 }
 
@@ -25286,7 +26463,8 @@ type PcloudSapPostOptions struct {
 	// System type used to host the instance. Only e880, e980, e1080 are supported.
 	SysType *string `json:"sysType,omitempty"`
 
-	// Cloud init user defined data.
+	// Cloud init user defined data; For FLS, only cloud-config instance-data is supported and data must not be compressed
+	// or exceed 63K.
 	UserData *string `json:"userData,omitempty"`
 
 	// List of Volume IDs to attach to the pvm-instance on creation.
@@ -26967,6 +28145,9 @@ type PcloudV2PvminstancesVolumesPostOptions struct {
 	// List of volumes to be attached to a PVM instance.
 	VolumeIDs []string `json:"volumeIDs" validate:"required"`
 
+	// Primary Boot Volume Id.
+	BootVolumeID *string `json:"bootVolumeID,omitempty"`
+
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -26998,6 +28179,12 @@ func (_options *PcloudV2PvminstancesVolumesPostOptions) SetVolumeIDs(volumeIDs [
 	return _options
 }
 
+// SetBootVolumeID : Allow user to set BootVolumeID
+func (_options *PcloudV2PvminstancesVolumesPostOptions) SetBootVolumeID(bootVolumeID string) *PcloudV2PvminstancesVolumesPostOptions {
+	_options.BootVolumeID = core.StringPtr(bootVolumeID)
+	return _options
+}
+
 // SetHeaders : Allow user to set Headers
 func (options *PcloudV2PvminstancesVolumesPostOptions) SetHeaders(param map[string]string) *PcloudV2PvminstancesVolumesPostOptions {
 	options.Headers = param
@@ -27014,7 +28201,8 @@ type PcloudV2VolumesClonePostOptions struct {
 	// further suffixed with an incremental number starting with 1.
 	//   Example volume names using name="volume-abcdef"
 	//     single volume clone will be named "clone-volume-abcdef-83081"
-	//     multi volume clone will be named "clone-volume-abcdef-73721-1", "clone-volume-abcdef-73721-2", ...
+	//     multi volume clone will be named "clone-volume-abcdef-73721-1", "clone-volume-abcdef-73721-2", ... For multiple
+	// volume clone, the provided name will be truncated to the first 20 characters.
 	Name *string `json:"name" validate:"required"`
 
 	// List of volumes to be cloned.
@@ -27414,7 +28602,8 @@ type PcloudV2VolumescloneExecutePostOptions struct {
 	// further suffixed with an incremental number starting with 1.
 	//   Example volume names using name="volume-abcdef"
 	//     single volume clone will be named "clone-volume-abcdef-83081"
-	//     multi volume clone will be named "clone-volume-abcdef-73721-1", "clone-volume-abcdef-73721-2", ...
+	//     multi volume clone will be named "clone-volume-abcdef-73721-1", "clone-volume-abcdef-73721-2", ... For multiple
+	// volume clone, the provided name will be truncated to the first 20 characters.
 	Name *string `json:"name" validate:"required"`
 
 	// default False, Execute failure rolls back clone activity but leaves prepared snapshot True, Execute failure rolls
@@ -28204,7 +29393,8 @@ type PcloudVolumesClonePostOptions struct {
 	// cloned they will be suffix with a '-' and an incremental number starting with 1.
 	//   Example volume names using displayName="volume-abcdef"
 	//     single volume clone will be named "clone-volume-abcdef"
-	//     multi volume clone will be named "clone-volume-abcdef-1", "clone-volume-abcdef-2", ...
+	//     multi volume clone will be named "clone-volume-abcdef-1", "clone-volume-abcdef-2", ... For multiple volume
+	// clone, the provided name will be truncated to the first 20 characters.
 	DisplayName *string `json:"displayName" validate:"required"`
 
 	// List of volumes to be cloned.
@@ -28990,13 +30180,22 @@ type PodData struct {
 	// Amount of available storage in the Pod (GB).
 	Storage *int64 `json:"storage" validate:"required"`
 
-	// Total number of cores in the Pod.
+	// Total number of usable cores in the Pod.
 	TotalCores *float64 `json:"totalCores" validate:"required"`
 
-	// Total amount of memory in the Pod (GB).
+	// Total amount of usable memory in the Pod (GB).
 	TotalMemory *int64 `json:"totalMemory" validate:"required"`
 
-	// Total amount of storage in the Pod (GB).
+	// Total number of physical cores in the Pod.
+	TotalPhysCores *float64 `json:"totalPhysCores" validate:"required"`
+
+	// Total amount of physical memory in the Pod (GB).
+	TotalPhysMemory *int64 `json:"totalPhysMemory" validate:"required"`
+
+	// Total amount of physical storage in the Pod (GB).
+	TotalPhysStorage *float64 `json:"totalPhysStorage" validate:"required"`
+
+	// Total amount of usable storage in the Pod (GB).
 	TotalStorage *int64 `json:"totalStorage" validate:"required"`
 }
 
@@ -29024,6 +30223,18 @@ func UnmarshalPodData(m map[string]json.RawMessage, result interface{}) (err err
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysCores", &obj.TotalPhysCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysMemory", &obj.TotalPhysMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysStorage", &obj.TotalPhysStorage)
 	if err != nil {
 		return
 	}
@@ -29342,6 +30553,9 @@ type SapProfile struct {
 	// SAP Profile ID.
 	ProfileID *string `json:"profileID" validate:"required"`
 
+	// List of supported systems.
+	SupportedSystems []string `json:"supportedSystems,omitempty"`
+
 	// Type of profile.
 	Type *string `json:"type" validate:"required"`
 }
@@ -29372,6 +30586,10 @@ func UnmarshalSapProfile(m map[string]json.RawMessage, result interface{}) (err 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "profileID", &obj.ProfileID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "supportedSystems", &obj.SupportedSystems)
 	if err != nil {
 		return
 	}
@@ -29561,6 +30779,23 @@ func UnmarshalSshKeys(m map[string]json.RawMessage, result interface{}) (err err
 	return
 }
 
+// SatelliteOrder : SatelliteOrder struct
+type SatelliteOrder struct {
+	// Time that satellite will be activated for Power Private Cloud.
+	ActivationTime *string `json:"activationTime" validate:"required"`
+}
+
+// UnmarshalSatelliteOrder unmarshals an instance of SatelliteOrder from the specified map of raw messages.
+func UnmarshalSatelliteOrder(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SatelliteOrder)
+	err = core.UnmarshalPrimitive(m, "activationTime", &obj.ActivationTime)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // SchemaParameters : SchemaParameters struct
 type SchemaParameters struct {
 	Parameters *JSONSchemaObject `json:"parameters,omitempty"`
@@ -29592,6 +30827,39 @@ func UnmarshalSchemasObject(m map[string]json.RawMessage, result interface{}) (e
 		return
 	}
 	err = core.UnmarshalModel(m, "service_instance", &obj.ServiceInstance, UnmarshalServiceInstanceSchemaObject)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Secondary : Information to create a secondary hostgroup.
+type Secondary struct {
+	// Name of the hostgroup to create in the secondary workspace.
+	Name *string `json:"name,omitempty"`
+
+	// Name of the workspace to share the hostgroup with.
+	Workspace *string `json:"workspace" validate:"required"`
+}
+
+// NewSecondary : Instantiate Secondary (Generic Model Constructor)
+func (*PowervsV1) NewSecondary(workspace string) (_model *Secondary, err error) {
+	_model = &Secondary{
+		Workspace: core.StringPtr(workspace),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalSecondary unmarshals an instance of Secondary from the specified map of raw messages.
+func UnmarshalSecondary(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Secondary)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "workspace", &obj.Workspace)
 	if err != nil {
 		return
 	}
@@ -32350,11 +33618,17 @@ type System struct {
 	// The host total RAM memory in GiB.
 	Memory *int64 `json:"memory" validate:"required"`
 
-	// The host total Processor units.
-	TotalCores *float64 `json:"totalCores" validate:"required"`
+	// The host total usable Processor units.
+	TotalCores *float64 `json:"totalCores,omitempty"`
 
-	// The host total RAM memory in GiB.
-	TotalMemory *int64 `json:"totalMemory" validate:"required"`
+	// The host total usable RAM memory in GiB.
+	TotalMemory *int64 `json:"totalMemory,omitempty"`
+
+	// Total number of physical cores in the Pod.
+	TotalPhysCores *float64 `json:"totalPhysCores,omitempty"`
+
+	// Total amount of physical memory in the Pod (GB).
+	TotalPhysMemory *int64 `json:"totalPhysMemory,omitempty"`
 }
 
 // UnmarshalSystem unmarshals an instance of System from the specified map of raw messages.
@@ -32385,6 +33659,14 @@ func UnmarshalSystem(m map[string]json.RawMessage, result interface{}) (err erro
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysCores", &obj.TotalPhysCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysMemory", &obj.TotalPhysMemory)
 	if err != nil {
 		return
 	}
@@ -32462,13 +33744,19 @@ type SystemPoolCapacity struct {
 	Memory *int64 `json:"memory" validate:"required"`
 
 	// The DataCenter list of servers and their available resources.
-	Systems []System `json:"systems,omitempty"`
+	Systems []SystemResources `json:"systems,omitempty"`
 
 	// Total number of cores in the System Pool.
 	TotalCores *float64 `json:"totalCores" validate:"required"`
 
 	// Total amount of memory in the System Pool (GB).
 	TotalMemory *int64 `json:"totalMemory" validate:"required"`
+
+	// Total number of physical cores in the Pod.
+	TotalPhysCores *float64 `json:"totalPhysCores" validate:"required"`
+
+	// Total amount of physical memory in the Pod (GB).
+	TotalPhysMemory *int64 `json:"totalPhysMemory" validate:"required"`
 }
 
 // UnmarshalSystemPoolCapacity unmarshals an instance of SystemPoolCapacity from the specified map of raw messages.
@@ -32482,7 +33770,7 @@ func UnmarshalSystemPoolCapacity(m map[string]json.RawMessage, result interface{
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "systems", &obj.Systems, UnmarshalSystem)
+	err = core.UnmarshalModel(m, "systems", &obj.Systems, UnmarshalSystemResources)
 	if err != nil {
 		return
 	}
@@ -32491,6 +33779,73 @@ func UnmarshalSystemPoolCapacity(m map[string]json.RawMessage, result interface{
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysCores", &obj.TotalPhysCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysMemory", &obj.TotalPhysMemory)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// SystemResources : Information about the resources that a single system contains.
+type SystemResources struct {
+	// The host available Processor units.
+	Cores *float64 `json:"cores" validate:"required"`
+
+	// The host identifier.
+	ID *int64 `json:"id" validate:"required"`
+
+	// The host available RAM memory in GiB.
+	Memory *int64 `json:"memory" validate:"required"`
+
+	// The host total usable Processor units.
+	TotalCores *float64 `json:"totalCores" validate:"required"`
+
+	// The host total usable RAM memory in GiB.
+	TotalMemory *int64 `json:"totalMemory" validate:"required"`
+
+	// Total number of physical cores in the Pod.
+	TotalPhysCores *float64 `json:"totalPhysCores" validate:"required"`
+
+	// Total amount of physical memory in the Pod (GB).
+	TotalPhysMemory *int64 `json:"totalPhysMemory" validate:"required"`
+}
+
+// UnmarshalSystemResources unmarshals an instance of SystemResources from the specified map of raw messages.
+func UnmarshalSystemResources(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SystemResources)
+	err = core.UnmarshalPrimitive(m, "cores", &obj.Cores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "memory", &obj.Memory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalCores", &obj.TotalCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalMemory", &obj.TotalMemory)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysCores", &obj.TotalPhysCores)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "totalPhysMemory", &obj.TotalPhysMemory)
 	if err != nil {
 		return
 	}
@@ -32983,6 +34338,24 @@ func UnmarshalUserInfo(m map[string]json.RawMessage, result interface{}) (err er
 	return
 }
 
+// V1AvailableHostsOptions : The AvailableHosts options.
+type V1AvailableHostsOptions struct {
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1AvailableHostsOptions : Instantiate V1AvailableHostsOptions
+func (*PowervsV1) NewV1AvailableHostsOptions() *V1AvailableHostsOptions {
+	return &V1AvailableHostsOptions{}
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1AvailableHostsOptions) SetHeaders(param map[string]string) *V1AvailableHostsOptions {
+	options.Headers = param
+	return options
+}
+
 // V1DatacentersGetOptions : The DatacentersGet options.
 type V1DatacentersGetOptions struct {
 	// Datacenter Region.
@@ -33042,6 +34415,295 @@ func (_options *V1DatacentersGetallOptions) SetAccept(accept string) *V1Datacent
 
 // SetHeaders : Allow user to set Headers
 func (options *V1DatacentersGetallOptions) SetHeaders(param map[string]string) *V1DatacentersGetallOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostgroupsGetOptions : The HostgroupsGet options.
+type V1HostgroupsGetOptions struct {
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostgroupsGetOptions : Instantiate V1HostgroupsGetOptions
+func (*PowervsV1) NewV1HostgroupsGetOptions() *V1HostgroupsGetOptions {
+	return &V1HostgroupsGetOptions{}
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostgroupsGetOptions) SetHeaders(param map[string]string) *V1HostgroupsGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostgroupsIDGetOptions : The HostgroupsIDGet options.
+type V1HostgroupsIDGetOptions struct {
+	// Hostgroup ID.
+	HostgroupID *string `json:"hostgroup_id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostgroupsIDGetOptions : Instantiate V1HostgroupsIDGetOptions
+func (*PowervsV1) NewV1HostgroupsIDGetOptions(hostgroupID string) *V1HostgroupsIDGetOptions {
+	return &V1HostgroupsIDGetOptions{
+		HostgroupID: core.StringPtr(hostgroupID),
+	}
+}
+
+// SetHostgroupID : Allow user to set HostgroupID
+func (_options *V1HostgroupsIDGetOptions) SetHostgroupID(hostgroupID string) *V1HostgroupsIDGetOptions {
+	_options.HostgroupID = core.StringPtr(hostgroupID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostgroupsIDGetOptions) SetHeaders(param map[string]string) *V1HostgroupsIDGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostgroupsIDPutOptions : The HostgroupsIDPut options.
+type V1HostgroupsIDPutOptions struct {
+	// Hostgroup ID.
+	HostgroupID *string `json:"hostgroup_id" validate:"required,ne="`
+
+	// List of workspace names to share the hostgroup with.
+	Add []Secondary `json:"add,omitempty"`
+
+	// A workspace name to stop sharing the hostgroup with.
+	Remove *string `json:"remove,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostgroupsIDPutOptions : Instantiate V1HostgroupsIDPutOptions
+func (*PowervsV1) NewV1HostgroupsIDPutOptions(hostgroupID string) *V1HostgroupsIDPutOptions {
+	return &V1HostgroupsIDPutOptions{
+		HostgroupID: core.StringPtr(hostgroupID),
+	}
+}
+
+// SetHostgroupID : Allow user to set HostgroupID
+func (_options *V1HostgroupsIDPutOptions) SetHostgroupID(hostgroupID string) *V1HostgroupsIDPutOptions {
+	_options.HostgroupID = core.StringPtr(hostgroupID)
+	return _options
+}
+
+// SetAdd : Allow user to set Add
+func (_options *V1HostgroupsIDPutOptions) SetAdd(add []Secondary) *V1HostgroupsIDPutOptions {
+	_options.Add = add
+	return _options
+}
+
+// SetRemove : Allow user to set Remove
+func (_options *V1HostgroupsIDPutOptions) SetRemove(remove string) *V1HostgroupsIDPutOptions {
+	_options.Remove = core.StringPtr(remove)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostgroupsIDPutOptions) SetHeaders(param map[string]string) *V1HostgroupsIDPutOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostgroupsPostOptions : The HostgroupsPost options.
+type V1HostgroupsPostOptions struct {
+	// List of hosts to add to the group.
+	Hosts []AddHost `json:"hosts" validate:"required"`
+
+	// Name of the hostgroup to create.
+	Name *string `json:"name" validate:"required"`
+
+	// List of workspace names to share the hostgroup with (optional).
+	Secondaries []Secondary `json:"secondaries,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostgroupsPostOptions : Instantiate V1HostgroupsPostOptions
+func (*PowervsV1) NewV1HostgroupsPostOptions(hosts []AddHost, name string) *V1HostgroupsPostOptions {
+	return &V1HostgroupsPostOptions{
+		Hosts: hosts,
+		Name: core.StringPtr(name),
+	}
+}
+
+// SetHosts : Allow user to set Hosts
+func (_options *V1HostgroupsPostOptions) SetHosts(hosts []AddHost) *V1HostgroupsPostOptions {
+	_options.Hosts = hosts
+	return _options
+}
+
+// SetName : Allow user to set Name
+func (_options *V1HostgroupsPostOptions) SetName(name string) *V1HostgroupsPostOptions {
+	_options.Name = core.StringPtr(name)
+	return _options
+}
+
+// SetSecondaries : Allow user to set Secondaries
+func (_options *V1HostgroupsPostOptions) SetSecondaries(secondaries []Secondary) *V1HostgroupsPostOptions {
+	_options.Secondaries = secondaries
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostgroupsPostOptions) SetHeaders(param map[string]string) *V1HostgroupsPostOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostsGetOptions : The HostsGet options.
+type V1HostsGetOptions struct {
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostsGetOptions : Instantiate V1HostsGetOptions
+func (*PowervsV1) NewV1HostsGetOptions() *V1HostsGetOptions {
+	return &V1HostsGetOptions{}
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostsGetOptions) SetHeaders(param map[string]string) *V1HostsGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostsIDDeleteOptions : The HostsIDDelete options.
+type V1HostsIDDeleteOptions struct {
+	// Host ID.
+	HostID *string `json:"host_id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostsIDDeleteOptions : Instantiate V1HostsIDDeleteOptions
+func (*PowervsV1) NewV1HostsIDDeleteOptions(hostID string) *V1HostsIDDeleteOptions {
+	return &V1HostsIDDeleteOptions{
+		HostID: core.StringPtr(hostID),
+	}
+}
+
+// SetHostID : Allow user to set HostID
+func (_options *V1HostsIDDeleteOptions) SetHostID(hostID string) *V1HostsIDDeleteOptions {
+	_options.HostID = core.StringPtr(hostID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostsIDDeleteOptions) SetHeaders(param map[string]string) *V1HostsIDDeleteOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostsIDGetOptions : The HostsIDGet options.
+type V1HostsIDGetOptions struct {
+	// Host ID.
+	HostID *string `json:"host_id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostsIDGetOptions : Instantiate V1HostsIDGetOptions
+func (*PowervsV1) NewV1HostsIDGetOptions(hostID string) *V1HostsIDGetOptions {
+	return &V1HostsIDGetOptions{
+		HostID: core.StringPtr(hostID),
+	}
+}
+
+// SetHostID : Allow user to set HostID
+func (_options *V1HostsIDGetOptions) SetHostID(hostID string) *V1HostsIDGetOptions {
+	_options.HostID = core.StringPtr(hostID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostsIDGetOptions) SetHeaders(param map[string]string) *V1HostsIDGetOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostsIDPutOptions : The HostsIDPut options.
+type V1HostsIDPutOptions struct {
+	// Host ID.
+	HostID *string `json:"host_id" validate:"required,ne="`
+
+	// Name of the host chosen by the user.
+	DisplayName *string `json:"displayName" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostsIDPutOptions : Instantiate V1HostsIDPutOptions
+func (*PowervsV1) NewV1HostsIDPutOptions(hostID string, displayName string) *V1HostsIDPutOptions {
+	return &V1HostsIDPutOptions{
+		HostID: core.StringPtr(hostID),
+		DisplayName: core.StringPtr(displayName),
+	}
+}
+
+// SetHostID : Allow user to set HostID
+func (_options *V1HostsIDPutOptions) SetHostID(hostID string) *V1HostsIDPutOptions {
+	_options.HostID = core.StringPtr(hostID)
+	return _options
+}
+
+// SetDisplayName : Allow user to set DisplayName
+func (_options *V1HostsIDPutOptions) SetDisplayName(displayName string) *V1HostsIDPutOptions {
+	_options.DisplayName = core.StringPtr(displayName)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostsIDPutOptions) SetHeaders(param map[string]string) *V1HostsIDPutOptions {
+	options.Headers = param
+	return options
+}
+
+// V1HostsPostOptions : The HostsPost options.
+type V1HostsPostOptions struct {
+	// Host to add to a hostgroup.
+	Host *AddHost `json:"host" validate:"required"`
+
+	// ID of the hostgroup to which the host should be added.
+	HostgroupID *string `json:"hostgroupID" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewV1HostsPostOptions : Instantiate V1HostsPostOptions
+func (*PowervsV1) NewV1HostsPostOptions(host *AddHost, hostgroupID string) *V1HostsPostOptions {
+	return &V1HostsPostOptions{
+		Host: host,
+		HostgroupID: core.StringPtr(hostgroupID),
+	}
+}
+
+// SetHost : Allow user to set Host
+func (_options *V1HostsPostOptions) SetHost(host *AddHost) *V1HostsPostOptions {
+	_options.Host = host
+	return _options
+}
+
+// SetHostgroupID : Allow user to set HostgroupID
+func (_options *V1HostsPostOptions) SetHostgroupID(hostgroupID string) *V1HostsPostOptions {
+	_options.HostgroupID = core.StringPtr(hostgroupID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *V1HostsPostOptions) SetHeaders(param map[string]string) *V1HostsPostOptions {
 	options.Headers = param
 	return options
 }
