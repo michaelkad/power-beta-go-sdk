@@ -3656,6 +3656,2348 @@ var _ = Describe(`PowervsV1`, func() {
 			})
 		})
 	})
+	Describe(`AvailableHosts(v1AvailableHostsOptions *V1AvailableHostsOptions) - Operation response error`, func() {
+		v1AvailableHostsPath := "/v1/available-hosts"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1AvailableHostsPath))
+					Expect(req.Method).To(Equal("GET"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke AvailableHosts with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := new(powervsv1.V1AvailableHostsOptions)
+				v1AvailableHostsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`AvailableHosts(v1AvailableHostsOptions *V1AvailableHostsOptions)`, func() {
+		v1AvailableHostsPath := "/v1/available-hosts"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1AvailableHostsPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCore": 13, "availableMemory": 15}, "count": 5, "sysType": "SysType"}}`)
+				}))
+			})
+			It(`Invoke AvailableHosts successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := new(powervsv1.V1AvailableHostsOptions)
+				v1AvailableHostsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.AvailableHostsWithContext(ctx, v1AvailableHostsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.AvailableHostsWithContext(ctx, v1AvailableHostsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1AvailableHostsPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCore": 13, "availableMemory": 15}, "count": 5, "sysType": "SysType"}}`)
+				}))
+			})
+			It(`Invoke AvailableHosts successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.AvailableHosts(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := new(powervsv1.V1AvailableHostsOptions)
+				v1AvailableHostsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke AvailableHosts with error: Operation request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := new(powervsv1.V1AvailableHostsOptions)
+				v1AvailableHostsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke AvailableHosts successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := new(powervsv1.V1AvailableHostsOptions)
+				v1AvailableHostsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.AvailableHosts(v1AvailableHostsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsGet(v1HostgroupsGetOptions *V1HostgroupsGetOptions) - Operation response error`, func() {
+		v1HostgroupsGetPath := "/v1/hostgroups"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostgroupsGet with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := new(powervsv1.V1HostgroupsGetOptions)
+				v1HostgroupsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsGet(v1HostgroupsGetOptions *V1HostgroupsGetOptions)`, func() {
+		v1HostgroupsGetPath := "/v1/hostgroups"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `[{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}]`)
+				}))
+			})
+			It(`Invoke HostgroupsGet successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := new(powervsv1.V1HostgroupsGetOptions)
+				v1HostgroupsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostgroupsGetWithContext(ctx, v1HostgroupsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostgroupsGetWithContext(ctx, v1HostgroupsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `[{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}]`)
+				}))
+			})
+			It(`Invoke HostgroupsGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostgroupsGet(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := new(powervsv1.V1HostgroupsGetOptions)
+				v1HostgroupsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostgroupsGet with error: Operation request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := new(powervsv1.V1HostgroupsGetOptions)
+				v1HostgroupsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostgroupsGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := new(powervsv1.V1HostgroupsGetOptions)
+				v1HostgroupsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostgroupsGet(v1HostgroupsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsPost(v1HostgroupsPostOptions *V1HostgroupsPostOptions) - Operation response error`, func() {
+		v1HostgroupsPostPath := "/v1/hostgroups"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostgroupsPost with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsModel := new(powervsv1.V1HostgroupsPostOptions)
+				v1HostgroupsPostOptionsModel.Hosts = []powervsv1.AddHost{*addHostModel}
+				v1HostgroupsPostOptionsModel.Name = core.StringPtr("testString")
+				v1HostgroupsPostOptionsModel.Secondaries = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsPost(v1HostgroupsPostOptions *V1HostgroupsPostOptions)`, func() {
+		v1HostgroupsPostPath := "/v1/hostgroups"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsPost successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsModel := new(powervsv1.V1HostgroupsPostOptions)
+				v1HostgroupsPostOptionsModel.Hosts = []powervsv1.AddHost{*addHostModel}
+				v1HostgroupsPostOptionsModel.Name = core.StringPtr("testString")
+				v1HostgroupsPostOptionsModel.Secondaries = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostgroupsPostWithContext(ctx, v1HostgroupsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostgroupsPostWithContext(ctx, v1HostgroupsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsPost successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostgroupsPost(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsModel := new(powervsv1.V1HostgroupsPostOptions)
+				v1HostgroupsPostOptionsModel.Hosts = []powervsv1.AddHost{*addHostModel}
+				v1HostgroupsPostOptionsModel.Name = core.StringPtr("testString")
+				v1HostgroupsPostOptionsModel.Secondaries = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostgroupsPost with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsModel := new(powervsv1.V1HostgroupsPostOptions)
+				v1HostgroupsPostOptionsModel.Hosts = []powervsv1.AddHost{*addHostModel}
+				v1HostgroupsPostOptionsModel.Name = core.StringPtr("testString")
+				v1HostgroupsPostOptionsModel.Secondaries = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostgroupsPostOptions model with no property values
+				v1HostgroupsPostOptionsModelNew := new(powervsv1.V1HostgroupsPostOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostgroupsPost(v1HostgroupsPostOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(201)
+				}))
+			})
+			It(`Invoke HostgroupsPost successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsModel := new(powervsv1.V1HostgroupsPostOptions)
+				v1HostgroupsPostOptionsModel.Hosts = []powervsv1.AddHost{*addHostModel}
+				v1HostgroupsPostOptionsModel.Name = core.StringPtr("testString")
+				v1HostgroupsPostOptionsModel.Secondaries = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostgroupsPost(v1HostgroupsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsIDGet(v1HostgroupsIDGetOptions *V1HostgroupsIDGetOptions) - Operation response error`, func() {
+		v1HostgroupsIDGetPath := "/v1/hostgroups/testString"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostgroupsIDGet with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				v1HostgroupsIDGetOptionsModel := new(powervsv1.V1HostgroupsIDGetOptions)
+				v1HostgroupsIDGetOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsIDGet(v1HostgroupsIDGetOptions *V1HostgroupsIDGetOptions)`, func() {
+		v1HostgroupsIDGetPath := "/v1/hostgroups/testString"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsIDGet successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				v1HostgroupsIDGetOptionsModel := new(powervsv1.V1HostgroupsIDGetOptions)
+				v1HostgroupsIDGetOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostgroupsIDGetWithContext(ctx, v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostgroupsIDGetWithContext(ctx, v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsIDGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostgroupsIDGet(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				v1HostgroupsIDGetOptionsModel := new(powervsv1.V1HostgroupsIDGetOptions)
+				v1HostgroupsIDGetOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostgroupsIDGet with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				v1HostgroupsIDGetOptionsModel := new(powervsv1.V1HostgroupsIDGetOptions)
+				v1HostgroupsIDGetOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostgroupsIDGetOptions model with no property values
+				v1HostgroupsIDGetOptionsModelNew := new(powervsv1.V1HostgroupsIDGetOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostgroupsIDGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				v1HostgroupsIDGetOptionsModel := new(powervsv1.V1HostgroupsIDGetOptions)
+				v1HostgroupsIDGetOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostgroupsIDGet(v1HostgroupsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsIDPut(v1HostgroupsIDPutOptions *V1HostgroupsIDPutOptions) - Operation response error`, func() {
+		v1HostgroupsIDPutPath := "/v1/hostgroups/testString"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostgroupsIDPut with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				v1HostgroupsIDPutOptionsModel := new(powervsv1.V1HostgroupsIDPutOptions)
+				v1HostgroupsIDPutOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Add = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsIDPutOptionsModel.Remove = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostgroupsIDPut(v1HostgroupsIDPutOptions *V1HostgroupsIDPutOptions)`, func() {
+		v1HostgroupsIDPutPath := "/v1/hostgroups/testString"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsIDPut successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				v1HostgroupsIDPutOptionsModel := new(powervsv1.V1HostgroupsIDPutOptions)
+				v1HostgroupsIDPutOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Add = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsIDPutOptionsModel.Remove = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostgroupsIDPutWithContext(ctx, v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostgroupsIDPutWithContext(ctx, v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostgroupsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"creationDate": "2019-01-01T12:00:00.000Z", "hosts": ["Hosts"], "id": "ID", "name": "Name", "primary": "Primary", "secondaries": ["Secondaries"]}`)
+				}))
+			})
+			It(`Invoke HostgroupsIDPut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostgroupsIDPut(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				v1HostgroupsIDPutOptionsModel := new(powervsv1.V1HostgroupsIDPutOptions)
+				v1HostgroupsIDPutOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Add = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsIDPutOptionsModel.Remove = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostgroupsIDPut with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				v1HostgroupsIDPutOptionsModel := new(powervsv1.V1HostgroupsIDPutOptions)
+				v1HostgroupsIDPutOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Add = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsIDPutOptionsModel.Remove = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostgroupsIDPutOptions model with no property values
+				v1HostgroupsIDPutOptionsModelNew := new(powervsv1.V1HostgroupsIDPutOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostgroupsIDPut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				v1HostgroupsIDPutOptionsModel := new(powervsv1.V1HostgroupsIDPutOptions)
+				v1HostgroupsIDPutOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Add = []powervsv1.Secondary{*secondaryModel}
+				v1HostgroupsIDPutOptionsModel.Remove = core.StringPtr("testString")
+				v1HostgroupsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostgroupsIDPut(v1HostgroupsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsGet(v1HostsGetOptions *V1HostsGetOptions) - Operation response error`, func() {
+		v1HostsGetPath := "/v1/hosts"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostsGet with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := new(powervsv1.V1HostsGetOptions)
+				v1HostsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsGet(v1HostsGetOptions *V1HostsGetOptions)`, func() {
+		v1HostsGetPath := "/v1/hosts"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `[{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}]`)
+				}))
+			})
+			It(`Invoke HostsGet successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := new(powervsv1.V1HostsGetOptions)
+				v1HostsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostsGetWithContext(ctx, v1HostsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostsGetWithContext(ctx, v1HostsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `[{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}]`)
+				}))
+			})
+			It(`Invoke HostsGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostsGet(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := new(powervsv1.V1HostsGetOptions)
+				v1HostsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostsGet with error: Operation request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := new(powervsv1.V1HostsGetOptions)
+				v1HostsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostsGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := new(powervsv1.V1HostsGetOptions)
+				v1HostsGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostsGet(v1HostsGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsPost(v1HostsPostOptions *V1HostsPostOptions) - Operation response error`, func() {
+		v1HostsPostPath := "/v1/hosts"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostsPost with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostsPostOptions model
+				v1HostsPostOptionsModel := new(powervsv1.V1HostsPostOptions)
+				v1HostsPostOptionsModel.Host = addHostModel
+				v1HostsPostOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsPost(v1HostsPostOptions *V1HostsPostOptions)`, func() {
+		v1HostsPostPath := "/v1/hosts"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsPost successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostsPostOptions model
+				v1HostsPostOptionsModel := new(powervsv1.V1HostsPostOptions)
+				v1HostsPostOptionsModel.Host = addHostModel
+				v1HostsPostOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostsPostWithContext(ctx, v1HostsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostsPostWithContext(ctx, v1HostsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsPostPath))
+					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(201)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsPost successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostsPost(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostsPostOptions model
+				v1HostsPostOptionsModel := new(powervsv1.V1HostsPostOptions)
+				v1HostsPostOptionsModel.Host = addHostModel
+				v1HostsPostOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostsPost with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostsPostOptions model
+				v1HostsPostOptionsModel := new(powervsv1.V1HostsPostOptions)
+				v1HostsPostOptionsModel.Host = addHostModel
+				v1HostsPostOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostsPostOptions model with no property values
+				v1HostsPostOptionsModelNew := new(powervsv1.V1HostsPostOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostsPost(v1HostsPostOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(201)
+				}))
+			})
+			It(`Invoke HostsPost successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+
+				// Construct an instance of the V1HostsPostOptions model
+				v1HostsPostOptionsModel := new(powervsv1.V1HostsPostOptions)
+				v1HostsPostOptionsModel.Host = addHostModel
+				v1HostsPostOptionsModel.HostgroupID = core.StringPtr("testString")
+				v1HostsPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostsPost(v1HostsPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDDelete(v1HostsIDDeleteOptions *V1HostsIDDeleteOptions) - Operation response error`, func() {
+		v1HostsIDDeletePath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDDeletePath))
+					Expect(req.Method).To(Equal("DELETE"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(202)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostsIDDelete with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				v1HostsIDDeleteOptionsModel := new(powervsv1.V1HostsIDDeleteOptions)
+				v1HostsIDDeleteOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDDelete(v1HostsIDDeleteOptions *V1HostsIDDeleteOptions)`, func() {
+		v1HostsIDDeletePath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDDeletePath))
+					Expect(req.Method).To(Equal("DELETE"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(202)
+					fmt.Fprintf(res, "%s", `{}`)
+				}))
+			})
+			It(`Invoke HostsIDDelete successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				v1HostsIDDeleteOptionsModel := new(powervsv1.V1HostsIDDeleteOptions)
+				v1HostsIDDeleteOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostsIDDeleteWithContext(ctx, v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostsIDDeleteWithContext(ctx, v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDDeletePath))
+					Expect(req.Method).To(Equal("DELETE"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(202)
+					fmt.Fprintf(res, "%s", `{}`)
+				}))
+			})
+			It(`Invoke HostsIDDelete successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostsIDDelete(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				v1HostsIDDeleteOptionsModel := new(powervsv1.V1HostsIDDeleteOptions)
+				v1HostsIDDeleteOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostsIDDelete with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				v1HostsIDDeleteOptionsModel := new(powervsv1.V1HostsIDDeleteOptions)
+				v1HostsIDDeleteOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostsIDDeleteOptions model with no property values
+				v1HostsIDDeleteOptionsModelNew := new(powervsv1.V1HostsIDDeleteOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(202)
+				}))
+			})
+			It(`Invoke HostsIDDelete successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				v1HostsIDDeleteOptionsModel := new(powervsv1.V1HostsIDDeleteOptions)
+				v1HostsIDDeleteOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostsIDDelete(v1HostsIDDeleteOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDGet(v1HostsIDGetOptions *V1HostsIDGetOptions) - Operation response error`, func() {
+		v1HostsIDGetPath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostsIDGet with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDGetOptions model
+				v1HostsIDGetOptionsModel := new(powervsv1.V1HostsIDGetOptions)
+				v1HostsIDGetOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDGet(v1HostsIDGetOptions *V1HostsIDGetOptions)`, func() {
+		v1HostsIDGetPath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsIDGet successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostsIDGetOptions model
+				v1HostsIDGetOptionsModel := new(powervsv1.V1HostsIDGetOptions)
+				v1HostsIDGetOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostsIDGetWithContext(ctx, v1HostsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostsIDGetWithContext(ctx, v1HostsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDGetPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsIDGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostsIDGet(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostsIDGetOptions model
+				v1HostsIDGetOptionsModel := new(powervsv1.V1HostsIDGetOptions)
+				v1HostsIDGetOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostsIDGet with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDGetOptions model
+				v1HostsIDGetOptionsModel := new(powervsv1.V1HostsIDGetOptions)
+				v1HostsIDGetOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostsIDGetOptions model with no property values
+				v1HostsIDGetOptionsModelNew := new(powervsv1.V1HostsIDGetOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostsIDGet(v1HostsIDGetOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostsIDGet successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDGetOptions model
+				v1HostsIDGetOptionsModel := new(powervsv1.V1HostsIDGetOptions)
+				v1HostsIDGetOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDGetOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostsIDGet(v1HostsIDGetOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDPut(v1HostsIDPutOptions *V1HostsIDPutOptions) - Operation response error`, func() {
+		v1HostsIDPutPath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke HostsIDPut with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDPutOptions model
+				v1HostsIDPutOptionsModel := new(powervsv1.V1HostsIDPutOptions)
+				v1HostsIDPutOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.DisplayName = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`HostsIDPut(v1HostsIDPutOptions *V1HostsIDPutOptions)`, func() {
+		v1HostsIDPutPath := "/v1/hosts/testString"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsIDPut successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the V1HostsIDPutOptions model
+				v1HostsIDPutOptionsModel := new(powervsv1.V1HostsIDPutOptions)
+				v1HostsIDPutOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.DisplayName = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.HostsIDPutWithContext(ctx, v1HostsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.HostsIDPutWithContext(ctx, v1HostsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(v1HostsIDPutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"capacity": {"availableCore": 13, "availableMemory": 15, "reservedCore": 12, "reservedMemory": 14, "totalCore": 9, "totalMemory": 11, "usedCore": 8, "usedMemory": 10}, "displayName": "DisplayName", "hostgroup": "Hostgroup", "id": "ID", "state": "State", "status": "Status", "sysType": "SysType"}`)
+				}))
+			})
+			It(`Invoke HostsIDPut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.HostsIDPut(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the V1HostsIDPutOptions model
+				v1HostsIDPutOptionsModel := new(powervsv1.V1HostsIDPutOptions)
+				v1HostsIDPutOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.DisplayName = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke HostsIDPut with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDPutOptions model
+				v1HostsIDPutOptionsModel := new(powervsv1.V1HostsIDPutOptions)
+				v1HostsIDPutOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.DisplayName = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the V1HostsIDPutOptions model with no property values
+				v1HostsIDPutOptionsModelNew := new(powervsv1.V1HostsIDPutOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.HostsIDPut(v1HostsIDPutOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke HostsIDPut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the V1HostsIDPutOptions model
+				v1HostsIDPutOptionsModel := new(powervsv1.V1HostsIDPutOptions)
+				v1HostsIDPutOptionsModel.HostID = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.DisplayName = core.StringPtr("testString")
+				v1HostsIDPutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.HostsIDPut(v1HostsIDPutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`ServiceBrokerHealthHead(serviceBrokerHealthHeadOptions *ServiceBrokerHealthHeadOptions)`, func() {
 		serviceBrokerHealthHeadPath := "/broker/v1/health"
 		Context(`Using mock server endpoint`, func() {
@@ -4533,6 +6875,428 @@ var _ = Describe(`PowervsV1`, func() {
 
 				// Verify a nil result
 				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptions *InternalV1PowervsLocationsActivatePutOptions) - Operation response error`, func() {
+		internalV1PowervsLocationsActivatePutPath := "/internal/v1/powervs/locations/activate"
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(internalV1PowervsLocationsActivatePutPath))
+					Expect(req.Method).To(Equal("PUT"))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprint(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsActivatePut with error: Operation response processing error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsModel := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				internalV1PowervsLocationsActivatePutOptionsModel.OrderID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay = core.Int64Ptr(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				powervsService.EnableRetries(0, 0)
+				result, response, operationErr = powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptions *InternalV1PowervsLocationsActivatePutOptions)`, func() {
+		internalV1PowervsLocationsActivatePutPath := "/internal/v1/powervs/locations/activate"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(internalV1PowervsLocationsActivatePutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"activationTime": "ActivationTime"}`)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsActivatePut successfully with retries`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+				powervsService.EnableRetries(0, 0)
+
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsModel := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				internalV1PowervsLocationsActivatePutOptionsModel.OrderID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay = core.Int64Ptr(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := powervsService.InternalV1PowervsLocationsActivatePutWithContext(ctx, internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				powervsService.DisableRetries()
+				result, response, operationErr := powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = powervsService.InternalV1PowervsLocationsActivatePutWithContext(ctx, internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(internalV1PowervsLocationsActivatePutPath))
+					Expect(req.Method).To(Equal("PUT"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"activationTime": "ActivationTime"}`)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsActivatePut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := powervsService.InternalV1PowervsLocationsActivatePut(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsModel := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				internalV1PowervsLocationsActivatePutOptionsModel.OrderID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay = core.Int64Ptr(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+			})
+			It(`Invoke InternalV1PowervsLocationsActivatePut with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsModel := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				internalV1PowervsLocationsActivatePutOptionsModel.OrderID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay = core.Int64Ptr(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+				// Construct a second instance of the InternalV1PowervsLocationsActivatePutOptions model with no property values
+				internalV1PowervsLocationsActivatePutOptionsModelNew := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				// Invoke operation with invalid model (negative test)
+				result, response, operationErr = powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsActivatePut successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsModel := new(powervsv1.InternalV1PowervsLocationsActivatePutOptions)
+				internalV1PowervsLocationsActivatePutOptionsModel.OrderID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay = core.Int64Ptr(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := powervsService.InternalV1PowervsLocationsActivatePut(internalV1PowervsLocationsActivatePutOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`InternalV1PowervsLocationsTagDelete(internalV1PowervsLocationsTagDeleteOptions *InternalV1PowervsLocationsTagDeleteOptions)`, func() {
+		internalV1PowervsLocationsTagDeletePath := "/internal/v1/powervs/locations/tag"
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(internalV1PowervsLocationsTagDeletePath))
+					Expect(req.Method).To(Equal("DELETE"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsTagDelete successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				response, operationErr := powervsService.InternalV1PowervsLocationsTagDelete(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsTagDeleteOptions model
+				internalV1PowervsLocationsTagDeleteOptionsModel := new(powervsv1.InternalV1PowervsLocationsTagDeleteOptions)
+				internalV1PowervsLocationsTagDeleteOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsTagDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				response, operationErr = powervsService.InternalV1PowervsLocationsTagDelete(internalV1PowervsLocationsTagDeleteOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+			})
+			It(`Invoke InternalV1PowervsLocationsTagDelete with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsTagDeleteOptions model
+				internalV1PowervsLocationsTagDeleteOptionsModel := new(powervsv1.InternalV1PowervsLocationsTagDeleteOptions)
+				internalV1PowervsLocationsTagDeleteOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsTagDeleteOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				response, operationErr := powervsService.InternalV1PowervsLocationsTagDelete(internalV1PowervsLocationsTagDeleteOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				// Construct a second instance of the InternalV1PowervsLocationsTagDeleteOptions model with no property values
+				internalV1PowervsLocationsTagDeleteOptionsModelNew := new(powervsv1.InternalV1PowervsLocationsTagDeleteOptions)
+				// Invoke operation with invalid model (negative test)
+				response, operationErr = powervsService.InternalV1PowervsLocationsTagDelete(internalV1PowervsLocationsTagDeleteOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`InternalV1PowervsLocationsTagPost(internalV1PowervsLocationsTagPostOptions *InternalV1PowervsLocationsTagPostOptions)`, func() {
+		internalV1PowervsLocationsTagPostPath := "/internal/v1/powervs/locations/tag"
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(internalV1PowervsLocationsTagPostPath))
+					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke InternalV1PowervsLocationsTagPost successfully`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Invoke operation with nil options model (negative test)
+				response, operationErr := powervsService.InternalV1PowervsLocationsTagPost(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsTagPostOptions model
+				internalV1PowervsLocationsTagPostOptionsModel := new(powervsv1.InternalV1PowervsLocationsTagPostOptions)
+				internalV1PowervsLocationsTagPostOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsTagPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				response, operationErr = powervsService.InternalV1PowervsLocationsTagPost(internalV1PowervsLocationsTagPostOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+			})
+			It(`Invoke InternalV1PowervsLocationsTagPost with error: Operation validation and request error`, func() {
+				powervsService, serviceErr := powervsv1.NewPowervsV1(&powervsv1.PowervsV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(powervsService).ToNot(BeNil())
+
+				// Construct an instance of the InternalV1PowervsLocationsTagPostOptions model
+				internalV1PowervsLocationsTagPostOptionsModel := new(powervsv1.InternalV1PowervsLocationsTagPostOptions)
+				internalV1PowervsLocationsTagPostOptionsModel.SatelliteID = core.StringPtr("testString")
+				internalV1PowervsLocationsTagPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := powervsService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				response, operationErr := powervsService.InternalV1PowervsLocationsTagPost(internalV1PowervsLocationsTagPostOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				// Construct a second instance of the InternalV1PowervsLocationsTagPostOptions model with no property values
+				internalV1PowervsLocationsTagPostOptionsModelNew := new(powervsv1.InternalV1PowervsLocationsTagPostOptions)
+				// Invoke operation with invalid model (negative test)
+				response, operationErr = powervsService.InternalV1PowervsLocationsTagPost(internalV1PowervsLocationsTagPostOptionsModelNew)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -17548,6 +20312,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.ProcType = core.StringPtr("dedicated")
 				pcloudPvminstancesPostOptionsModel.Processors = core.Float64Ptr(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.ServerName = core.StringPtr("testString")
+				pcloudPvminstancesPostOptionsModel.DeployTarget = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.DeploymentType = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.KeyPairName = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity = core.Int64Ptr(int64(38))
@@ -17671,6 +20436,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.ProcType = core.StringPtr("dedicated")
 				pcloudPvminstancesPostOptionsModel.Processors = core.Float64Ptr(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.ServerName = core.StringPtr("testString")
+				pcloudPvminstancesPostOptionsModel.DeployTarget = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.DeploymentType = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.KeyPairName = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity = core.Int64Ptr(int64(38))
@@ -17802,6 +20568,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.ProcType = core.StringPtr("dedicated")
 				pcloudPvminstancesPostOptionsModel.Processors = core.Float64Ptr(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.ServerName = core.StringPtr("testString")
+				pcloudPvminstancesPostOptionsModel.DeployTarget = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.DeploymentType = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.KeyPairName = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity = core.Int64Ptr(int64(38))
@@ -17877,6 +20644,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.ProcType = core.StringPtr("dedicated")
 				pcloudPvminstancesPostOptionsModel.Processors = core.Float64Ptr(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.ServerName = core.StringPtr("testString")
+				pcloudPvminstancesPostOptionsModel.DeployTarget = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.DeploymentType = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.KeyPairName = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity = core.Int64Ptr(int64(38))
@@ -17973,6 +20741,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.ProcType = core.StringPtr("dedicated")
 				pcloudPvminstancesPostOptionsModel.Processors = core.Float64Ptr(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.ServerName = core.StringPtr("testString")
+				pcloudPvminstancesPostOptionsModel.DeployTarget = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.DeploymentType = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.KeyPairName = core.StringPtr("testString")
 				pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity = core.Int64Ptr(int64(38))
@@ -24614,7 +27383,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"PodData": {"cores": 5, "memory": 6, "satLocationID": "SatLocationID", "storage": 7, "totalCores": 10, "totalMemory": 11, "totalStorage": 12}, "StorageControllers": {"mapKey": {"displayName": "DisplayName", "health": "Health", "poolStorage": 11, "poolTotalStorage": 16, "pools": {"mapKey": {"poolName": "PoolName", "storage": 7, "totalStorage": 12}}}}, "SystemPools": {"mapKey": {"cores": 5, "memory": 6, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}], "totalCores": 10, "totalMemory": 11}}}`)
+					fmt.Fprintf(res, "%s", `{"PodData": {"cores": 5, "memory": 6, "satLocationID": "SatLocationID", "storage": 7, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15, "totalPhysStorage": 16, "totalStorage": 12}, "StorageControllers": {"mapKey": {"displayName": "DisplayName", "health": "Health", "poolStorage": 11, "poolTotalStorage": 16, "pools": {"mapKey": {"poolName": "PoolName", "storage": 7, "totalStorage": 12}}}}, "SystemPools": {"mapKey": {"cores": 5, "memory": 6, "systems": [{"cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}], "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}}}`)
 				}))
 			})
 			It(`Invoke PcloudPodcapacityGet successfully with retries`, func() {
@@ -24668,7 +27437,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"PodData": {"cores": 5, "memory": 6, "satLocationID": "SatLocationID", "storage": 7, "totalCores": 10, "totalMemory": 11, "totalStorage": 12}, "StorageControllers": {"mapKey": {"displayName": "DisplayName", "health": "Health", "poolStorage": 11, "poolTotalStorage": 16, "pools": {"mapKey": {"poolName": "PoolName", "storage": 7, "totalStorage": 12}}}}, "SystemPools": {"mapKey": {"cores": 5, "memory": 6, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}], "totalCores": 10, "totalMemory": 11}}}`)
+					fmt.Fprintf(res, "%s", `{"PodData": {"cores": 5, "memory": 6, "satLocationID": "SatLocationID", "storage": 7, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15, "totalPhysStorage": 16, "totalStorage": 12}, "StorageControllers": {"mapKey": {"displayName": "DisplayName", "health": "Health", "poolStorage": 11, "poolTotalStorage": 16, "pools": {"mapKey": {"poolName": "PoolName", "storage": 7, "totalStorage": 12}}}}, "SystemPools": {"mapKey": {"cores": 5, "memory": 6, "systems": [{"cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}], "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}}}`)
 				}))
 			})
 			It(`Invoke PcloudPodcapacityGet successfully`, func() {
@@ -24826,7 +27595,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"profiles": [{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "type": "balanced"}]}`)
+					fmt.Fprintf(res, "%s", `{"profiles": [{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "supportedSystems": ["SupportedSystems"], "type": "balanced"}]}`)
 				}))
 			})
 			It(`Invoke PcloudSapGetall successfully with retries`, func() {
@@ -24880,7 +27649,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"profiles": [{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "type": "balanced"}]}`)
+					fmt.Fprintf(res, "%s", `{"profiles": [{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "supportedSystems": ["SupportedSystems"], "type": "balanced"}]}`)
 				}))
 			})
 			It(`Invoke PcloudSapGetall successfully`, func() {
@@ -25453,7 +28222,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "type": "balanced"}`)
+					fmt.Fprintf(res, "%s", `{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "supportedSystems": ["SupportedSystems"], "type": "balanced"}`)
 				}))
 			})
 			It(`Invoke PcloudSapGet successfully with retries`, func() {
@@ -25508,7 +28277,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "type": "balanced"}`)
+					fmt.Fprintf(res, "%s", `{"certified": false, "cores": 5, "memory": 6, "profileID": "ProfileID", "supportedSystems": ["SupportedSystems"], "type": "balanced"}`)
 				}))
 			})
 			It(`Invoke PcloudSapGet successfully`, func() {
@@ -31072,7 +33841,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "coreMemoryRatio": 15, "maxAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "maxCoresAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "maxMemoryAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "sharedCoreRatio": {"default": 7, "max": 3, "min": 3}, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}], "type": "Type"}}`)
+					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "coreMemoryRatio": 15, "maxAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "maxCoresAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "maxMemoryAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "sharedCoreRatio": {"default": 7, "max": 3, "min": 3}, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}], "type": "Type"}}`)
 				}))
 			})
 			It(`Invoke PcloudSystempoolsGet successfully with retries`, func() {
@@ -31126,7 +33895,7 @@ var _ = Describe(`PowervsV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "coreMemoryRatio": 15, "maxAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "maxCoresAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "maxMemoryAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}, "sharedCoreRatio": {"default": 7, "max": 3, "min": 3}, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11}], "type": "Type"}}`)
+					fmt.Fprintf(res, "%s", `{"mapKey": {"capacity": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "coreMemoryRatio": 15, "maxAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "maxCoresAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "maxMemoryAvailable": {"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}, "sharedCoreRatio": {"default": 7, "max": 3, "min": 3}, "systems": [{"availableCores": 14, "availableMemory": 15, "cores": 5, "id": 2, "memory": 6, "totalCores": 10, "totalMemory": 11, "totalPhysCores": 14, "totalPhysMemory": 15}], "type": "Type"}}`)
 				}))
 			})
 			It(`Invoke PcloudSystempoolsGet successfully`, func() {
@@ -45388,6 +48157,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs = []string{"testString"}
+				pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := powervsService.PcloudV2PvminstancesVolumesPost(pcloudV2PvminstancesVolumesPostOptionsModel)
@@ -45457,6 +48227,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs = []string{"testString"}
+				pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with a Context to test a timeout error
@@ -45534,6 +48305,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs = []string{"testString"}
+				pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with valid options model (positive test)
@@ -45556,6 +48328,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs = []string{"testString"}
+				pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
 				err := powervsService.SetServiceURL("")
@@ -45599,6 +48372,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs = []string{"testString"}
+				pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID = core.StringPtr("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation
@@ -51732,6 +54506,13 @@ var _ = Describe(`PowervsV1`, func() {
 				URL:           "http://powervsv1modelgenerator.com",
 				Authenticator: &core.NoAuthAuthenticator{},
 			})
+			It(`Invoke NewAddHost successfully`, func() {
+				displayName := "testString"
+				sysType := "testString"
+				_model, err := powervsService.NewAddHost(displayName, sysType)
+				Expect(_model).ToNot(BeNil())
+				Expect(err).To(BeNil())
+			})
 			It(`Invoke NewAuxiliaryVolumeForOnboarding successfully`, func() {
 				auxVolumeName := "testString"
 				_model, err := powervsService.NewAuxiliaryVolumeForOnboarding(auxVolumeName)
@@ -51816,6 +54597,41 @@ var _ = Describe(`PowervsV1`, func() {
 				Expect(internalV1PowervsInstancesGetOptionsModel).ToNot(BeNil())
 				Expect(internalV1PowervsInstancesGetOptionsModel.PowervsLocation).To(Equal(core.StringPtr("testString")))
 				Expect(internalV1PowervsInstancesGetOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewInternalV1PowervsLocationsActivatePutOptions successfully`, func() {
+				// Construct an instance of the InternalV1PowervsLocationsActivatePutOptions model
+				internalV1PowervsLocationsActivatePutOptionsOrderID := "testString"
+				internalV1PowervsLocationsActivatePutOptionsSatelliteID := "testString"
+				internalV1PowervsLocationsActivatePutOptionsModel := powervsService.NewInternalV1PowervsLocationsActivatePutOptions(internalV1PowervsLocationsActivatePutOptionsOrderID, internalV1PowervsLocationsActivatePutOptionsSatelliteID)
+				internalV1PowervsLocationsActivatePutOptionsModel.SetOrderID("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SetSatelliteID("testString")
+				internalV1PowervsLocationsActivatePutOptionsModel.SetDaysToDelay(int64(38))
+				internalV1PowervsLocationsActivatePutOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(internalV1PowervsLocationsActivatePutOptionsModel).ToNot(BeNil())
+				Expect(internalV1PowervsLocationsActivatePutOptionsModel.OrderID).To(Equal(core.StringPtr("testString")))
+				Expect(internalV1PowervsLocationsActivatePutOptionsModel.SatelliteID).To(Equal(core.StringPtr("testString")))
+				Expect(internalV1PowervsLocationsActivatePutOptionsModel.DaysToDelay).To(Equal(core.Int64Ptr(int64(38))))
+				Expect(internalV1PowervsLocationsActivatePutOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewInternalV1PowervsLocationsTagDeleteOptions successfully`, func() {
+				// Construct an instance of the InternalV1PowervsLocationsTagDeleteOptions model
+				internalV1PowervsLocationsTagDeleteOptionsSatelliteID := "testString"
+				internalV1PowervsLocationsTagDeleteOptionsModel := powervsService.NewInternalV1PowervsLocationsTagDeleteOptions(internalV1PowervsLocationsTagDeleteOptionsSatelliteID)
+				internalV1PowervsLocationsTagDeleteOptionsModel.SetSatelliteID("testString")
+				internalV1PowervsLocationsTagDeleteOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(internalV1PowervsLocationsTagDeleteOptionsModel).ToNot(BeNil())
+				Expect(internalV1PowervsLocationsTagDeleteOptionsModel.SatelliteID).To(Equal(core.StringPtr("testString")))
+				Expect(internalV1PowervsLocationsTagDeleteOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewInternalV1PowervsLocationsTagPostOptions successfully`, func() {
+				// Construct an instance of the InternalV1PowervsLocationsTagPostOptions model
+				internalV1PowervsLocationsTagPostOptionsSatelliteID := "testString"
+				internalV1PowervsLocationsTagPostOptionsModel := powervsService.NewInternalV1PowervsLocationsTagPostOptions(internalV1PowervsLocationsTagPostOptionsSatelliteID)
+				internalV1PowervsLocationsTagPostOptionsModel.SetSatelliteID("testString")
+				internalV1PowervsLocationsTagPostOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(internalV1PowervsLocationsTagPostOptionsModel).ToNot(BeNil())
+				Expect(internalV1PowervsLocationsTagPostOptionsModel.SatelliteID).To(Equal(core.StringPtr("testString")))
+				Expect(internalV1PowervsLocationsTagPostOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewInternalV1PowervsLocationsTransitgatewayGetOptions successfully`, func() {
 				// Construct an instance of the InternalV1PowervsLocationsTransitgatewayGetOptions model
@@ -53527,6 +56343,7 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudPvminstancesPostOptionsModel.SetProcType("dedicated")
 				pcloudPvminstancesPostOptionsModel.SetProcessors(float64(72.5))
 				pcloudPvminstancesPostOptionsModel.SetServerName("testString")
+				pcloudPvminstancesPostOptionsModel.SetDeployTarget("testString")
 				pcloudPvminstancesPostOptionsModel.SetDeploymentType("testString")
 				pcloudPvminstancesPostOptionsModel.SetKeyPairName("testString")
 				pcloudPvminstancesPostOptionsModel.SetLicenseRepositoryCapacity(int64(38))
@@ -53558,6 +56375,7 @@ var _ = Describe(`PowervsV1`, func() {
 				Expect(pcloudPvminstancesPostOptionsModel.ProcType).To(Equal(core.StringPtr("dedicated")))
 				Expect(pcloudPvminstancesPostOptionsModel.Processors).To(Equal(core.Float64Ptr(float64(72.5))))
 				Expect(pcloudPvminstancesPostOptionsModel.ServerName).To(Equal(core.StringPtr("testString")))
+				Expect(pcloudPvminstancesPostOptionsModel.DeployTarget).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudPvminstancesPostOptionsModel.DeploymentType).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudPvminstancesPostOptionsModel.KeyPairName).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudPvminstancesPostOptionsModel.LicenseRepositoryCapacity).To(Equal(core.Int64Ptr(int64(38))))
@@ -54417,11 +57235,13 @@ var _ = Describe(`PowervsV1`, func() {
 				pcloudV2PvminstancesVolumesPostOptionsModel.SetCloudInstanceID("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.SetPvmInstanceID("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.SetVolumeIDs([]string{"testString"})
+				pcloudV2PvminstancesVolumesPostOptionsModel.SetBootVolumeID("testString")
 				pcloudV2PvminstancesVolumesPostOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(pcloudV2PvminstancesVolumesPostOptionsModel).ToNot(BeNil())
 				Expect(pcloudV2PvminstancesVolumesPostOptionsModel.CloudInstanceID).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudV2PvminstancesVolumesPostOptionsModel.PvmInstanceID).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudV2PvminstancesVolumesPostOptionsModel.VolumeIDs).To(Equal([]string{"testString"}))
+				Expect(pcloudV2PvminstancesVolumesPostOptionsModel.BootVolumeID).To(Equal(core.StringPtr("testString")))
 				Expect(pcloudV2PvminstancesVolumesPostOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewPcloudV2VolumesClonePostOptions successfully`, func() {
@@ -55068,6 +57888,12 @@ var _ = Describe(`PowervsV1`, func() {
 				Expect(_model).ToNot(BeNil())
 				Expect(err).To(BeNil())
 			})
+			It(`Invoke NewSecondary successfully`, func() {
+				workspace := "testString"
+				_model, err := powervsService.NewSecondary(workspace)
+				Expect(_model).ToNot(BeNil())
+				Expect(err).To(BeNil())
+			})
 			It(`Invoke NewServiceBindingBindingOptions successfully`, func() {
 				// Construct an instance of the ServiceBindingResourceObject model
 				serviceBindingResourceObjectModel := new(powervsv1.ServiceBindingResourceObject)
@@ -55614,6 +58440,13 @@ var _ = Describe(`PowervsV1`, func() {
 				Expect(serviceInstanceUpdateOptionsModel.AcceptsIncomplete).To(Equal(core.BoolPtr(true)))
 				Expect(serviceInstanceUpdateOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
+			It(`Invoke NewV1AvailableHostsOptions successfully`, func() {
+				// Construct an instance of the V1AvailableHostsOptions model
+				v1AvailableHostsOptionsModel := powervsService.NewV1AvailableHostsOptions()
+				v1AvailableHostsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1AvailableHostsOptionsModel).ToNot(BeNil())
+				Expect(v1AvailableHostsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
 			It(`Invoke NewV1DatacentersGetOptions successfully`, func() {
 				// Construct an instance of the V1DatacentersGetOptions model
 				datacenterRegion := "testString"
@@ -55634,6 +58467,137 @@ var _ = Describe(`PowervsV1`, func() {
 				Expect(v1DatacentersGetallOptionsModel).ToNot(BeNil())
 				Expect(v1DatacentersGetallOptionsModel.Accept).To(Equal(core.StringPtr("application/json")))
 				Expect(v1DatacentersGetallOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostgroupsGetOptions successfully`, func() {
+				// Construct an instance of the V1HostgroupsGetOptions model
+				v1HostgroupsGetOptionsModel := powervsService.NewV1HostgroupsGetOptions()
+				v1HostgroupsGetOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostgroupsGetOptionsModel).ToNot(BeNil())
+				Expect(v1HostgroupsGetOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostgroupsIDGetOptions successfully`, func() {
+				// Construct an instance of the V1HostgroupsIDGetOptions model
+				hostgroupID := "testString"
+				v1HostgroupsIDGetOptionsModel := powervsService.NewV1HostgroupsIDGetOptions(hostgroupID)
+				v1HostgroupsIDGetOptionsModel.SetHostgroupID("testString")
+				v1HostgroupsIDGetOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostgroupsIDGetOptionsModel).ToNot(BeNil())
+				Expect(v1HostgroupsIDGetOptionsModel.HostgroupID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostgroupsIDGetOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostgroupsIDPutOptions successfully`, func() {
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				Expect(secondaryModel).ToNot(BeNil())
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+				Expect(secondaryModel.Name).To(Equal(core.StringPtr("testString")))
+				Expect(secondaryModel.Workspace).To(Equal(core.StringPtr("testString")))
+
+				// Construct an instance of the V1HostgroupsIDPutOptions model
+				hostgroupID := "testString"
+				v1HostgroupsIDPutOptionsModel := powervsService.NewV1HostgroupsIDPutOptions(hostgroupID)
+				v1HostgroupsIDPutOptionsModel.SetHostgroupID("testString")
+				v1HostgroupsIDPutOptionsModel.SetAdd([]powervsv1.Secondary{*secondaryModel})
+				v1HostgroupsIDPutOptionsModel.SetRemove("testString")
+				v1HostgroupsIDPutOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostgroupsIDPutOptionsModel).ToNot(BeNil())
+				Expect(v1HostgroupsIDPutOptionsModel.HostgroupID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostgroupsIDPutOptionsModel.Add).To(Equal([]powervsv1.Secondary{*secondaryModel}))
+				Expect(v1HostgroupsIDPutOptionsModel.Remove).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostgroupsIDPutOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostgroupsPostOptions successfully`, func() {
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				Expect(addHostModel).ToNot(BeNil())
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+				Expect(addHostModel.DisplayName).To(Equal(core.StringPtr("testString")))
+				Expect(addHostModel.SysType).To(Equal(core.StringPtr("testString")))
+
+				// Construct an instance of the Secondary model
+				secondaryModel := new(powervsv1.Secondary)
+				Expect(secondaryModel).ToNot(BeNil())
+				secondaryModel.Name = core.StringPtr("testString")
+				secondaryModel.Workspace = core.StringPtr("testString")
+				Expect(secondaryModel.Name).To(Equal(core.StringPtr("testString")))
+				Expect(secondaryModel.Workspace).To(Equal(core.StringPtr("testString")))
+
+				// Construct an instance of the V1HostgroupsPostOptions model
+				v1HostgroupsPostOptionsHosts := []powervsv1.AddHost{}
+				v1HostgroupsPostOptionsName := "testString"
+				v1HostgroupsPostOptionsModel := powervsService.NewV1HostgroupsPostOptions(v1HostgroupsPostOptionsHosts, v1HostgroupsPostOptionsName)
+				v1HostgroupsPostOptionsModel.SetHosts([]powervsv1.AddHost{*addHostModel})
+				v1HostgroupsPostOptionsModel.SetName("testString")
+				v1HostgroupsPostOptionsModel.SetSecondaries([]powervsv1.Secondary{*secondaryModel})
+				v1HostgroupsPostOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostgroupsPostOptionsModel).ToNot(BeNil())
+				Expect(v1HostgroupsPostOptionsModel.Hosts).To(Equal([]powervsv1.AddHost{*addHostModel}))
+				Expect(v1HostgroupsPostOptionsModel.Name).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostgroupsPostOptionsModel.Secondaries).To(Equal([]powervsv1.Secondary{*secondaryModel}))
+				Expect(v1HostgroupsPostOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostsGetOptions successfully`, func() {
+				// Construct an instance of the V1HostsGetOptions model
+				v1HostsGetOptionsModel := powervsService.NewV1HostsGetOptions()
+				v1HostsGetOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostsGetOptionsModel).ToNot(BeNil())
+				Expect(v1HostsGetOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostsIDDeleteOptions successfully`, func() {
+				// Construct an instance of the V1HostsIDDeleteOptions model
+				hostID := "testString"
+				v1HostsIDDeleteOptionsModel := powervsService.NewV1HostsIDDeleteOptions(hostID)
+				v1HostsIDDeleteOptionsModel.SetHostID("testString")
+				v1HostsIDDeleteOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostsIDDeleteOptionsModel).ToNot(BeNil())
+				Expect(v1HostsIDDeleteOptionsModel.HostID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostsIDDeleteOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostsIDGetOptions successfully`, func() {
+				// Construct an instance of the V1HostsIDGetOptions model
+				hostID := "testString"
+				v1HostsIDGetOptionsModel := powervsService.NewV1HostsIDGetOptions(hostID)
+				v1HostsIDGetOptionsModel.SetHostID("testString")
+				v1HostsIDGetOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostsIDGetOptionsModel).ToNot(BeNil())
+				Expect(v1HostsIDGetOptionsModel.HostID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostsIDGetOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostsIDPutOptions successfully`, func() {
+				// Construct an instance of the V1HostsIDPutOptions model
+				hostID := "testString"
+				v1HostsIDPutOptionsDisplayName := "testString"
+				v1HostsIDPutOptionsModel := powervsService.NewV1HostsIDPutOptions(hostID, v1HostsIDPutOptionsDisplayName)
+				v1HostsIDPutOptionsModel.SetHostID("testString")
+				v1HostsIDPutOptionsModel.SetDisplayName("testString")
+				v1HostsIDPutOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostsIDPutOptionsModel).ToNot(BeNil())
+				Expect(v1HostsIDPutOptionsModel.HostID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostsIDPutOptionsModel.DisplayName).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostsIDPutOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewV1HostsPostOptions successfully`, func() {
+				// Construct an instance of the AddHost model
+				addHostModel := new(powervsv1.AddHost)
+				Expect(addHostModel).ToNot(BeNil())
+				addHostModel.DisplayName = core.StringPtr("testString")
+				addHostModel.SysType = core.StringPtr("testString")
+				Expect(addHostModel.DisplayName).To(Equal(core.StringPtr("testString")))
+				Expect(addHostModel.SysType).To(Equal(core.StringPtr("testString")))
+
+				// Construct an instance of the V1HostsPostOptions model
+				var v1HostsPostOptionsHost *powervsv1.AddHost = nil
+				v1HostsPostOptionsHostgroupID := "testString"
+				v1HostsPostOptionsModel := powervsService.NewV1HostsPostOptions(v1HostsPostOptionsHost, v1HostsPostOptionsHostgroupID)
+				v1HostsPostOptionsModel.SetHost(addHostModel)
+				v1HostsPostOptionsModel.SetHostgroupID("testString")
+				v1HostsPostOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(v1HostsPostOptionsModel).ToNot(BeNil())
+				Expect(v1HostsPostOptionsModel.Host).To(Equal(addHostModel))
+				Expect(v1HostsPostOptionsModel.HostgroupID).To(Equal(core.StringPtr("testString")))
+				Expect(v1HostsPostOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewV1WorkspacesGetOptions successfully`, func() {
 				// Construct an instance of the V1WorkspacesGetOptions model
